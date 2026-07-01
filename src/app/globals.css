@@ -117,6 +117,12 @@ button{
   background: white;
 }
 
+@media (max-width: 992px) {
+  .product-grid-wrapper{
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
 .product-grid-wrapper-right{
   gap: 5px;
 }
@@ -155,4 +161,386 @@ button{
 
 .animate-fadeUp {
   animation: fadeUp 0.8s ease-out;
+}
+
+/* ===========================
+   FEATURED PROJECTS
+=========================== */
+
+.featured-projects{
+    padding:100px 0;
+    background:#f7f5ec;
+}
+
+.featured-wrapper{
+    background:#000;
+    border-radius:22px;
+    padding:60px 40px;
+    overflow:hidden;
+}
+
+.featured-title{
+    color:#fff;
+    text-align:center;
+    font-size:30px;
+    font-weight:700;
+    letter-spacing:2px;
+    margin-bottom:50px;
+}
+
+.featured-stage{
+    position:relative;
+    height:500px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+}
+
+.featured-card{
+    position:absolute;
+    width:260px;
+    border-radius:12px;
+    overflow:hidden;
+    cursor:pointer;
+    box-shadow:0 18px 45px rgba(0,0,0,.35);
+    transition:box-shadow .4s ease;
+}
+
+.featured-card:hover{
+    box-shadow:0 30px 70px rgba(0,0,0,.55);
+}
+
+.featured-image{
+    object-fit:cover;
+    transition:transform .7s ease;
+}
+
+.featured-card:hover .featured-image{
+    transform:scale(1.08);
+}
+
+.featured-description{
+    max-width:900px;
+    margin:40px auto 0;
+    text-align:center;
+    color:#d8d8d8;
+    line-height:1.8;
+    font-size:18px;
+}
+
+.featured-controls{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    margin-top:40px;
+}
+
+.featured-controls button{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.4);
+    background:transparent;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:22px;
+    cursor:pointer;
+    transition:all .35s ease;
+}
+
+.featured-controls button:hover{
+    background:#66711E;
+    border-color:#66711E;
+    transform:translateY(-4px);
+}
+
+/* Responsive */
+
+@media(max-width:1200px){
+
+.featured-stage{
+    transform:scale(.85);
+}
+
+}
+
+@media(max-width:991px){
+
+.featured-stage{
+    transform:scale(.65);
+    height:420px;
+}
+
+.featured-title{
+    font-size:25px;
+}
+
+.featured-description{
+    font-size:16px;
+}
+
+}
+
+@media(max-width:767px){
+
+.featured-wrapper{
+    padding:40px 20px;
+}
+
+.featured-stage{
+    transform:scale(.42);
+    height:320px;
+}
+
+.featured-title{
+    font-size:20px;
+}
+
+.featured-description{
+    margin-top:20px;
+    font-size:15px;
+}
+
+.featured-controls button{
+    width:46px;
+    height:46px;
+}
+
+}
+
+
+/* ===========================
+   SERVICES
+=========================== */
+
+.services-section{
+    position:relative;
+    padding:90px 0;
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-position:center;
+    overflow:hidden;
+}
+
+.services-title{
+    text-align:center;
+    font-size:46px;
+    font-weight:700;
+    color:#000;
+    margin-bottom:50px;
+    letter-spacing:.5px;
+}
+
+.services-grid{
+    display:grid;
+    grid-template-columns:0.8fr 1.15fr 1fr;
+    gap:42px;
+    align-items:center;
+}
+
+/* Left */
+
+.services-left h4{
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.services-left p{
+    font-size:17px;
+    line-height:2;
+    color:#1d1d1d;
+}
+
+/* Image */
+
+.services-image{
+    position:relative;
+    width:100%;
+    height:720px;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.12);
+}
+
+.services-image img{
+    transition:.8s;
+}
+
+.services-image:hover img{
+    transform:scale(1.08);
+}
+
+/* Right */
+
+.services-right{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+}
+
+/* Card */
+
+.service-card{
+    background:#bcc09a;
+    border-radius:10px;
+    padding:18px;
+}
+
+.service-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.service-header h4{
+    font-size:20px;
+    font-weight:700;
+    color:#1a1a1a;
+}
+
+.service-header button{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    border:none;
+    background:#fff;
+    cursor:pointer;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:.35s;
+}
+
+.service-header button:hover{
+    background:#66711E;
+    color:#fff;
+    transform:rotate(45deg);
+}
+
+/* List */
+
+.service-list{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.service-item{
+    background:#eef0e5;
+    border-radius:6px;
+    padding:18px 20px;
+    color:#000;
+    text-decoration:none;
+    transition:.35s;
+    font-size:15px;
+}
+
+.service-item:hover{
+    background:#66711E;
+    color:#fff;
+}
+
+.service-item.active{
+    background:#66711E;
+    color:#fff;
+}
+
+/* Bottom */
+
+.services-bottom{
+    margin-top:45px;
+    display:flex;
+    justify-content:flex-end;
+}
+
+.services-btn{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:10px 12px 10px 28px;
+    border:none;
+    border-radius:50px;
+    background:#66711E;
+    color:#fff;
+    cursor:pointer;
+    font-size:15px;
+    transition:.35s;
+}
+
+.services-btn span{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:#fff;
+    color:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:.35s;
+}
+
+.services-btn:hover{
+    transform:translateY(-5px);
+}
+
+.services-btn:hover span{
+    transform:rotate(45deg);
+}
+
+/* Responsive */
+
+@media(max-width:1200px){
+
+.services-grid{
+grid-template-columns:1fr;
+}
+
+.services-image{
+height:560px;
+}
+
+.services-bottom{
+justify-content:center;
+}
+
+}
+
+@media(max-width:768px){
+
+.services-title{
+font-size:34px;
+}
+
+.services-image{
+height:420px;
+}
+
+.services-left p{
+font-size:15px;
+line-height:1.8;
+}
+
+.service-header h4{
+font-size:17px;
+}
+
+.service-item{
+padding:15px;
+font-size:14px;
+}
+
+.services-btn{
+padding:8px 10px 8px 20px;
+}
+
+.services-btn span{
+width:40px;
+height:40px;
+}
+
 }
