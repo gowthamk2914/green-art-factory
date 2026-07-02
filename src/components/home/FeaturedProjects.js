@@ -27,7 +27,6 @@ export default function FeaturedProjects() {
   useEffect(() => {
   const updatePositions = () => {
     const width = window.innerWidth;
-    console.log("Window width:", width); // Debugging line
 
     if (width >= 1100) {
       setPositions([
