@@ -4,6 +4,9 @@ import FeaturedProjects from "../components/home/FeaturedProjects";
 import Services from "../components/home/Services";
 import Testimonials from "../components/home/Testimonials";
 import Clients from "../components/home/Clients";
+import LatestPosts from "../components/home/LatestPosts";
+import BlogsInsights from "../components/home/BlogsInsights";
+import Footer from "../components/home/Footer";
 import "../app/globals.css";
 
 export default function Home() {
@@ -15,6 +18,9 @@ export default function Home() {
       <Services />
       <Testimonials />
       <Clients />
+      <LatestPosts />
+      <BlogsInsights />
+      <Footer />
     </>
   );
 }
