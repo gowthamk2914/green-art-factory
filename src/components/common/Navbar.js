@@ -10,7 +10,7 @@ import { IoChevronDownOutline } from "react-icons/io5";
 const Navbar = () => {
   return (
     <>
-      <header className="bg-[#F7F5EC] py-8">
+      <header className="py-8">
         <div className="container flex items-center justify-between">
 
           {/* Logo */}
