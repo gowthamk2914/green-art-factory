@@ -56,6 +56,14 @@ const Navbar = () => {
               Our Products
             </Link>
 
+             <Link
+              href="/categories"
+              className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
+            >
+             Categories
+            </Link>
+
+
             <Link
               href="/quote"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
