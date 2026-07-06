@@ -1,5 +1,6 @@
 import "./globals.css";
 import Navbar from "../components/common/Navbar";
+import Footer from "../components/common/Footer";
 import { ReactNode } from "react";
 import type { Metadata } from "next";
 import favicon from "@/public/images/gaf_favicon.png";
@@ -36,6 +37,7 @@ export default function RootLayout({
       <body className={poppins.className}>
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );
