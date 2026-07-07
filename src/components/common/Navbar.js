@@ -15,7 +15,7 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="header-wrapper">
+      <header className="header-wrapper sticky top-0 z-[999] shadow-md transition-all duration-300">
         <div className="container flex items-center justify-between">
           {/* Logo */}
 

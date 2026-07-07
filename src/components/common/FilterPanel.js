@@ -263,7 +263,7 @@ export default function FilterPanel({ isOpen, onClose, onApply }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-[#0d1a08]/97 text-white backdrop-blur-sm">
+    <div className="filter-panel fixed inset-0 z-[100] flex flex-col bg-[#0d1a08]/97 text-white backdrop-blur-sm">
       {/* header */}
       <div className="flex items-center justify-between px-6 py-5 md:px-10">
         <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">

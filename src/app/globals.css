@@ -2649,3 +2649,11 @@ a.gaf-footer-contact-text:hover {
 .filter-section-title{
   padding: 15px;
 }
+
+.header-wrapper{
+  background-color: #f7f5ec;
+}
+
+.filter-panel{
+  z-index: 999;
+}
