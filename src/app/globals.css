@@ -2,11 +2,6 @@
 
 @import "tailwindcss";
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 html {
   scroll-behavior: smooth;
@@ -2641,4 +2636,16 @@ a.gaf-footer-contact-text:hover {
     height: 56px;
     min-width: 56px;
   }
+}
+
+
+.navbar-icon-wrapper{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+
+.filter-section-title{
+  padding: 15px;
 }
