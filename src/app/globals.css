@@ -1562,14 +1562,14 @@ justify-content:center;
   width: 46px;
   height: 46px;
   border-radius: 12px;
-  background: #0d0d0d;
+  background-image:url("/images/gaf-logo-white-bg.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   overflow: hidden;
   flex-shrink: 0;
 }
- 
-.gaf-posts-avatar-img {
-  object-fit: cover;
-}
+
 
 .gaf-posts-name {
   font-weight: 700;

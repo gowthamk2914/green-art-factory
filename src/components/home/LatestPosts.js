@@ -85,7 +85,7 @@ function PostCard({ post, profilePicture }) {
       <div className="gaf-posts-card-body">
         <div className="gaf-posts-card-header">
           <span className="gaf-posts-avatar">
-            {profilePicture && (
+            {/* {profilePicture && (
               <Image
                 src={profilePicture}
                 alt="Green Art Factory"
@@ -93,7 +93,7 @@ function PostCard({ post, profilePicture }) {
                 sizes="46px"
                 className="gaf-posts-avatar-img"
               />
-            )}
+            )} */}
           </span>
           <span className="gaf-posts-name">Green Art Factory</span>
         </div>
