@@ -133,7 +133,7 @@ const slides = [
 
 const Products = () => {
   return (
-    <section className="products-section relative overflow-hidden pt-24 pb-20">
+    <section className="products-section relative overflow-hidden pt-24 pb-5">
 
       {/* Curved Top */}
 
