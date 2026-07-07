@@ -1341,10 +1341,9 @@ justify-content:center;
 
 
 
-/* ===== Latest Posts component (LatestPosts.js) ===== */
+/* ===== Latest Posts component ===== */
 
-/* Outer wrapper: this is the ONLY element the bg image stretches across.
-   It's full width — nothing here caps at 1500px. */
+
 .gaf-posts-outer {
   width: 100%;
   background-size: cover;
@@ -1353,8 +1352,6 @@ justify-content:center;
   padding: 20px 0;
 }
 
-/* Inner container: everything else (sidebar + grid) lives in here and
-   is capped at 1500px, centered on the page. */
 .gaf-posts-container {
   max-width: 1500px;
   margin: 0 auto;
@@ -1396,6 +1393,16 @@ justify-content:center;
   z-index: 1;
   width: 100%;
 }
+
+
+/* ---------- add to your existing Latest Posts CSS ---------- */
+
+.gaf-posts-status {
+  color: #e6ebe1;
+  font-size: 14px;
+  padding: 24px 0;
+}
+
 
 .gaf-posts-heading {
   color: #ffffff;
@@ -1502,6 +1509,7 @@ justify-content:center;
 .gaf-posts-card-image-wrap {
   position: relative;
   width: 100%;
+  display:block;
 }
 
 .gaf-posts-card--normal .gaf-posts-card-image-wrap {
@@ -1550,11 +1558,17 @@ justify-content:center;
 }
 
 .gaf-posts-avatar {
+  position: relative;
   width: 46px;
   height: 46px;
   border-radius: 12px;
   background: #0d0d0d;
+  overflow: hidden;
   flex-shrink: 0;
+}
+ 
+.gaf-posts-avatar-img {
+  object-fit: cover;
 }
 
 .gaf-posts-name {
@@ -1650,7 +1664,7 @@ justify-content:center;
 
 
 
-/* ===== Blogs & Insights component (BlogsInsights.js) ===== */
+/* ===== Blogs & Insights component ===== */
 
 .gaf-blogs-section {
   width: 100%;

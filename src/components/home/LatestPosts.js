@@ -1,72 +1,32 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
-/* Section + sidebar art — replace with your real files in /public */
 const BG_IMAGE = "/images/latest-posts-section-bg.jpg";
 const LEAF_IMAGE = "/images/latest-posts-section-leaf.png";
 
-/* One entry per post. `size` controls the image height:
-   "normal" | "tall" | "short" */
-const POSTS = {
-  col1: [
-    {
-      id: 1,
-      image: "/images/latest-posts1.jpg",
-      size: "normal",
-      hasGallery: false,
-      hashtags: "#GreenLiving #LandscapeDesign",
-      emoji: "🌱",
-      description:
-        "Bringing life to every space with elegant landscaping and sustainable greenery solutions. Fresh, modern, and naturally inspiring.",
-    },
-    {
-      id: 2,
-      image: "/images/latest-posts2.jpg",
-      size: "tall",
-      hasGallery: true,
-      inlineHashtag: "#healthy",
-      inlineText: " You and your family will love this refreshing desert!",
-    },
-  ],
+/* From your Behold dashboard (behold.so) → after connecting your
+   Instagram account once, create a JSON feed and paste its URL here.
+   It looks like: https://feeds.behold.so/XXXXXXXXXXXX
+   No token, no ID, no server code needed — it's a public read URL. */
+const BEHOLD_FEED_URL = "https://feeds.behold.so/Ahmm4BnIUEH6OgjWRfw5";
 
-  col2: [
-    {
-      id: 3,
-      image: "/images/latest-posts3.jpg",
-      size: "normal",
-      hasGallery: false,
-      hashtags: "#GreenLiving #LandscapeDesign",
-      emoji: "🌱",
-      description:
-        "Bringing life to every space with elegant landscaping and sustainable greenery solutions. Fresh, modern, and naturally inspiring.",
-    },
-    {
-      id: 4,
-      image: "/images/latest-posts1.jpg",
-      size: "short",
-      hasGallery: true,
-      hashtags: "#Landscaping #NatureInspired",
-      emoji: "🌿",
-    },
-  ],
-  col3: [
-    {
-      id: 5,
-      image: "/images/latest-posts2.jpg",
-      size: "short",
-      hasGallery: false,
-      hashtags: "#GreenLiving #LandscapeDesign",
-    },
-    {
-      id: 6,
-      image: "/images/latest-posts3.jpg",
-      size: "short",
-      hasGallery: true,
-      hashtags: "#GreenLiving #LandscapeDesign",
-    },
-  ],
-};
+/* Behold captions are one plain-text blob, same as raw Instagram data —
+   hashtags aren't pre-colored, so we split them out ourselves. */
+function splitCaption(caption = "") {
+  const hashtags = caption.match(/#\w+/g) ?? [];
+  const description = caption.replace(/#\w+/g, "").trim();
+  return { hashtags: hashtags.join(" "), description };
+}
+
+/* Spreads a flat list of posts round-robin into N columns, since we
+   don't control the count/order the way static mock data did */
+function distributeIntoColumns(posts, columnCount) {
+  const columns = Array.from({ length: columnCount }, () => []);
+  posts.forEach((post, i) => columns[i % columnCount].push(post));
+  return columns;
+}
 
 function InstagramGlyph() {
   return (
@@ -89,54 +49,57 @@ function LinkedInGlyph() {
 function CameraIcon() {
   return (
     <Image
-          src={"/images/latest-posts-camera.png"}
-          alt="Green Art Factory camera icon"
-          fill
-          className="gaf-posts-camera-icon"
-        />
+      src="/images/latest-posts-camera.png"
+      alt="carousel post"
+      fill
+      className="gaf-posts-camera-icon"
+    />
   );
 }
 
-function PostCard({ post }) {
+function PostCard({ post, profilePicture }) {
+  const { hashtags, description } = splitCaption(post.caption);
+
   return (
-    <article className={`gaf-posts-card gaf-posts-card--${post.size}`}>
-      <div className="gaf-posts-card-image-wrap">
+    <article className="gaf-posts-card gaf-posts-card--normal">
+      <a
+        href={post.permalink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="gaf-posts-card-image-wrap"
+      >
         <Image
-          src={post.image}
+          src={post.mediaUrl || post.thumbnailUrl}
           alt="Green Art Factory post"
           fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 400px"
           className="gaf-posts-card-image"
         />
-        {post.hasGallery && (
+        {post.isAlbum && (
           <span className="gaf-posts-camera-badge">
             <CameraIcon />
           </span>
         )}
-      </div>
+      </a>
 
       <div className="gaf-posts-card-body">
         <div className="gaf-posts-card-header">
-          <div className="gaf-posts-avatar" />
+          <span className="gaf-posts-avatar">
+            {profilePicture && (
+              <Image
+                src={profilePicture}
+                alt="Green Art Factory"
+                fill
+                sizes="46px"
+                className="gaf-posts-avatar-img"
+              />
+            )}
+          </span>
           <span className="gaf-posts-name">Green Art Factory</span>
         </div>
 
-        {post.hashtags && (
-          <p className="gaf-posts-hashtags">
-            {post.hashtags}
-            {post.emoji && <span className="gaf-posts-emoji"> {post.emoji}</span>}
-          </p>
-        )}
-
-        {post.inlineHashtag && (
-          <p className="gaf-posts-inline-text">
-            <span className="gaf-posts-hashtags">{post.inlineHashtag}</span>
-            {post.inlineText}
-          </p>
-        )}
-
-        {post.description && (
-          <p className="gaf-posts-desc">{post.description}</p>
-        )}
+        {hashtags && <p className="gaf-posts-hashtags">{hashtags}</p>}
+        {description && <p className="gaf-posts-desc">{description}</p>}
 
         <span className="gaf-posts-ig-badge">
           <InstagramGlyph />
@@ -147,21 +110,39 @@ function PostCard({ post }) {
 }
 
 export default function LatestPosts() {
+  const [status, setStatus] = useState("loading"); // loading | error | ready
+  const [posts, setPosts] = useState([]);
+  const [profilePicture, setProfilePicture] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch(BEHOLD_FEED_URL)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load feed");
+        return res.json();
+      })
+      .then((data) => {
+        if (cancelled) return;
+        // Behold returns { posts: [...], profilePictureUrl: "..." }
+        setPosts((data.posts ?? []).slice(0, 7));
+        setProfilePicture(data.profilePictureUrl ?? null);
+        setStatus("ready");
+      })
+      .catch(() => !cancelled && setStatus("error"));
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const columns = distributeIntoColumns(posts, 3);
+
   return (
-    <section
-      className="gaf-posts-outer"
-      style={{ backgroundImage: `url(${BG_IMAGE})` }}
-    >
-      {/* Everything except the background is capped at 1500px and centered */}
+    <section className="gaf-posts-outer" style={{ backgroundImage: `url(${BG_IMAGE})` }}>
       <div className="gaf-posts-container">
         <aside className="gaf-posts-sidebar">
-          <Image
-            src={LEAF_IMAGE}
-            alt=""
-            width={280}
-            height={280}
-            className="gaf-posts-leaf-img"
-          />
+          <Image src={LEAF_IMAGE} alt="" width={280} height={280} className="gaf-posts-leaf-img" />
 
           <div className="gaf-posts-sidebar-content">
             <h2 className="gaf-posts-heading">Latest Posts</h2>
@@ -195,21 +176,19 @@ export default function LatestPosts() {
         </aside>
 
         <div className="gaf-posts-grid">
-          <div className="gaf-posts-column">
-            {POSTS.col1.map((post) => (
-              <PostCard key={post.id} post={post} />
+          {status === "loading" && <p className="gaf-posts-status">Loading latest posts…</p>}
+          {status === "error" && (
+            <p className="gaf-posts-status">Couldn&rsquo;t load Instagram posts right now.</p>
+          )}
+
+          {status === "ready" &&
+            columns.map((column, i) => (
+              <div className="gaf-posts-column" key={i}>
+                {column.map((post) => (
+                  <PostCard key={post.id} post={post} profilePicture={profilePicture} />
+                ))}
+              </div>
             ))}
-          </div>
-          <div className="gaf-posts-column">
-            {POSTS.col2.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
-          <div className="gaf-posts-column">
-            {POSTS.col3.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
         </div>
       </div>
     </section>
