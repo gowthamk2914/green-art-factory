@@ -2120,7 +2120,6 @@ justify-content:center;
   width: 100%;
   background: linear-gradient(120deg, #0e1a0c 0%, #16240f 45%, #3c4a1e 100%);
   padding: 64px 48px 0;
-  font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .gaf-footer-top {
@@ -2398,7 +2397,6 @@ a.gaf-footer-contact-text:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* ---------- design tagline ---------- */
