@@ -6,7 +6,7 @@ export default function Hero() {
   return (
     <section className="gaf-categories-section">
       <Image
-        src="/images/category-hero-bg.jpg"
+        src="/images/category-hero-bg.png"
         alt="Category Background"
         fill
         priority

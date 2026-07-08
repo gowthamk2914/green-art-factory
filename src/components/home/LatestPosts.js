@@ -6,22 +6,17 @@ import Image from "next/image";
 const BG_IMAGE = "/images/latest-posts-section-bg.jpg";
 const LEAF_IMAGE = "/images/latest-posts-section-leaf.png";
 
-/* From your Behold dashboard (behold.so) → after connecting your
-   Instagram account once, create a JSON feed and paste its URL here.
-   It looks like: https://feeds.behold.so/XXXXXXXXXXXX
-   No token, no ID, no server code needed — it's a public read URL. */
+
 const BEHOLD_FEED_URL = "https://feeds.behold.so/Ahmm4BnIUEH6OgjWRfw5";
 
-/* Behold captions are one plain-text blob, same as raw Instagram data —
-   hashtags aren't pre-colored, so we split them out ourselves. */
+
 function splitCaption(caption = "") {
   const hashtags = caption.match(/#\w+/g) ?? [];
   const description = caption.replace(/#\w+/g, "").trim();
   return { hashtags: hashtags.join(" "), description };
 }
 
-/* Spreads a flat list of posts round-robin into N columns, since we
-   don't control the count/order the way static mock data did */
+
 function distributeIntoColumns(posts, columnCount) {
   const columns = Array.from({ length: columnCount }, () => []);
   posts.forEach((post, i) => columns[i % columnCount].push(post));
@@ -110,7 +105,7 @@ function PostCard({ post, profilePicture }) {
 }
 
 export default function LatestPosts() {
-  const [status, setStatus] = useState("loading"); // loading | error | ready
+  const [status, setStatus] = useState("loading"); 
   const [posts, setPosts] = useState([]);
   const [profilePicture, setProfilePicture] = useState(null);
 
@@ -124,7 +119,6 @@ export default function LatestPosts() {
       })
       .then((data) => {
         if (cancelled) return;
-        // Behold returns { posts: [...], profilePictureUrl: "..." }
         setPosts((data.posts ?? []).slice(0, 7));
         setProfilePicture(data.profilePictureUrl ?? null);
         setStatus("ready");

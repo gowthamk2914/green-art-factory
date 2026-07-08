@@ -72,6 +72,16 @@ const SLIDES = [
 
 const AUTOPLAY_MS = 4500;
 const DRAG_THRESHOLD_PX = 60;
+const TAGLINE_MS = 3000;
+
+
+const DESIGN_TAGLINES = [
+  "Timeless Design, Naturally Inspired",
+  "Where Nature Meets Modern Living",
+  "Crafted Spaces, Sustainably Designed",
+  "Elevating Interiors With Greenery",
+];
+
 
 function ArrowIcon() {
   return (
@@ -87,11 +97,15 @@ function ArrowIcon() {
   );
 }
 
-function SearchIcon() {
+function SparkleIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
-      <path d="M20 20L16.5 16.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -103,6 +117,7 @@ function mod(n, m) {
 export default function NatureShowcase() {
   const [active, setActive] = useState(0);
   const [search, setSearch] = useState("");
+  const [taglineIndex, setTaglineIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragDeltaX, setDragDeltaX] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -166,18 +181,11 @@ export default function NatureShowcase() {
 
   return (
     <section className="gaf-nature-section">
-      <div className="gaf-nature-searchbar">
-        <SearchIcon />
-        <input
-          type="text"
-          placeholder="Search what you like to see..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="gaf-nature-search-input"
-        />
-        <button type="button" className="gaf-nature-search-btn">
-          Search
-        </button>
+      <div className="gaf-nature-tagline">
+        <SparkleIcon />
+        <span key={taglineIndex} className="gaf-nature-tagline-text">
+          {DESIGN_TAGLINES[taglineIndex]}
+        </span>
       </div>
 
       <div className="gaf-nature-panel">
