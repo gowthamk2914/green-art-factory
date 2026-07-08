@@ -117,7 +117,7 @@ export default function LatestPosts() {
   useEffect(() => {
     let cancelled = false;
 
-    fetch(BEHOLD_FEED_URL)
+    fetch(`${BEHOLD_FEED_URL}?_=${Date.now()}`, { cache: "no-store" })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load feed");
         return res.json();
