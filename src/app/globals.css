@@ -2656,3 +2656,623 @@ a.gaf-footer-contact-text:hover {
 .filter-panel{
   z-index: 999;
 }
+
+
+/* ===== About Us component (AboutUs.js) ===== */
+
+.gaf-about-section {
+  width: 100%;
+  padding: 64px 24px 56px;
+  background: #e9edd6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gaf-about-title {
+  color: #14140f;
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0 0 32px;
+}
+
+/* ---------- card ---------- */
+
+.gaf-about-card {
+  width: 100%;
+  max-width: 1500px;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* ---------- media column ---------- */
+
+.gaf-about-media {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: gaf-about-fade-in 0.45s ease;
+}
+
+.gaf-about-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 330px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.gaf-about-image {
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+.gaf-about-video-wrap {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000;
+}
+
+.gaf-about-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gaf-about-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.gaf-about-play-btn:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+/* ---------- content column ---------- */
+
+.gaf-about-content {
+  padding: 8px 8px 8px 0;
+  animation: gaf-about-fade-in 0.45s ease;
+}
+
+.gaf-about-badge {
+  display: inline-block;
+  background: #1e8449;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 9px 24px;
+  margin-bottom: 26px;
+}
+
+.gaf-about-heading {
+  color: #14140f;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0 0 22px;
+  line-height: 1.2;
+}
+
+.gaf-about-paragraph {
+  color: #2a2a22;
+  font-size: 15px;
+  line-height: 1.75;
+  margin: 0 0 20px;
+}
+
+@keyframes gaf-about-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- tab bar ---------- */
+
+.gaf-about-tabs {
+  width: 100%;
+  max-width: 1000px;
+  background: #1e8449;
+  border-radius: 999px;
+  padding: 10px;
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.gaf-about-tab {
+  flex: 1;
+  min-width: 100px;
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.gaf-about-tab--active {
+  background: #ffffff;
+  color: #14140f;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .gaf-about-card {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+
+  .gaf-about-content {
+    padding: 0;
+  }
+
+  .gaf-about-tabs {
+    flex-wrap: wrap;
+    border-radius: 24px;
+  }
+
+  .gaf-about-tab {
+    min-width: 45%;
+  }
+}
+
+@media (max-width: 560px) {
+  .gaf-about-title {
+    font-size: 1.8rem;
+  }
+
+  .gaf-about-heading {
+    font-size: 1.6rem;
+  }
+
+  .gaf-about-image-wrap {
+    height: 240px;
+  }
+
+  .gaf-about-video-wrap {
+    height: 190px;
+  }
+
+  .gaf-about-tab {
+    min-width: 100%;
+  }
+}
+
+/* ===== Mission / Vision component (MissionVision.js) ===== */
+
+.gaf-mv-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 0;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.gaf-mv-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 0;
+}
+
+/* ---------- text panel (sage green) ---------- */
+
+.gaf-mv-panel {
+  flex: 1 1 46%;
+  height: 100%;
+  background: #c9d4ab;
+  display: flex;
+  align-items: center;
+  gap:20px;
+  padding: 20px 10px;
+  border-radius: 0 290px 290px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.gaf-mv-row--reverse .gaf-mv-panel {
+  padding: 20px 10px;
+  border-radius: 290px 0 0 290px;
+  flex-direction: row-reverse;
+}
+
+
+.gaf-mv-row.gaf-mv-row--reverse{
+  flex-direction: row-reverse;
+}
+
+.gaf-mv-paragraph {
+  color: #171a10;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.75;
+  margin: 0;
+  padding: 0 0 0 25px;
+}
+
+/* ---------- circle image ---------- */
+
+.gaf-mv-circle {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 2;
+  flex-shrink: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.gaf-mv-circle-img {
+  object-fit: cover;
+}
+
+/* ---------- heading side (white) ---------- */
+
+.gaf-mv-heading-wrap {
+  flex: 10%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 56px;
+}
+
+.gaf-mv-heading {
+  color: #101008;
+  font-size: 35px;
+  font-weight: 800;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 1024px) {
+  .gaf-mv-circle {
+    width: 300px;
+    height: 300px;
+    min-width: 300px;
+  }
+
+  .gaf-mv-heading {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .gaf-mv-row,
+.gaf-mv-row.gaf-mv-row--reverse {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .gaf-mv-panel,
+  .gaf-mv-row--reverse .gaf-mv-panel {
+    order: 2;
+    width: 100%;
+    padding: 32px 24px;
+    border-radius: 0;
+    min-height: 0;
+  }
+
+  .gaf-mv-circle {
+    order: 1;
+    margin: -28px 0;
+    width: 220px;
+    height: 220px;
+    min-width: 220px;
+  }
+
+  .gaf-mv-heading-wrap {
+    order: 0;
+    width: 100%;
+    min-height: 0;
+    padding: 28px 24px 0;
+  }
+
+  .gaf-mv-heading {
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+
+@media (max-width:575px){
+  .gaf-mv-panel{
+    flex-direction: column;
+  }
+
+  .gaf-mv-row--reverse .gaf-mv-panel{
+    flex-direction: column;
+  }
+}
+
+
+/* ===== Core Values component (CoreValues.js) ===== */
+
+.gaf-cv-section {
+  width: 100%;
+  padding: 56px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gaf-cv-title {
+  color: #101008;
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0 0 40px;
+}
+
+/* ---------- row ---------- */
+
+.gaf-cv-row {
+  width: 100%;
+  max-width: 1500px;
+  display: flex;
+  align-items: flex-start;
+}
+
+/* ---------- green text panel ---------- */
+
+.gaf-cv-panel {
+  flex: 1 1 56%;
+  background: linear-gradient(30deg, #bbdcbe 0%, #80b97f 100%);
+  border-radius: 24px;
+  padding: 44px 74px 44px 44px;
+  box-shadow: 0 20px 40px rgba(30, 50, 15, 0.18);
+  z-index: 1;
+}
+
+.gaf-cv-intro {
+  color: #10160a;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0 0 28px;
+}
+
+.gaf-cv-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.gaf-cv-list-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.gaf-cv-list-title {
+  color: #0c1206;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.gaf-cv-list-number {
+  font-weight: 700;
+}
+
+.gaf-cv-list-desc {
+  color: #10160a;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ---------- image ---------- */
+
+.gaf-cv-image-wrap {
+  position: relative;
+  flex: 1 1 44%;
+  min-height: 420px;
+  margin-left: -64px;
+  margin-top: 56px;
+  border-radius: 24px;
+  overflow: hidden;
+  z-index: 2;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.22);
+}
+
+.gaf-cv-image {
+  object-fit: cover;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .gaf-cv-row {
+    flex-direction: column;
+  }
+
+  .gaf-cv-panel {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .gaf-cv-image-wrap {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 300px;
+    margin-left: 0;
+    margin-top: -40px;
+    align-self: flex-end;
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 560px) {
+  .gaf-cv-title {
+    font-size: 1.7rem;
+  }
+
+  .gaf-cv-panel {
+    padding: 32px 24px;
+  }
+
+  .gaf-cv-image-wrap {
+    max-width: 100%;
+    margin-top: -28px;
+    min-height: 220px;
+  }
+}
+
+
+
+/* ===== Meet Our Team component (TeamMarquee.js) ===== */
+
+.gaf-team-section {
+  width: 100%;
+  padding: 56px 0 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.gaf-team-heading {
+  color: #101008;
+  font-size: 2.6rem;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 18px;
+}
+
+.gaf-team-subtext {
+  color: #6b6b62;
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 0 48px;
+  padding: 0 24px;
+}
+
+/* ---------- marquee ---------- */
+
+.gaf-team-marquee {
+  width: 100%;
+  overflow: hidden;
+}
+
+.gaf-team-track {
+  display: flex;
+  width: max-content;
+  gap: 32px;
+  padding: 0 16px;
+  /* linear + infinite = constant speed, no easing pause at the loop
+     point; 30s for 2x5 cards feels unhurried without dragging */
+  animation: gaf-team-scroll 30s linear infinite;
+}
+
+@keyframes gaf-team-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* exactly one full (unduplicated) set width, since the track
+       holds the team list twice back-to-back */
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- card ---------- */
+
+.gaf-team-card {
+  flex-shrink: 0;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.gaf-team-photo-wrap {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  clip-path: url(#gaf-team-wave);
+  margin-bottom: 20px;
+}
+
+.gaf-team-photo {
+  object-fit: cover;
+}
+
+.gaf-team-name {
+  color: #14140f;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.gaf-team-role {
+  color: #8a8a7c;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 640px) {
+  .gaf-team-heading {
+    font-size: 2rem;
+  }
+
+  .gaf-team-card {
+    width: 220px;
+  }
+
+  .gaf-team-photo-wrap {
+    height: 270px;
+  }
+
+  .gaf-team-track {
+    animation-duration: 22s;
+  }
+}
