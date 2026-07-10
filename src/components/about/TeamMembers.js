@@ -1,32 +1,58 @@
 import Image from "next/image";
 
-/* Replace every image with your real team photos in /public.
-   `bg` cycles through the three reference colors automatically if
-   you don't set one, so you can just add more people below. */
-const BG_COLORS = ["#f6d9b8", "#f4b9bb", "#bcd9ee"];
-
+/* Replace every team photo with your real one in /public. */
 const TEAM = [
-  { name: "John Smith", role: "Company CEO", image: "/images/team/john-smith.jpg" },
-  { name: "David Johnson", role: "Co-Founder", image: "/images/team/david-johnson.jpg" },
-  { name: "Mary Johnson", role: "Property Managers", image: "/images/team/mary-johnson.jpg" },
-  { name: "Patricia Davis", role: "Estate Consultant", image: "/images/team/patricia-davis-1.jpg" },
-  { name: "Patricia Davis", role: "Estate Consultant", image: "/images/team/patricia-davis-2.jpg" },
+  { name: "John Smith", role: "Company CEO", image: "/images/about-team-1.png" },
+  { name: "David Johnson", role: "Co-Founder", image: "/images/about-team-2.png" },
+  { name: "Mary Johnson", role: "Property Managers", image: "/images/about-team-3.png" },
+  { name: "Patricia Davis", role: "Estate Consultant", image: "/images/about-team-4.png" },
+  { name: "Patricia Davis", role: "Estate Consultant", image: "/images/about-team-3.png" },
 ];
 
+/* Your 6 wave-shape assets: 3 colors × up/down. File names below are
+   guesses — rename these to match whatever you actually saved them as
+   in /public/images/. */
+const COLORS = ["peach", "pink", "blue"];
+const DIRECTIONS = ["up", "down"];
+
+function getWaveVariant(index) {
+  const color = COLORS[index % COLORS.length];
+  const direction = DIRECTIONS[index % 2]; // alternates every card
+  return {
+    direction,
+    src: `/images/${color}-${direction}.png`,
+  };
+}
+
 function TeamCard({ member, index }) {
-  const bg = BG_COLORS[index % BG_COLORS.length];
+  const wave = getWaveVariant(index);
 
   return (
-    <div className="gaf-team-card">
-      <div className="gaf-team-photo-wrap" style={{ backgroundColor: bg }}>
-        <Image
-          src={member.image}
-          alt={member.name}
-          fill
-          sizes="280px"
-          className="gaf-team-photo"
-        />
+    <div className={`gaf-team-card gaf-team-card--${wave.direction}`}>
+      <div className="gaf-team-photo-wrap">
+        {/* The colored wave shape itself, sitting behind the photo */}
+        <img src={wave.src} alt="" aria-hidden="true" className="gaf-team-wave-bg" />
+
+        {/* The portrait, masked to the exact same PNG shape so it only
+            shows through the wave silhouette — no hand-coded SVG path,
+            it uses your actual asset's alpha shape directly. */}
+        <div
+          className="gaf-team-photo-mask"
+          style={{
+            WebkitMaskImage: `url(${wave.src})`,
+            maskImage: `url(${wave.src})`,
+          }}
+        >
+          <Image
+            src={member.image}
+            alt={member.name}
+            fill
+            sizes="280px"
+            className="gaf-team-photo"
+          />
+        </div>
       </div>
+
       <h3 className="gaf-team-name">{member.name}</h3>
       <p className="gaf-team-role">{member.role}</p>
     </div>
@@ -34,10 +60,12 @@ function TeamCard({ member, index }) {
 }
 
 export default function TeamMembers() {
-  // Rendered twice back-to-back so the CSS animation can loop from
-  // -50% back to 0% with zero visible seam — always moving, never
-  // resetting or pausing.
-  const loopedTeam = [...TEAM, ...TEAM];
+  // Rendered 4x back-to-back. With only 2 copies, any screen wider than
+  // roughly half the track's total width runs out of duplicated cards
+  // before the animation reaches its wrap point — which is exactly the
+  // "blank space near the end of the loop" symptom. 4 copies leaves a
+  // much bigger content buffer ahead of the visible window at all times.
+  const loopedTeam = [...TEAM, ...TEAM, ...TEAM, ...TEAM];
 
   return (
     <section className="gaf-team-section">
@@ -55,16 +83,6 @@ export default function TeamMembers() {
           ))}
         </div>
       </div>
-
-      {/* wave clip-path shared by every card, scales with each card's
-          own box since clipPathUnits is objectBoundingBox */}
-      <svg width="0" height="0" style={{ position: "absolute" }}>
-        <defs>
-          <clipPath id="gaf-team-wave" clipPathUnits="objectBoundingBox">
-            <path d="M0,0.16 C0.18,0 0.32,0.3 0.5,0.16 C0.68,0.02 0.82,0.32 1,0.16 L1,1 L0,1 Z" />
-          </clipPath>
-        </defs>
-      </svg>
     </section>
   );
 }
