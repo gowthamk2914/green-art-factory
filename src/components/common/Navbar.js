@@ -65,10 +65,10 @@ const Navbar = () => {
             </Link>
 
             <Link
-              href="/quote"
+              href="/services"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
-              Get Quote
+              Services
             </Link>
 
             <Link
