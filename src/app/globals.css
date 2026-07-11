@@ -4108,6 +4108,8 @@ a.gaf-footer-contact-text:hover {
   background: linear-gradient(180deg, #fbfaf0 0%, #f7f6e9 100%);
   padding: 96px 24px;
   overflow: hidden;
+  max-width: 1500px;
+  margin: 0 auto;
 }
 
 /* ambient drifting glows */
@@ -4143,6 +4145,25 @@ a.gaf-footer-contact-text:hover {
   50% { transform: translate(-25px, -20px); }
 }
 
+.services-head-wrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.services-heading-black{
+  font-size: 35px;
+  font-weight: 700;
+}
+
+.services-title-green{
+  font-size: 35px;
+  font-weight: 700;
+  color: #009652;
+}
+
 .ecs-grid {
   position: relative;
   max-width: 1280px;
@@ -4151,7 +4172,9 @@ a.gaf-footer-contact-text:hover {
   grid-template-columns: 1fr;
   gap: 48px;
   align-items: center;
+  padding: 40px 0;
 }
+
 @media (min-width: 1024px) {
   .ecs-grid {
     grid-template-columns: 620px 1fr;

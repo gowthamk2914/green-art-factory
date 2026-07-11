@@ -20,7 +20,6 @@ export default function ExpertCareSection() {
   const [sectionVisible, setSectionVisible] = useState(false);
   const sectionRef = useRef(null);
 
-  // Entrance reveal (fade/slide) — triggers once the section scrolls into view
   useEffect(() => {
     const node = sectionRef.current;
     if (!node) return;
@@ -41,6 +40,10 @@ export default function ExpertCareSection() {
 
   return (
     <section ref={sectionRef} className={`ecs-section ${sectionVisible ? 'ecs-visible' : ''}`}>
+      <div className="services-head-wrapper">
+      <h2 className="services-heading-black">OUR SERVICES</h2>
+      <h2 className="services-title-green">INDOOR PLANT MAINTENANCE</h2>
+      </div>
       <div className="ecs-glow ecs-glow--a" />
       <div className="ecs-glow ecs-glow--b" />
 
