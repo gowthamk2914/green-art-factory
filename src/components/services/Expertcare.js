@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 
 
 const IMAGE_SRC =
-  'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?q=80&w=1200&auto=format&fit=crop';
+  '/images/expert-care-img.jpg';
 
 const TAGS = [
   'Watering & Nutrition',

@@ -4673,3 +4673,623 @@ a.gaf-footer-contact-text:hover {
   color: rgba(255, 255, 255, 0.6);
   max-width: 200px;
 }
+
+
+
+/* ==========================================================================
+   GallerySection.css
+   Styling + animations for the "Featured Gallery" masonry section.
+   Paired with GallerySection.jsx.
+   ========================================================================== */
+
+.gls-section {
+  position: relative;
+  width: 100%;
+  padding: 80px 24px 100px;
+  background: #ffffff;
+}
+
+.gls-header {
+  max-width: 1300px;
+  margin: 0 auto 40px;
+}
+
+/* ---------- reveal-on-scroll utility ---------- */
+.gls-anim {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.gls-visible .gls-anim {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gls-title {
+  font-size: 40px;
+  font-weight: 800;
+  color: #4b5320;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+
+.gls-subtitle {
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: #444;
+  max-width: 760px;
+}
+
+/* ---------- masonry grid via CSS columns ---------- */
+.gls-masonry {
+  max-width: 1300px;
+  margin: 0 auto;
+  column-count: 1;
+  column-gap: 20px;
+}
+@media (min-width: 640px) {
+  .gls-masonry {
+    column-count: 2;
+  }
+}
+@media (min-width: 1024px) {
+  .gls-masonry {
+    column-count: 3;
+  }
+}
+
+.gls-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin-bottom: 20px;
+  border: none;
+  padding: 0;
+  background: none;
+  border-radius: 18px;
+  overflow: hidden;
+  break-inside: avoid;
+  cursor: pointer;
+  box-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.25);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.gls-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 45px -18px rgba(0, 0, 0, 0.35);
+}
+
+.gls-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.gls-item:hover .gls-img {
+  transform: scale(1.06);
+}
+
+.gls-item-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.18) 45%,
+    transparent 60%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.gls-item:hover .gls-item-shine {
+  transform: translateX(120%);
+}
+
+/* ---------- lightbox ---------- */
+.gls-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(10, 12, 6, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  animation: gls-fade-in 0.25s ease-out;
+}
+@keyframes gls-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.gls-lightbox-img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 12px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  animation: gls-pop-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes gls-pop-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.gls-close {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+.gls-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.gls-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+.gls-nav:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+.gls-nav--prev {
+  left: 24px;
+}
+.gls-nav--prev:hover {
+  transform: translateY(-50%) translateX(-3px);
+}
+.gls-nav--next {
+  right: 24px;
+}
+.gls-nav--next:hover {
+  transform: translateY(-50%) translateX(3px);
+}
+
+@media (max-width: 640px) {
+  .gls-nav,
+  .gls-close {
+    width: 40px;
+    height: 40px;
+  }
+  .gls-nav--prev {
+    left: 10px;
+  }
+  .gls-nav--next {
+    right: 10px;
+  }
+}
+
+
+
+.faq-section {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 80px 24px 100px;
+}
+
+.faq-title {
+  text-align: center;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #4b5320;
+  letter-spacing: -0.01em;
+  margin-bottom: 48px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.faq-item {
+  border: 1px solid #eee7d0;
+  border-radius: 22px;
+  background: #ffffff;
+  overflow: hidden;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.faq-item:hover {
+  border-color: #e2d9b8;
+  box-shadow: 0 10px 26px -18px rgba(75, 83, 32, 0.25);
+}
+.faq-item--open {
+  border-color: #d8ceA0;
+  box-shadow: 0 16px 34px -18px rgba(75, 83, 32, 0.3);
+}
+
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 26px 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.faq-question-text {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: #4b5320;
+  line-height: 1.4;
+}
+
+.faq-icon-box {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 9999px;
+  background: #f1efe6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.35s ease, transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.faq-item--open .faq-icon-box {
+  background: #4b5320;
+  transform: rotate(135deg);
+}
+
+.faq-icon {
+  width: 16px;
+  height: 16px;
+  color: #4b5320;
+  transition: color 0.35s ease;
+}
+.faq-item--open .faq-icon {
+  color: #ffffff;
+}
+
+.faq-answer-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.faq-item--open .faq-answer-wrap {
+  grid-template-rows: 1fr;
+}
+
+.faq-answer-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.faq-answer-text {
+  padding: 0 28px 28px;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: #6b7160;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.35s ease 0.05s, transform 0.35s ease 0.05s;
+}
+.faq-item--open .faq-answer-text {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ==========================================================================
+   EnquirySection.css
+   Styling + animations for the "Start Your First Project" enquiry section.
+   Paired with EnquirySection.jsx.
+   ========================================================================== */
+
+.enq-section {
+  width: 100%;
+  background: #fbfaeb;
+  padding: 60px 24px;
+}
+
+.enq-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+@media (min-width: 1024px) {
+  .enq-grid {
+    grid-template-columns: 0.85fr 1fr;
+  }
+}
+
+/* ---------- reveal-on-scroll ---------- */
+.enq-anim {
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.enq-anim--left {
+  transform: translateX(-30px);
+}
+.enq-anim--right {
+  transform: translateX(30px);
+}
+.enq-visible .enq-anim {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* ---------- image card ---------- */
+.enq-image-card {
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  min-height: 560px;
+  box-shadow: 0 30px 60px -25px rgba(0, 0, 0, 0.35);
+}
+
+.enq-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 8s ease-out;
+}
+.enq-visible .enq-image {
+  transform: scale(1.12);
+}
+
+.enq-image-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(10, 14, 5, 0.85) 100%);
+}
+
+.enq-image-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 36px;
+  color: #ffffff;
+}
+
+.enq-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 12px;
+}
+
+.enq-image-title {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 22px;
+}
+
+.enq-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.25);
+  margin-bottom: 20px;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
+}
+.enq-visible .enq-divider {
+  transform: scaleX(1);
+}
+
+.enq-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.enq-contact-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  font-size: 14.5px;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+.enq-contact-row:hover {
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+.enq-contact-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.3s ease;
+}
+.enq-contact-row:hover .enq-contact-icon {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- form card ---------- */
+.enq-form-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 44px 48px;
+  box-shadow: 0 25px 55px -30px rgba(75, 83, 32, 0.25);
+}
+@media (max-width: 640px) {
+  .enq-form-card {
+    padding: 32px 24px;
+  }
+}
+
+.enq-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #2f9e5b;
+  margin-bottom: 14px;
+}
+
+.enq-title {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #1c1f14;
+  margin-bottom: 14px;
+}
+.enq-title-accent {
+  color: #4b5320;
+}
+
+.enq-subtitle {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #6b7160;
+  max-width: 480px;
+  margin-bottom: 32px;
+}
+
+.enq-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.enq-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+@media (min-width: 560px) {
+  .enq-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.enq-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.enq-label {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #1c1f14;
+}
+
+.enq-input {
+  width: 100%;
+  border: 1px solid #e6e3d2;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 14.5px;
+  color: #333;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
+}
+.enq-input::placeholder {
+  color: #a7ab97;
+}
+.enq-input--focused,
+.enq-input:focus {
+  border-color: #4b5320;
+  box-shadow: 0 0 0 4px rgba(75, 83, 32, 0.1);
+}
+
+.enq-textarea {
+  resize: none;
+  line-height: 1.6;
+}
+
+.enq-submit {
+  position: relative;
+  overflow: hidden;
+  border: none;
+  border-radius: 9999px;
+  background: #4b5320;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 17px;
+  margin-top: 6px;
+  cursor: pointer;
+  box-shadow: 0 16px 30px -14px rgba(75, 83, 32, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+.enq-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 36px -14px rgba(75, 83, 32, 0.55);
+}
+.enq-submit:active {
+  transform: translateY(0);
+}
+.enq-submit:disabled {
+  opacity: 0.75;
+  cursor: default;
+}
+
+.enq-submit-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+.enq-submit:hover .enq-submit-shine {
+  transform: translateX(120%);
+}
+
+.enq-submit-text {
+  position: relative;
+}
+
+.enq-footnote {
+  text-align: center;
+  font-size: 12.5px;
+  color: #9aa088;
+  margin-top: 4px;
+}
