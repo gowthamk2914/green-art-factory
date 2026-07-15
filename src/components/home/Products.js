@@ -161,12 +161,7 @@ const Products = () => {
       <div className="container products-section-wrapper">
         <h2 className="products-title">OUR PRODUCTS</h2>
 
-        <div
-          className="products-stack-container"
-          style={{
-            height: `${slides.length * 100}vh`,
-          }}
-        >
+        <div className="products-stack-container">
           {slides.map((item, slideIndex) => (
             <div
               key={item.id}
