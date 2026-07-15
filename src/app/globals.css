@@ -86,55 +86,55 @@ button{
   z-index: 1;
 }
 
-.product-swiper {
-  overflow: visible;
+.products-section-wrapper h2 {
+  padding: 30px 0;
+  text-align: center;
+  color: white;
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: .5px;
 }
 
-/* .products-section-wrapper{
-  padding: 80px 0;
-} */
-
-.products-section-wrapper h2{
-  margin-bottom: 30px;
-}
-
-/* .product-swiper{
-  background: white;
-} */
-
-.product-grid-wrapper{
+.product-grid-wrapper {
   padding: 5px;
   gap: 5px;
   background: white;
 }
 
 @media (max-width: 992px) {
-  .product-grid-wrapper{
+  .product-grid-wrapper {
     grid-template-columns: repeat(1, 1fr);
   }
 }
 
-.product-grid-wrapper-right{
+.product-grid-wrapper-right {
   gap: 5px;
 }
 
-.product-grid-wrapper div div{
+.product-grid-wrapper div div {
   padding: 0 20px;
 }
 
-.product-grid-wrapper-right div div{
+.product-grid-wrapper-right div div {
   padding: 10px 20px;
 }
 
-.product-grid-wrapper div button{
+.product-grid-wrapper div button {
   padding: 7px 14px;
 }
 
-.product-bottom-control{
-  padding: 50px 0;
+.product-bottom-control {
+  padding: 10px 0;
 }
 
-.products-view-all-btn{
+.product-grid-control-wrapper {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 10px;
+}
+
+.products-view-all-btn {
   padding: 5px 15px;
 }
 
@@ -150,8 +150,19 @@ button{
   }
 }
 
-.animate-fadeUp {
-  animation: fadeUp 0.8s ease-out;
+.products-stack-container {
+  position: relative;
+}
+
+.product-stack-item {
+  position: sticky;
+  top: 100px;
+
+  margin-bottom: 120px;
+
+  transition:
+    transform 0.5s ease,
+    opacity 0.5s ease;
 }
 
 /* ===========================
@@ -209,6 +220,112 @@ button{
 
 .featured-card:hover .featured-image{
     transform:scale(1.08);
+}
+
+/* ---------- richer caption: category eyebrow + title + "View Project" CTA ---------- */
+
+.featured-caption-scrim{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:75%;
+    background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.1) 30%, rgba(0,0,0,.82) 100%);
+    pointer-events:none;
+    z-index:1;
+}
+
+.featured-caption{
+    position:absolute;
+    left:18px;
+    right:18px;
+    bottom:18px;
+    z-index:2;
+    pointer-events:none;
+}
+
+.featured-caption-category{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#9be08a;
+    margin-bottom:8px;
+    opacity:.95;
+}
+
+.featured-caption-dot{
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:#9be08a;
+    flex-shrink:0;
+}
+
+.featured-caption-title{
+    color:#fff;
+    font-size:17px;
+    font-weight:700;
+    line-height:1.3;
+    letter-spacing:.01em;
+    text-shadow:0 2px 12px rgba(0,0,0,.55);
+    margin-bottom:10px;
+}
+
+.featured-caption-cta{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    transition:max-height .4s ease, opacity .35s ease, margin-top .4s ease;
+}
+
+.featured-card:hover .featured-caption-cta{
+    max-height:30px;
+    opacity:1;
+}
+
+.featured-caption-cta-text{
+    font-size:12.5px;
+    font-weight:600;
+    color:#fff;
+    letter-spacing:.02em;
+}
+
+.featured-caption-cta-icon{
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:#66711E;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    transition:transform .4s ease;
+}
+
+.featured-card:hover .featured-caption-cta-icon{
+    transform:rotate(45deg);
+}
+
+/* full-card invisible link overlay — makes the whole card clickable while
+   the animated caption/scrim stay purely visual (no nested interactive
+   elements inside the anchor, so no invalid-nesting issues) */
+.featured-card-link{
+    position:absolute;
+    inset:0;
+    z-index:3;
+}
+.featured-card-link:focus-visible{
+    outline:2px solid #9be08a;
+    outline-offset:-2px;
+    border-radius:12px;
 }
 
 .featured-description{
@@ -298,6 +415,14 @@ button{
 .featured-controls button{
     width:46px;
     height:46px;
+}
+
+.featured-caption-title{
+    font-size:22px;
+}
+
+.featured-caption-category{
+    font-size:13px;
 }
 
 }
