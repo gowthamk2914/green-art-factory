@@ -44,35 +44,35 @@ const Navbar = () => {
 
           <nav className="hidden items-center gap-10 lg:flex">
             <Link
-              href="/about"
+              href="#"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               About
             </Link>
 
             <Link
-              href="/careers"
+              href="#"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               Careers
             </Link>
 
             <Link
-              href="/categories"
+              href="#"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               Categories
             </Link>
 
             <Link
-              href="/services"
+              href="#"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               Services
             </Link>
 
             <Link
-              href="/contact"
+              href="#"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               Contact us

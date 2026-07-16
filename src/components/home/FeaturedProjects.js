@@ -8,7 +8,7 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { FiArrowUpRight } from "react-icons/fi";
 
 
-const AUTOPLAY_INTERVAL_MS = 3000;
+const AUTOPLAY_INTERVAL_MS = 2000;
 
 const projects = [
   {

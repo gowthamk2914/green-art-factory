@@ -125,6 +125,201 @@ const slides = [
       },
     ],
   },
+
+{
+  id: 4,
+  viewAllLink: "/products/biophilic-design-or-indoor-landscape",
+  viewAllText: "View All",
+  items: [
+    {
+      title: "Bespoke Plants & Varieties of Pots",
+      image: "/images/biophilic-1.jpg",
+      buttonText: "Explore Bespoke Plants & Pots",
+      link: "/products/bespoke-plants-varieties-of-pots",
+      large: true,
+    },
+    {
+      title: "Partition Planters",
+      image: "/images/biophilic-2.jpg",
+      buttonText: "Explore Partition Planters",
+      link: "/products/partition-planters",
+    },
+    {
+      title: "Living Plants",
+      image: "/images/biophilic-3.jpg",
+      buttonText: "Explore Living Plants",
+      link: "/products/living-plants",
+    },
+    {
+      title: "Artificial Topiary",
+      image: "/images/biophilic-4.jpg",
+      buttonText: "Explore Artificial Topiary",
+      link: "/products/artificial-topiary",
+    },
+    {
+      title: "Plants on Ceiling & Hanging Plants",
+      image: "/images/biophilic-5.jpg",
+      buttonText: "Explore Ceiling & Hanging Plants",
+      link: "/products/plants-on-ceiling-hanging-plants",
+    },
+  ],
+},
+
+{
+  id: 5,
+  viewAllLink: "/products/garden-pot-planters",
+  viewAllText: "View All",
+  items: [
+    {
+      title: "FRP Planters",
+      image: "/images/planter-1.jpg",
+      buttonText: "Explore FRP Planters",
+      link: "/products/frp-planters",
+      large: true,
+    },
+    {
+      title: "Metal Planters",
+      image: "/images/planter-2.jpg",
+      buttonText: "Explore Metal Planters",
+      link: "/products/metal-planters",
+    },
+    {
+      title: "Concrete Planters",
+      image: "/images/planter-3.jpg",
+      buttonText: "Explore Concrete Planters",
+      link: "/products/concrete-planters",
+    },
+    {
+      title: "Wooden Planters",
+      image: "/images/planter-4.jpg",
+      buttonText: "Explore Wooden Planters",
+      link: "/products/wooden-planters",
+    },
+    {
+      title: "Designer Planters",
+      image: "/images/planter-5.jpg",
+      buttonText: "Explore Designer Planters",
+      link: "/products/designer-planters",
+    },
+  ],
+},
+
+{
+  id: 6,
+  viewAllLink: "/products/living-plants",
+  viewAllText: "View All",
+  items: [
+    {
+      title: "Indoor Foliage Plants",
+      image: "/images/living-1.jpg",
+      buttonText: "Explore Indoor Foliage Plants",
+      link: "/products/indoor-foliage-plants",
+      large: true,
+    },
+    {
+      title: "Flowering Plants",
+      image: "/images/living-2.jpg",
+      buttonText: "Explore Flowering Plants",
+      link: "/products/flowering-plants",
+    },
+    {
+      title: "Air Purifying Plants",
+      image: "/images/living-3.jpg",
+      buttonText: "Explore Air Purifying Plants",
+      link: "/products/air-purifying-plants",
+    },
+    {
+      title: "Office Plants",
+      image: "/images/living-4.jpg",
+      buttonText: "Explore Office Plants",
+      link: "/products/office-plants",
+    },
+    {
+      title: "Landscape Plants",
+      image: "/images/living-5.jpg",
+      buttonText: "Explore Landscape Plants",
+      link: "/products/landscape-plants",
+    },
+  ],
+},
+
+   {
+  id: 7,
+  viewAllLink: "/products/water-features",
+  viewAllText: "View All",
+  items: [
+    {
+      title: "Water Fountains",
+      image: "/images/water-1.jpg",
+      buttonText: "Explore Water Fountains",
+      link: "/products/water-fountains",
+      large: true,
+    },
+    {
+      title: "Water Curtains",
+      image: "/images/water-2.jpg",
+      buttonText: "Explore Water Curtains",
+      link: "/products/water-curtains",
+    },
+    {
+      title: "Water Walls",
+      image: "/images/water-3.jpg",
+      buttonText: "Explore Water Walls",
+      link: "/products/water-walls",
+    },
+    {
+      title: "Pond Features",
+      image: "/images/water-4.jpg",
+      buttonText: "Explore Pond Features",
+      link: "/products/pond-features",
+    },
+    {
+      title: "Cascade Water Features",
+      image: "/images/water-5.jpg",
+      buttonText: "Explore Cascade Water Features",
+      link: "/products/cascade-water-features",
+    },
+  ],
+},
+
+   {
+  id: 8,
+  viewAllLink: "/products/bark-panels",
+  viewAllText: "View All",
+  items: [
+    {
+      title: "Natural Bark Panels",
+      image: "/images/bark-1.jpg",
+      buttonText: "Explore Natural Bark Panels",
+      link: "/products/natural-bark-panels",
+      large: true,
+    },
+    {
+      title: "Decorative Bark Panels",
+      image: "/images/bark-2.jpg",
+      buttonText: "Explore Decorative Bark Panels",
+      link: "/products/decorative-bark-panels",
+    },
+    {
+      title: "Interior Bark Cladding",
+      image: "/images/bark-3.jpg",
+      buttonText: "Explore Interior Bark Cladding",
+      link: "/products/interior-bark-cladding",
+    },
+    {
+      title: "Feature Wall Bark Panels",
+      image: "/images/bark-4.jpg",
+      buttonText: "Explore Feature Wall Bark Panels",
+      link: "/products/feature-wall-bark-panels",
+    },
+    {
+      title: "Custom Bark Installations",
+      image: "/images/bark-5.jpg",
+      buttonText: "Explore Custom Bark Installations",
+      link: "/products/custom-bark-installations",
+    },
+  ],
+},
 ];
 
 const Products = () => {
@@ -167,15 +362,15 @@ const Products = () => {
               key={item.id}
               className="product-stack-item"
               style={{
-                top: `${120 + slideIndex * 25}px`,
+                top: `120px`,
                 zIndex: slideIndex + 1,
               }}
-            >
+            > 
               <div className="product-grid-control-wrapper">
                 <div className="grid grid-cols-[2fr_1fr_1fr] gap-4 product-grid-wrapper animate-fadeUp">
 
                   {/* Left Big Card */}
-                  <div className="group relative h-[420px] overflow-hidden rounded-xl transition-all duration-500 hover:-translate-y-3">
+                  <div className="group relative h-[420px] overflow-hidden rounded-xl transition-all duration-500">
                     <Image
                       src={item.items[0].image}
                       alt=""
@@ -203,7 +398,7 @@ const Products = () => {
                     {item.items.slice(1).map((product, index) => (
                       <div
                         key={index}
-                        className="group relative h-[202px] overflow-hidden rounded-xl transition-all duration-500 hover:-translate-y-3"
+                        className="group relative h-[202px] overflow-hidden rounded-xl transition-all duration-500"
                       >
                         <Image
                           src={product.image}
