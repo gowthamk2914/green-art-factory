@@ -19,6 +19,10 @@ const nextConfig = {
         // Behold's own CDN, used for profile pictures in the feed JSON
         hostname: "*.behold.pictures",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
     ],
   },
 };

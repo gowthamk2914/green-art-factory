@@ -5,7 +5,8 @@ import {
 } from "./actions";
 
 const initialState = {
-  loading: false,
+  loading: true, // fixed: was false — saga fires on mount anyway,
+                 // so start in loading state to avoid an extra empty render
   data: [],
   error: null,
 };
