@@ -12,11 +12,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { getProductsPreviewRequest } from "../../redux/Products/actions";
 
-gsap.registerPlugin(ScrollTrigger); // register once, at module scope
+gsap.registerPlugin(ScrollTrigger); 
 
-// Skeleton mirrors the real card heights/grid so the page height barely
-// shifts once real data + images arrive — this is what keeps ScrollTrigger
-// from having to correct a large layout jump.
 const ProductSkeleton = () => (
   <div className="product-stack-item" style={{ top: "120px" }}>
     <div className="product-grid-control-wrapper">
@@ -49,72 +46,39 @@ const Products = () => {
     dispatch(getProductsPreviewRequest());
   }, [dispatch]);
 
-  useEffect(() => {
-    // Don't set up triggers until real content is on screen
-    if (loading || !sortedProducts?.length || !containerRef.current) return;
+useEffect(() => {
+  if (loading || !sortedProducts?.length || !containerRef.current) return;
 
-    const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+  const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
 
-      mm.add("(min-width: 1024px)", () => {
-        gsap.utils.toArray(".product-stack-item").forEach((card) => {
-          gsap.fromTo(
-            card,
-            { y: 120, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 80%",
-                end: "top 20%",
-                scrub: true,
-              },
-            }
-          );
-        });
-
-        return () => mm.revert();
+    mm.add("(min-width: 1024px)", () => {
+      gsap.utils.toArray(".product-stack-item").forEach((card) => {
+        gsap.fromTo(
+          card,
+          { y: 120, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+  trigger: card,
+  start: "top 80%",
+  end: "top 20%",
+  scrub: 1,           
+  fastScrollEnd: true, 
+  invalidateOnRefresh: true, 
+},
+          }
+        );
       });
-    }, containerRef);
 
-    // Images load async and can change section height after ScrollTrigger
-    // already measured the page. Refresh once every image has settled.
-    const images = Array.from(containerRef.current.querySelectorAll("img"));
-    let pending = images.length;
+      return () => mm.revert();
+    });
+  }, containerRef);
 
-    const checkDone = () => {
-      pending -= 1;
-      if (pending <= 0) ScrollTrigger.refresh();
-    };
-
-    if (images.length === 0) {
-      requestAnimationFrame(() => ScrollTrigger.refresh());
-    } else {
-      images.forEach((img) => {
-        if (img.complete) {
-          checkDone();
-        } else {
-          img.addEventListener("load", checkDone, { once: true });
-          img.addEventListener("error", checkDone, { once: true });
-        }
-      });
-    }
-
-    // Safety net for late layout shifts (fonts, other async sections, etc.)
-    const fallback = setTimeout(() => ScrollTrigger.refresh(), 600);
-
-    return () => {
-      clearTimeout(fallback);
-      images.forEach((img) => {
-        img.removeEventListener("load", checkDone);
-        img.removeEventListener("error", checkDone);
-      });
-      ctx.revert(); // kills triggers + reverts matchMedia cleanly
-    };
-  }, [loading, sortedProducts?.length]);
+}, [loading, sortedProducts?.length]);
 
   if (error) {
     return (
@@ -135,7 +99,7 @@ const Products = () => {
 
         <div className="products-stack-container">
           {loading || !sortedProducts?.length
-            ? // Show 2 skeleton rows while loading — keeps section height stable
+            ? 
               Array.from({ length: 2 }).map((_, i) => (
                 <ProductSkeleton key={`skeleton-${i}`} />
               ))
