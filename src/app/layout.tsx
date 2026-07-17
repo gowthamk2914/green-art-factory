@@ -4,6 +4,7 @@ import Footer from "../components/common/Footer";
 import { ReactNode } from "react";
 import type { Metadata } from "next";
 import favicon from "@/public/images/gaf_favicon.png";
+import Providers from "./providers";
 
 import { Poppins } from "next/font/google";
 
@@ -36,7 +37,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         <Navbar />
-        {children}
+        <Providers>
+          {children}
+        </Providers>
         <Footer />
       </body>
     </html>
