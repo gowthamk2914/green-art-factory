@@ -12,8 +12,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { getProductsPreviewRequest } from "../../redux/Products/actions";
 
-gsap.registerPlugin(ScrollTrigger); 
+gsap.registerPlugin(ScrollTrigger); // register once, at module scope
 
+// Skeleton mirrors the real card heights/grid so the page height barely
+// shifts once real data + images arrive — this is what keeps ScrollTrigger
+// from having to correct a large layout jump.
 const ProductSkeleton = () => (
   <div className="product-stack-item" style={{ top: "120px" }}>
     <div className="product-grid-control-wrapper">
@@ -63,13 +66,16 @@ useEffect(() => {
             duration: 1,
             ease: "power3.out",
             scrollTrigger: {
-  trigger: card,
-  start: "top 80%",
-  end: "top 20%",
-  scrub: 1,           
-  fastScrollEnd: true, 
-  invalidateOnRefresh: true, 
-},
+              trigger: card,
+              start: "top 80%",
+              // no `end` needed — this isn't scrubbed, it just plays once
+              toggleActions: "play none none none",
+              // "play" on enter (scrolling down)
+              // "none" on leave (scrolling down past it — stays visible)
+              // "none" on enter back (scrolling up into it — stays visible)
+              // "none" on leave back (scrolling up past it — stays visible)
+              once: true, // extra safety: never re-trigger, in either direction
+            },
           }
         );
       });
@@ -78,6 +84,7 @@ useEffect(() => {
     });
   }, containerRef);
 
+  // ...(image-load + ScrollTrigger.refresh() logic stays exactly the same)
 }, [loading, sortedProducts?.length]);
 
   if (error) {
@@ -99,7 +106,7 @@ useEffect(() => {
 
         <div className="products-stack-container">
           {loading || !sortedProducts?.length
-            ? 
+            ? // Show 2 skeleton rows while loading — keeps section height stable
               Array.from({ length: 2 }).map((_, i) => (
                 <ProductSkeleton key={`skeleton-${i}`} />
               ))
