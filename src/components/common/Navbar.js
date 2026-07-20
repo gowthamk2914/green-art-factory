@@ -44,35 +44,42 @@ const Navbar = () => {
 
           <nav className="hidden items-center gap-10 lg:flex">
             <Link
-              href="#"
+              href="/about"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               About
             </Link>
 
             <Link
-              href="#"
+              href="/careers"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               Careers
             </Link>
 
             <Link
-              href="#"
+              href="/blogs"
+              className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
+            >
+              Blogs
+            </Link>
+
+            <Link
+              href="/categories"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               Categories
             </Link>
 
             <Link
-              href="#"
+              href="/services"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               Services
             </Link>
 
             <Link
-              href="#"
+              href="/contact"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               Contact us
