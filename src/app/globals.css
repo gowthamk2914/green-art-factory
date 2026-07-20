@@ -235,8 +235,8 @@ button{
     left:0;
     right:0;
     bottom:0;
-    height:75%;
-    background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.1) 30%, rgba(0,0,0,.82) 100%);
+    background: linear-gradient(#0000 0%, #0000001a 10%, #000000d1 50%);
+    height: 70%;
     pointer-events:none;
     z-index:1;
 }
@@ -250,7 +250,7 @@ button{
     pointer-events:none;
 }
 
-.featured-caption-category{
+.featured-caption-sector{
     display:inline-flex;
     align-items:center;
     gap:7px;
@@ -279,6 +279,22 @@ button{
     letter-spacing:.01em;
     text-shadow:0 2px 12px rgba(0,0,0,.55);
     margin-bottom:10px;
+}
+
+.featured-category{
+  color: white;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.1;
+  font-weight: 500;
+}
+
+.featured-category-wrapper{
+  border: 1px solid white;
+  width: fit-content;
+  padding: 3px 5px;
+  border-radius: 5px;
+  margin-bottom: 4px;
 }
 
 .featured-caption-cta{
@@ -427,7 +443,7 @@ button{
     font-size:22px;
 }
 
-.featured-caption-category{
+.featured-caption-sector{
     font-size:13px;
 }
 
