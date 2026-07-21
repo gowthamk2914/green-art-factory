@@ -3,18 +3,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 
+import { useDispatch, useSelector } from "react-redux";
+import { getPartnersRequest } from "../../redux/Clients/actions";
+
 const BG_IMAGE = "/images/clients-bg.png";
 
-
-const CLIENTS = [
-  { id: 1, logo: "/images/logo.png" },
-  { id: 2, logo: "/images/logo.png" },
-  { id: 3, logo: "/images/logo.png" },
-  { id: 4, logo: "/images/logo.png" },
-  { id: 5, logo: "/images/logo.png" },
-  { id: 6, logo: "/images/logo.png" },
-  { id: 7, logo: "/images/logo.png" },
-];
 
 const LOGO_PX = {
   sm: 40,
@@ -56,6 +49,22 @@ const DRAG_THRESHOLD_PX = 4;
 
 
 export default function Clients() {
+
+  const dispatch = useDispatch();
+
+const {
+  loading,
+  data: CLIENTS,
+  error,
+} = useSelector(
+  (state) => state.Clients
+);
+
+useEffect(() => {
+  dispatch(getPartnersRequest());
+}, [dispatch]);
+
+
   /* `active` is an unbounded integer, not clamped to the array length.
      Content wraps via mod() at render time, but the raw number keeps
      climbing/falling so the slide animation never has to "jump". */
@@ -74,7 +83,10 @@ export default function Clients() {
     return () => window.removeEventListener("resize", updateLayout);
   }, []);
 
-  const total = CLIENTS.length;
+
+
+  const clients = Array.isArray(CLIENTS) ? CLIENTS : [];
+  const total = clients.length;
   const { visibleCount, spacing } = layout;
   const half = Math.floor(visibleCount / 2);
   const buffer = 2; /* extra hidden cards each side, for a smooth edge */
@@ -132,12 +144,19 @@ export default function Clients() {
 
   const outerHalf = half + buffer;
   const slots = [];
-  for (let offset = -outerHalf; offset <= outerHalf; offset += 1) {
+
+if (total > 0) {
+  for (let offset = -outerHalf; offset <= outerHalf; offset++) {
     const rawIndex = active + offset;
     const virtualIndex = mod(rawIndex, total);
-    slots.push({ key: rawIndex, offset, client: CLIENTS[virtualIndex] });
-  }
 
+    slots.push({
+      key: rawIndex,
+      offset,
+      client: clients[virtualIndex],
+    });
+  }
+}
   const [isPaused, setIsPaused] = useState(false);
 
 useEffect(() => {
@@ -211,6 +230,7 @@ function getTranslate(offset) {
   onMouseLeave={() => setIsPaused(false)}
 >
           {slots.map(({ key, offset, client }) => {
+            if (!client) return null;
             const absOffset = Math.abs(offset);
             const sizeName = sizeForOffset(absOffset);
             const sizeClass = `gaf-clients-card--${sizeName}`;
@@ -236,14 +256,20 @@ function getTranslate(offset) {
                   pointerEvents: isVisible ? "auto" : "none",
                 }}
               >
-                <Image
-                  src={client.logo}
-                  alt={`Client ${client.id} logo`}
-                  width={logoPx}
-                  height={logoPx}
-                  className="gaf-clients-logo-img"
-                  draggable={false}
-                />
+                {/* <a
+  href={client.website_url || "#"}
+  target="_blank"
+  rel="noopener noreferrer"
+> */}
+  <Image
+    src={client.logo}
+    alt={client.name}
+    width={logoPx}
+    height={logoPx}
+    className="gaf-clients-logo-img"
+    draggable={false}
+  />
+{/* </a> */}
               </div>
             );
           })}

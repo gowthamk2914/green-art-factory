@@ -55,6 +55,7 @@ export default function EnquirySection() {
 
   return (
     <section ref={sectionRef} className={`enq-section ${visible ? 'enq-visible' : ''}`}>
+      <div className="container">
       <div className="enq-grid">
         {/* LEFT: image panel */}
         <div className="enq-image-card enq-anim enq-anim--left">
@@ -168,6 +169,7 @@ export default function EnquirySection() {
             <p className="enq-footnote">Response guaranteed within 24 hours. No commitment required.</p>
           </form>
         </div>
+      </div>
       </div>
     </section>
   );

@@ -65,10 +65,10 @@ const Navbar = () => {
             </Link>
 
             <Link
-              href="/categories"
+              href="/blog-detail"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
-              Categories
+              Blogs Detail
             </Link>
 
             <Link
