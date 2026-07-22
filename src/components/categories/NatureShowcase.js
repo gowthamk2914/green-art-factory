@@ -1,275 +1,204 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { FiArrowUpRight } from "react-icons/fi";
 
+// Sample data — replace with items from your API. Keep this shape:
+//   { id, title, description, href, image, thumbnails: [4 image URLs] }
+// Layout alternates automatically based on array position (see
+// `imageFirst` below) — the API/CMS doesn't need to know which side of
+// the row anything renders on, just send the items in display order.
+// `thumbnails` is expected to always be exactly 4 entries.
+// Titles below are taken from the real product-category API response
+// (ordered by that response's `id` field: 1 -> 8). Everything else here
+// (description, image, thumbnails, href) is still placeholder sample data
+// — this is NOT wired to the API yet, only the titles were swapped in.
+const ITEMS = [
+  {
+    id: "moss-creations",
+    title: "Moss Creations",
+    description:
+      "Create captivating interiors with our bespoke Moss Creations, thoughtfully designed to introduce the beauty of nature into modern spaces without the need for ongoing maintenance. From elegant moss walls and artistic feature installations to custom branding elements and decorative panels, every creation is handcrafted using premium preserved moss to deliver exceptional texture, visual depth, and timeless appeal. Ideal for offices, hotels, restaurants, retail environments, and luxury residences, our moss designs enhance interiors with sustainable beauty while creating calming, inspiring, and memorable experiences.",
+    href: "/services/moss-creations",
+    image: "/images/moss1.jpg",
+    thumbnails: [
+      "/images/moss2.jpg",
+      "/images/moss3.jpg",
+      "/images/moss4.jpg",
+      "/images/moss5.jpg",
+    ],
+  },
 
-const SLIDES = [
   {
-    id: 1,
-    image: "/images/nature-showcase-slide-1.jpg",
-    thumb: "/images/nature-showcase-slide-1.jpg",
-    title: "Moss Creation",
+    id: "bespoke-artificial-trees",
+    title: "Bespoke Artificial Trees",
     description:
-      "Transforming outdoor spaces into stunning landscapes that blend beauty, functionality, and nature. From concept to completion, we create green environments designed to inspire and thrive.",
-    ctaLabel: "View Now",
+      "Bring elegance and sophistication to any environment with our custom-designed Bespoke Artificial Trees. Crafted using premium-quality materials and highly realistic foliage, our trees replicate the beauty of natural greenery while eliminating the need for watering, pruning, or maintenance. Perfect for hotels, commercial spaces, shopping malls, restaurants, corporate offices, and luxury residences, each tree is tailored to complement your interior design and architectural vision while delivering year-round greenery that never fades.",
+    href: "/services/bespoke-artificial-trees",
+    image: "/images/bespoke1.jpg",
+    thumbnails: [
+      "/images/bespoke2.jpg",
+      "/images/bespoke3.jpg",
+      "/images/bespoke4.jpg",
+      "/images/bespoke5.jpg",
+    ],
   },
+
   {
-    id: 2,
-    image: "/images/nature-showcase-slide-2.jpg",
-    thumb: "/images/nature-showcase-slide-2.jpg",
-    title: "Vertical Garden",
+    id: "green-walls",
+    title: "Green Walls",
     description:
-      "Turning bare walls into living art with lush vertical gardens that bring texture, colour, and fresh air into any space, indoors or out.",
-    ctaLabel: "View Now",
+      "Transform ordinary walls into extraordinary living masterpieces with our innovative Green Wall solutions. Combining preserved moss, artificial foliage, and premium botanical elements, our installations create vibrant vertical landscapes that enhance aesthetics, improve ambiance, and strengthen the connection between people and nature. Whether for offices, hospitality venues, retail stores, healthcare facilities, or residential interiors, our green walls provide a striking visual impact with minimal maintenance and lasting beauty.",
+    href: "/services/green-walls",
+    image: "/images/green-wall1.jpg",
+    thumbnails: [
+      "/images/green-wall2.jpg",
+      "/images/green-wall3.jpg",
+      "/images/green-wall4.jpg",
+      "/images/green-wall5.jpg",
+    ],
   },
+
   {
-    id: 3,
-    image: "/images/nature-showcase-slide-3.jpg",
-    thumb: "/images/nature-showcase-slide-3.jpg",
-    title: "Living Wall Design",
+    id: "biophilic-designs-indoor-landscapes",
+    title: "Biophilic Designs & Indoor Landscapes",
     description:
-      "Custom living walls engineered for long-term health and visual impact, tailored to the light and layout of your space.",
-    ctaLabel: "View Now",
+      "Experience the transformative power of nature through our Biophilic Design and Indoor Landscape solutions. We thoughtfully integrate greenery, natural textures, lighting, water features, and architectural elements to create healthier, more productive, and visually inspiring environments. Every design is tailored to your space, whether it's a corporate office, hotel, restaurant, educational institution, healthcare facility, or luxury residence, delivering timeless elegance while promoting wellbeing and a stronger connection with nature.",
+    href: "/services/biophilic-designs-indoor-landscapes",
+    image: "/images/biophilic-1.jpg",
+    thumbnails: [
+      "/images/biophilic-2.jpg",
+      "/images/biophilic-3.jpg",
+      "/images/biophilic-4.jpg",
+      "/images/biophilic-5.jpg",
+    ],
   },
+
   {
-    id: 4,
-    image: "/images/nature-showcase-slide-4.jpg",
-    thumb: "/images/nature-showcase-slide-4.jpg",
-    title: "Preserved Moss Art",
+    id: "garden-pot-planters",
+    title: "Garden Pot Planters",
     description:
-      "Zero-maintenance preserved moss installations that keep their colour and texture for years, with no water or sunlight required.",
-    ctaLabel: "View Now",
+      "Elevate your indoor and outdoor spaces with our premium collection of Garden Pot Planters, available in a wide variety of styles, materials, finishes, and sizes. Designed to complement both modern and traditional landscapes, our planters provide the perfect foundation for natural plants, artificial greenery, and decorative arrangements. Ideal for homes, hotels, restaurants, offices, commercial buildings, and outdoor gardens, they combine durability, elegance, and functionality to create visually appealing green environments.",
+    href: "/services/garden-pot-planters",
+    image: "/images/planter-1.jpg",
+    thumbnails: [
+      "/images/planter-2.jpg",
+      "/images/planter-3.jpg",
+      "/images/planter-4.jpg",
+      "/images/planter-5.jpg",
+    ],
   },
+
   {
-    id: 5,
-    image: "/images/nature-showcase-slide-5.jpg",
-    thumb: "/images/nature-showcase-slide-5.jpg",
-    title: "Indoor Greenery",
+    id: "living-plants",
+    title: "Living Plants",
     description:
-      "Thoughtfully placed indoor planting that softens interiors and improves air quality, designed around how the space is actually used.",
-    ctaLabel: "View Now",
+      "Bring freshness, vitality, and natural beauty into your surroundings with our carefully curated Living Plant solutions. We provide expert consultation, plant selection, installation, and maintenance services tailored to suit residential, commercial, hospitality, and corporate environments. From elegant indoor plants and statement trees to lush office greenery, every installation is designed to improve air quality, promote wellbeing, and create healthier, more vibrant spaces that leave a lasting impression.",
+    href: "/services/living-plants",
+    image: "/images/living-1.jpg",
+    thumbnails: [
+      "/images/living-2.jpg",
+      "/images/living-3.jpg",
+      "/images/living-4.jpg",
+      "/images/living-5.jpg",
+    ],
   },
+
   {
-    id: 6,
-    image: "/images/nature-showcase-slide-6.jpg",
-    thumb: "/images/nature-showcase-slide-6.jpg",
-    title: "Garden Landscape",
+    id: "water-features",
+    title: "Water Features",
     description:
-      "Full landscape design and build, from pathways and lighting to planting schemes that feel considered in every season.",
-    ctaLabel: "View Now",
+      "Enhance your environment with beautifully crafted Water Features that combine movement, sound, and elegance to create calming, luxurious spaces. Our custom-designed fountains, cascading waterfalls, reflective pools, and decorative water installations are tailored for residential landscapes, hotels, resorts, offices, restaurants, and commercial developments. Every feature is designed to complement its surroundings while delivering a peaceful atmosphere and an unforgettable visual centerpiece.",
+    href: "/services/water-features",
+    image: "/images/water-1.jpg",
+    thumbnails: [
+      "/images/water-2.jpg",
+      "/images/water-3.jpg",
+      "/images/water-4.jpg",
+      "/images/water-5.jpg",
+    ],
   },
+
   {
-    id: 7,
-    image: "/images/nature-showcase-slide-7.jpg",
-    thumb: "/images/nature-showcase-slide-7.jpg",
-    title: "Rooftop Greenery",
+    id: "bark-panels",
+    title: "Bark Panels",
     description:
-      "Reclaiming rooftops and terraces as green, usable space with planting built to handle wind, sun, and exposure.",
-    ctaLabel: "View Now",
+      "Introduce authentic natural texture and warmth into your interiors with our handcrafted Bark Panel installations. Carefully designed using premium bark materials, these decorative panels create distinctive feature walls that blend organic beauty with contemporary design. Perfect for hotels, restaurants, offices, retail stores, and luxury homes, our bark panels offer a sophisticated aesthetic that celebrates the timeless appeal of nature while adding depth, character, and visual interest to every space.",
+    href: "/services/bark-panels",
+    image: "/images/bark-1.jpg",
+    thumbnails: [
+      "/images/bark-2.jpg",
+      "/images/bark-3.jpg",
+      "/images/bark-4.jpg",
+      "/images/bark-5.jpg",
+    ],
   },
 ];
 
-const AUTOPLAY_MS = 4500;
-const DRAG_THRESHOLD_PX = 60;
-const TAGLINE_MS = 3000;
-
-
-const DESIGN_TAGLINES = [
-  "Timeless Design, Naturally Inspired",
-  "Where Nature Meets Modern Living",
-  "Crafted Spaces, Sustainably Designed",
-  "Elevating Interiors With Greenery",
-];
-
-
-function ArrowIcon() {
+export default function GreenShowcase({ items = ITEMS }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M7 17L17 7M17 7H8M17 7V16"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+    <section className="showcase-section">
+      <div className="container">
+      <div className="showcase-wrapper">
+        {items.map((item, i) => {
+          // even index -> image on the left, text on the right
+          // odd index  -> text on the left, image on the right
+          const imageFirst = i % 2 === 0;
 
-function SparkleIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function mod(n, m) {
-  return ((n % m) + m) % m;
-}
-
-export default function NatureShowcase() {
-  const [active, setActive] = useState(0);
-  const [search, setSearch] = useState("");
-  const [taglineIndex, setTaglineIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragDeltaX, setDragDeltaX] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const dragStartXRef = useRef(0);
-  const draggedRef = useRef(false);
-  const total = SLIDES.length;
-
-  const goTo = useCallback(
-    (index) => setActive(mod(index, total)),
-    [total]
-  );
-
-  const goNext = useCallback(() => setActive((p) => mod(p + 1, total)), [total]);
-  const goPrev = useCallback(() => setActive((p) => mod(p - 1, total)), [total]);
-
-  /* ---- autoplay ---- */
-  useEffect(() => {
-    if (isPaused || isDragging) return undefined;
-    const id = setInterval(goNext, AUTOPLAY_MS);
-    return () => clearInterval(id);
-  }, [isPaused, isDragging, goNext]);
-
-  /* ---- drag / swipe on the main showcase card ---- */
-  const handlePointerDown = (e) => {
-    setIsDragging(true);
-    setIsPaused(true);
-    draggedRef.current = false;
-    dragStartXRef.current = e.clientX;
-    e.currentTarget.setPointerCapture?.(e.pointerId);
-  };
-
-  const handlePointerMove = (e) => {
-    if (!isDragging) return;
-    const delta = e.clientX - dragStartXRef.current;
-    if (Math.abs(delta) > 4) draggedRef.current = true;
-    setDragDeltaX(delta);
-  };
-
-  const endDrag = useCallback(() => {
-    if (dragDeltaX <= -DRAG_THRESHOLD_PX) goNext();
-    else if (dragDeltaX >= DRAG_THRESHOLD_PX) goPrev();
-    setIsDragging(false);
-    setDragDeltaX(0);
-    setIsPaused(false);
-  }, [dragDeltaX, goNext, goPrev]);
-
-  const handlePointerUp = () => {
-    if (isDragging) endDrag();
-  };
-
-  const handleClickCapture = (e) => {
-    if (draggedRef.current) {
-      e.stopPropagation();
-      e.preventDefault();
-      draggedRef.current = false;
-    }
-  };
-
-  const slide = SLIDES[active];
-
-  return (
-    <section className="gaf-nature-section">
-      <div className="gaf-nature-tagline">
-        <SparkleIcon />
-        <span key={taglineIndex} className="gaf-nature-tagline-text">
-          {DESIGN_TAGLINES[taglineIndex]}
-        </span>
+          return (
+            <div className="showcase-row" key={item.id}>
+              {imageFirst ? (
+                <>
+                  <ShowcaseMedia item={item} />
+                  <ShowcaseText item={item} />
+                </>
+              ) : (
+                <>
+                  <ShowcaseText item={item} />
+                  <ShowcaseMedia item={item} />
+                </>
+              )}
+            </div>
+          );
+        })}
       </div>
-
-      <div className="gaf-nature-panel">
-        <h2 className="gaf-nature-heading">
-          Bringing <span className="gaf-nature-highlight">Nature</span> Closer
-          to
-          <br />
-          Your <span className="gaf-nature-highlight">Lifestyle</span>
-        </h2>
-
-        <div
-          className={`gaf-nature-card ${isDragging ? "gaf-nature-card--dragging" : ""}`}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-          onPointerLeave={handlePointerUp}
-          onClickCapture={handleClickCapture}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => !isDragging && setIsPaused(false)}
-          style={{
-            transform: isDragging ? `translateX(${dragDeltaX * 0.3}px)` : "translateX(0)",
-            transition: isDragging ? "none" : "transform 0.35s ease",
-          }}
-        >
-          <div className="gaf-nature-image-wrap">
-            <Image
-              key={slide.id}
-              src={slide.image}
-              alt={slide.title}
-              fill
-              className="gaf-nature-image"
-              draggable={false}
-            />
-          </div>
-
-          <div className="gaf-nature-content">
-            <h3 className="gaf-nature-title">{slide.title}</h3>
-            <p className="gaf-nature-desc">{slide.description}</p>
-            <button type="button" className="gaf-nature-cta-btn">
-              {slide.ctaLabel}
-              <span className="gaf-nature-cta-icon">
-                <ArrowIcon />
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <div className="gaf-nature-thumbs">
-          {SLIDES.map((s, index) => (
-            <button
-              type="button"
-              key={s.id}
-              onClick={() => goTo(index)}
-              aria-label={`Show ${s.title}`}
-              className={`gaf-nature-thumb ${
-                index === active ? "gaf-nature-thumb--active" : ""
-              }`}
-            >
-              <Image
-                src={s.thumb}
-                alt={s.title}
-                fill
-                className="gaf-nature-thumb-image"
-                draggable={false}
-              />
-            </button>
-          ))}
-        </div>
-
-        <div className="gaf-nature-dots">
-          {SLIDES.map((s, index) => (
-            <button
-              type="button"
-              key={s.id}
-              onClick={() => goTo(index)}
-              aria-label={`Go to slide ${index + 1}`}
-              className={`gaf-nature-dot ${
-                index === active ? "gaf-nature-dot--active" : ""
-              }`}
-            />
-          ))}
-        </div>
       </div>
     </section>
+  );
+}
+
+function ShowcaseMedia({ item }) {
+  return (
+    <div className="showcase-media">
+      <div className="showcase-media-hero">
+        <Image src={item.image} alt={item.title} fill className="showcase-media-image" />
+      </div>
+
+      {item.thumbnails?.length > 0 && (
+        <div className="showcase-thumbs">
+          {item.thumbnails.slice(0, 4).map((thumb, i) => (
+            <div className="showcase-thumb" key={i}>
+              <Image src={thumb} alt="" fill className="showcase-thumb-image" />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ShowcaseText({ item }) {
+  return (
+    <div className="showcase-text">
+      <h3 className="showcase-title">{item.title}</h3>
+      <p className="showcase-desc">{item.description}</p>
+      <Link href={item.href} className="showcase-btn">
+        <span className="showcase-btn-label">View Now</span>
+        <span className="showcase-btn-icon">
+          <FiArrowUpRight />
+        </span>
+      </Link>
+    </div>
   );
 }

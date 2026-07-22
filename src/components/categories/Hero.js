@@ -14,7 +14,7 @@ export default function Hero() {
       />
 
       <div className="gaf-categories-card">
-        <h2 className="gaf-categories-heading">Categories</h2>
+        <h2 className="gaf-categories-heading">Products</h2>
         <p className="gaf-categories-subtext">
           Explore our curated collection of botanical creations designed to
           transform modern spaces through natural textures, timeless greenery,
