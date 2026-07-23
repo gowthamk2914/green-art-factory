@@ -17,7 +17,7 @@ import { FaLinkedinIn, FaInstagram, FaFacebookF } from "react-icons/fa";
 //   { type: "quote", text }
 const AUTHOR = {
   name: "Onur Eren",
-  handle: "@createonur",
+  handle: "",
   avatar: "/images/blog1-writer.png",
 };
 

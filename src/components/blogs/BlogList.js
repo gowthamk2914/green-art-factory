@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
 import { FiSearch, FiArrowUpRight } from "react-icons/fi";
 import {
   IoGridOutline,
@@ -12,77 +13,89 @@ import {
   IoBookOutline,
 } from "react-icons/io5";
 
-// Category pills shown at the top of the section. `count` is the number
-// shown on the pill (from your API/category endpoint) — swap these for real
-// numbers, or drop the whole `count` field to hide the badge on a pill.
-// `label` also doubles as the left-side section title when that category
-// is active (see `activeLabel` below) — keep labels short/title-friendly.
-const CATEGORIES = [
-  { id: "all", label: "All Blogs", icon: IoGridOutline, count: null },
-  { id: "indoor-plants", label: "Indoor Plants", icon: IoLeafOutline, count: 43 },
-  { id: "plant-care", label: "Plant-Care", icon: IoBagHandleOutline, count: 24 },
-  { id: "succulents", label: "Succulents", icon: IoFlowerOutline, count: 15 },
-  { id: "guides", label: "Guides", icon: IoBookOutline, count: 12 },
-];
+import { getBlogPreviewRequest } from "../../redux/BlogPreview/actions";
 
-// Sample cards — replace with data from your API. `TOTAL_COUNT` reflects the
-// real total for this category (e.g. from pagination metadata); it can be
-// larger than the number of cards actually loaded/rendered here.
-const TOTAL_COUNT = 15;
+// The API only sends { id, name, slug } per category — no icon. This maps
+// known slugs to a pill icon, falling back to a generic leaf for anything
+// new the API adds later so a pill never renders without an icon.
+const CATEGORY_ICONS = {
+  "indoor-plants": IoLeafOutline,
+  "plant-care": IoBagHandleOutline,
+  succulents: IoFlowerOutline,
+  guides: IoBookOutline,
+};
 
-const CARDS = [
-  {
-    id: 1,
-    badge: "MOSS WALLS",
-    title: "Moss as Art: The Gallery-Inspired Interior",
-    description:
-      "When preserved moss becomes the canvas — exploring botanical installations as fine art.",
-    image: "/images/blog-list-1.jpeg",
-    href: "/stories/moss-as-art",
-  },
-  {
-    id: 2,
-    badge: "COMMERCIAL",
-    title: "Green Branding in Retail Architecture",
-    description:
-      "How premium retail brands leverage botanical environments to shape customer experience.",
-    image: "/images/blog-list-2.jpeg",
-    href: "/stories/green-branding-retail",
-  },
-  {
-    id: 3,
-    badge: "GREEN INSPIRATION",
-    title: "Outdoor Oasis: Premium Landscape Installations",
-    description:
-      "Extending botanical elegance into terraces, courtyards, and rooftop sanctuaries.",
-    image: "/images/blog-list-3.jpeg",
-    href: "/stories/outdoor-oasis",
-  },
-  {
-    id: 4,
-    badge: "INTERIOR STYLING",
-    title: "Wellness Spaces and Botanical Calm",
-    description:
-      "Designing sanctuaries of rest with nature-forward interior elements that soothe the senses.",
-    image: "/images/blog-list-4.jpeg",
-    href: "/stories/wellness-spaces",
-  },
-  {
-    id: 5,
-    badge: "DESIGN TRENDS",
-    title: "2025 Biophilic Design Watch",
-    description:
-      "The emerging movements reshaping how architects and designers integrate nature.",
-    image: "/images/blog-list-5.jpeg",
-    href: "/stories/biophilic-design-2025",
-  },
-];
+function iconForCategory(slug) {
+  return CATEGORY_ICONS[slug] || IoLeafOutline;
+}
+
+// "Indoor-plants" -> "INDOOR PLANTS" (matches the card badge styling)
+function formatBadge(category) {
+  if (!category) return "";
+  return category.replace(/-/g, " ").toUpperCase();
+}
 
 export default function BlogList() {
+  const dispatch = useDispatch();
+
+  const blogPreviewState = useSelector((state) => state.BlogPreview);
+  const {
+    loading = false,
+    data = { categories: [], posts: [] },
+    error = null,
+  } = blogPreviewState || {};
+
+  const categories = data?.categories || [];
+  const posts = data?.posts || [];
+
+  useEffect(() => {
+    dispatch(getBlogPreviewRequest());
+  }, [dispatch]);
+
   const [activeCategory, setActiveCategory] = useState("all");
   const [query, setQuery] = useState("");
 
-  const filteredCards = CARDS.filter((card) => {
+  // "All Blogs" is a local pseudo-category, not part of the API response.
+  const pillCategories = useMemo(
+    () => [
+      { id: "all", label: "All Blogs", icon: IoGridOutline, count: null },
+      ...categories.map((cat) => ({
+        id: cat.slug,
+        label: cat.name,
+        icon: iconForCategory(cat.slug),
+        count: null,
+      })),
+    ],
+    [categories]
+  );
+
+  // Map API posts into the card shape this component renders.
+  // `categoryRaw` is kept (in addition to the display-formatted `badge`)
+  // so the active pill can filter cards by exact category match.
+  const cards = useMemo(
+    () =>
+      posts.map((post) => ({
+        id: post.id,
+        badge: formatBadge(post.category),
+        categoryRaw: post.category || "",
+        title: post.title,
+        description: post.excerpt,
+        image: post.image,
+        href: `/blog/${post.slug}`,
+      })),
+    [posts]
+  );
+
+  const activeLabel =
+    pillCategories.find((cat) => cat.id === activeCategory)?.label ?? "All Blogs";
+
+  const filteredCards = cards.filter((card) => {
+    const matchesCategory =
+      activeCategory === "all" ||
+      card.categoryRaw.toLowerCase() === activeLabel.toLowerCase();
+
+    if (!matchesCategory) return false;
+
     if (!query.trim()) return true;
     const q = query.trim().toLowerCase();
     return (
@@ -94,14 +107,29 @@ export default function BlogList() {
 
   // Left-side heading: "All Blogs" by default, and only swaps to the
   // selected category's label when the filter actually changes.
-  const activeLabel =
-    CATEGORIES.find((cat) => cat.id === activeCategory)?.label ?? "All Blogs";
   const [headingLead, ...headingRest] = activeLabel.split(" ");
   const headingAccent = headingRest.join(" ");
 
   // Duplicate the card set so the marquee track (2x width) can loop
   // seamlessly at -50% translateX with no visible seam or pause.
-  const loopCards = filteredCards.length > 0 ? [...filteredCards, ...filteredCards] : [];
+  //
+  // With very few filtered cards (e.g. 2 for a niche category), simply
+  // duplicating once isn't enough content to fill the visible track width
+  // — that's what was showing as blank space before the loop caught up.
+  // Instead, first pad the filtered set by cycling through it (p1, p2,
+  // p1, p2, p1, p2...) until there's a safe minimum amount of content,
+  // THEN duplicate that padded set for the seamless loop.
+  const MIN_LOOP_CARDS = 8;
+  const paddedCards =
+    filteredCards.length === 0
+      ? []
+      : filteredCards.length >= MIN_LOOP_CARDS
+      ? filteredCards
+      : Array.from({ length: Math.ceil(MIN_LOOP_CARDS / filteredCards.length) }).flatMap(
+          () => filteredCards
+        );
+
+  const loopCards = paddedCards.length > 0 ? [...paddedCards, ...paddedCards] : [];
 
   return (
     <section className="browse-section">
@@ -120,7 +148,7 @@ export default function BlogList() {
           </div>
 
           <div className="browse-pills">
-            {CATEGORIES.map((cat) => {
+            {pillCategories.map((cat) => {
               const Icon = cat.icon;
               const isActive = activeCategory === cat.id;
               return (
@@ -150,25 +178,29 @@ export default function BlogList() {
             )}
           </h2>
 
-          <span className="browse-total">Total ({TOTAL_COUNT})</span>
+          <span className="browse-total">Total ({filteredCards.length})</span>
         </div>
 
         {/* infinite auto-scrolling card marquee */}
-        {filteredCards.length === 0 ? (
+        {loading ? (
+          <p className="browse-empty">Loading articles…</p>
+        ) : error ? (
+          <p className="browse-empty">Couldn&apos;t load articles right now.</p>
+        ) : filteredCards.length === 0 ? (
           <p className="browse-empty">No results found.</p>
         ) : (
           <div className="browse-track-outer">
             <div
               className="browse-track"
-              style={{ animationDuration: `${filteredCards.length * 6}s` }}
+              style={{ animationDuration: `${paddedCards.length * 6}s` }}
             >
               {loopCards.map((card, i) => (
                 <Link
                   key={`${card.id}-${i}`}
                   href={card.href}
                   className="browse-card"
-                  aria-hidden={i >= filteredCards.length ? "true" : undefined}
-                  tabIndex={i >= filteredCards.length ? -1 : undefined}
+                  aria-hidden={i >= paddedCards.length ? "true" : undefined}
+                  tabIndex={i >= paddedCards.length ? -1 : undefined}
                 >
                   <div className="browse-card-image-wrap">
                     <Image

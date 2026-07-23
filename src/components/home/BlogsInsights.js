@@ -1,60 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
 
-/* Hero + card art — replace with your real files in /public */
+import { getBlogPreviewRequest } from "../../redux/BlogPreview/actions";
+
+/* Hero art stays static — not part of the API response */
 const HERO_BG = "/images/blogs-bg.jpg";
-const POST_IMAGE = "/images/blog1.jpg";
-const FEATURED_IMAGE = "/images/blog2.jpg";
-const AVATAR_ONUR = "/images/blog1-writer.png";
-const AVATAR_ANDY = "/images/blog2-writer.png";
-
-const FILTERS = [
-  { id: "all", label: "All", count: null, icon: "grid" },
-  { id: "indoor", label: "Indoor Plants", count: 43, icon: "leaf" },
-  { id: "care", label: "Plant-Care", count: 24, icon: "care" },
-  { id: "succulents", label: "Succulents", count: 15, icon: "cactus" },
-  { id: "guides", label: "Guides", count: 12, icon: "guide" },
-];
-
-const POSTS = [
-  {
-    id: 1,
-    image: POST_IMAGE,
-    tag: "GREEN LIVING",
-    title: "Designing Spaces That Feel Alive With Nature",
-    description:
-      "Discover how thoughtful interiors, organic textures, and natural elements create calming spaces that feel elegant, timeless, and connected to everyday living. Explore beautifully curated spaces where minimal design meets natural warmth to create environments that inspire comfort and creativity.",
-    authorAvatar: AVATAR_ONUR,
-    authorName: "Onur Eren",
-    authorHandle: "@createonur",
-    date: "07/05/2026",
-  },
-  {
-    id: 2,
-    image: POST_IMAGE,
-    tag: "GREEN LIVING",
-    title: "Designing Spaces That Feel Alive With Nature",
-    description:
-      "Discover how thoughtful interiors, organic textures, and natural elements create calming spaces that feel elegant, timeless, and connected to everyday living. Explore beautifully curated spaces where minimal design meets natural warmth to create environments that inspire comfort and creativity.",
-    authorAvatar: AVATAR_ONUR,
-    authorName: "Onur Eren",
-    authorHandle: "@createonur",
-    date: "07/05/2026",
-  },
-];
-
-const FEATURED = {
-  image: FEATURED_IMAGE,
-  tag: "GREEN LIVING",
-  title: "Meet your Glide Certified community challenge winners",
-  description:
-    "Discover how thoughtful interiors, organic textures, and natural elements create calming spaces that feel elegant, timeless, and connected to everyday living.",
-  authorAvatar: AVATAR_ANDY,
-  authorName: "Andy Claremont",
-  date: "07/05/2026",
-};
 
 function ArrowIcon() {
   return (
@@ -79,63 +32,46 @@ function SearchIcon() {
   );
 }
 
-function FilterIcon({ type }) {
-  switch (type) {
-    case "grid":
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
-          <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
-          <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
-          <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
-        </svg>
-      );
-    case "leaf":
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M20 4C10 4 4 10 4 18c0 .5.5 1 1 1 8 0 14-6 14-14 0-.5-.4-1-1-1Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinejoin="round"
-          />
-          <path d="M6 18C10 14 14 10 19 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        </svg>
-      );
-    case "care":
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M6 9h12l-1.2 10.2a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8L6 9Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinejoin="round"
-          />
-          <path d="M9 9V7a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="2" />
-        </svg>
-      );
-    case "cactus":
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M12 21V9a3 3 0 0 1 3-3v0a3 3 0 0 1 3 3v3M12 12a3 3 0 0 0-3-3v0a3 3 0 0 0-3 3v3"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-    case "guide":
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="4" width="8" height="16" rx="1.5" stroke="currentColor" strokeWidth="2" />
-          <rect x="13" y="4" width="8" height="16" rx="1.5" stroke="currentColor" strokeWidth="2" />
-        </svg>
-      );
-    default:
-      return null;
-  }
+function GridIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+function LeafIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M20 4C10 4 4 10 4 18c0 .5.5 1 1 1 8 0 14-6 14-14 0-.5-.4-1-1-1Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path d="M6 18C10 14 14 10 19 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// Formats an ISO 8601 date string (e.g. "2026-05-29T16:44:47.000000Z")
+// into "05/29/2026". Falls back to the raw string if parsing fails.
+function formatDate(isoString) {
+  if (!isoString) return "";
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return isoString;
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${mm}/${dd}/${date.getFullYear()}`;
+}
+
+// "Indoor-plants" -> "INDOOR PLANTS"
+function formatTag(category) {
+  if (!category) return "";
+  return category.replace(/-/g, " ").toUpperCase();
 }
 
 function PostCard({ post }) {
@@ -146,21 +82,27 @@ function PostCard({ post }) {
       </div>
 
       <div className="gaf-blogs-post-body">
-        <span className="gaf-blogs-post-tag">{post.tag}</span>
+        {post.category && <span className="gaf-blogs-post-tag">{formatTag(post.category)}</span>}
         <h3 className="gaf-blogs-post-title">{post.title}</h3>
-        <p className="gaf-blogs-post-desc">{post.description}</p>
+        <p className="gaf-blogs-post-desc">{post.excerpt}</p>
 
         <div className="gaf-blogs-post-footer">
-          <div className="gaf-blogs-author">
-            <span className="gaf-blogs-avatar">
-              <Image src={post.authorAvatar} alt={post.authorName} fill className="gaf-blogs-avatar-img" />
-            </span>
-            <span className="gaf-blogs-author-text">
-              <span className="gaf-blogs-author-name">{post.authorName}</span>
-              <span className="gaf-blogs-author-handle">{post.authorHandle}</span>
-            </span>
-          </div>
-          <span className="gaf-blogs-post-date">{post.date}</span>
+          {post.authorName ? (
+            <div className="gaf-blogs-author">
+              {post.authorAvatar && (
+                <span className="gaf-blogs-avatar">
+                  <Image src={post.authorAvatar} alt={post.authorName} fill className="gaf-blogs-avatar-img" />
+                </span>
+              )}
+              <span className="gaf-blogs-author-text">
+                <span className="gaf-blogs-author-name">{post.authorName}</span>
+                {post.authorHandle && <span className="gaf-blogs-author-handle">{post.authorHandle}</span>}
+              </span>
+            </div>
+          ) : (
+            <span />
+          )}
+          <span className="gaf-blogs-post-date">{formatDate(post.published_at)}</span>
         </div>
       </div>
     </article>
@@ -168,15 +110,68 @@ function PostCard({ post }) {
 }
 
 export default function BlogsInsights() {
+  const dispatch = useDispatch();
+
+  const blogPreviewState = useSelector((state) => state.BlogPreview);
+
+  const {
+    loading = false,
+    data = { categories: [], posts: [] },
+    error = null,
+  } = blogPreviewState || {};
+
+  const categories = data?.categories || [];
+  const posts = data?.posts || [];
+
+  useEffect(() => {
+    dispatch(getBlogPreviewRequest());
+  }, [dispatch]);
+
   const [activeFilter, setActiveFilter] = useState("all");
   const [search, setSearch] = useState("");
 
+  // "All" is a local pseudo-category, not part of the API response.
+  const filters = useMemo(
+    () => [{ id: "all", slug: "all", label: "All", count: null }, ...(categories || []).map((cat) => ({
+      id: cat.id,
+      slug: cat.slug,
+      label: cat.name,
+      count: null,
+    }))],
+    [categories]
+  );
+
+  // Newest first: bigger id = posted more recently.
+  const sortedPosts = useMemo(
+    () => [...posts].sort((a, b) => b.id - a.id),
+    [posts]
+  );
+
+  const filteredPosts = useMemo(() => {
+    const activeCategory = filters.find((f) => f.slug === activeFilter);
+    const q = search.trim().toLowerCase();
+
+    return (sortedPosts || []).filter((post) => {
+      const matchesCategory =
+        activeFilter === "all" ||
+        !activeCategory ||
+        post.category?.toLowerCase() === activeCategory.label?.toLowerCase();
+
+      const matchesSearch =
+        !q ||
+        post.title?.toLowerCase().includes(q) ||
+        post.excerpt?.toLowerCase().includes(q);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [sortedPosts, filters, activeFilter, search]);
+
+  const leftPosts = filteredPosts.slice(0, 2);
+  const featuredPost = filteredPosts[2];
+
   return (
     <section className="gaf-blogs-section">
-      <div
-        className="gaf-blogs-hero"
-        style={{ backgroundImage: `url(${HERO_BG})` }}
-      >
+      <div className="gaf-blogs-hero" style={{ backgroundImage: `url(${HERO_BG})` }}>
         <h1 className="gaf-blogs-heading">Blogs &amp; Insights</h1>
         <p className="gaf-blogs-subtext">
           Explore curated articles on beautiful living, thoughtful interiors,
@@ -203,16 +198,16 @@ export default function BlogsInsights() {
             />
           </label>
 
-          {FILTERS.map((filter) => (
+          {filters.map((filter) => (
             <button
               type="button"
               key={filter.id}
-              onClick={() => setActiveFilter(filter.id)}
+              onClick={() => setActiveFilter(filter.slug)}
               className={`gaf-blogs-filter-pill ${
-                activeFilter === filter.id ? "gaf-blogs-filter-pill--active" : ""
+                activeFilter === filter.slug ? "gaf-blogs-filter-pill--active" : ""
               }`}
             >
-              <FilterIcon type={filter.icon} />
+              {filter.slug === "all" ? <GridIcon /> : <LeafIcon />}
               <span>{filter.label}</span>
               {filter.count !== null && (
                 <span className="gaf-blogs-filter-count">{filter.count}</span>
@@ -223,52 +218,70 @@ export default function BlogsInsights() {
       </div>
 
       <div className="gaf-blogs-panel">
-        <div className="gaf-blogs-grid">
-          <div className="gaf-blogs-left">
-            {POSTS.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
+        {loading ? (
+          <p className="gaf-blogs-status">Loading articles…</p>
+        ) : error ? (
+          <p className="gaf-blogs-status gaf-blogs-status--error">Couldn&apos;t load articles right now.</p>
+        ) : filteredPosts.length === 0 ? (
+          <p className="gaf-blogs-status">No articles found.</p>
+        ) : (
+          <div className="gaf-blogs-grid">
+            <div className="gaf-blogs-left">
+              {leftPosts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
 
-          <div className="gaf-blogs-right">
-            <article className="gaf-blogs-featured-card">
-              <div className="gaf-blogs-featured-image-wrap">
-                <Image
-                  src={FEATURED.image}
-                  alt={FEATURED.title}
-                  fill
-                  className="gaf-blogs-featured-image"
-                />
-              </div>
-
-              <div className="gaf-blogs-featured-body">
-                <span className="gaf-blogs-featured-tag">{FEATURED.tag}</span>
-                <h3 className="gaf-blogs-featured-title">{FEATURED.title}</h3>
-                <p className="gaf-blogs-featured-desc">{FEATURED.description}</p>
-
-                <div className="gaf-blogs-featured-footer">
-                  <span className="gaf-blogs-avatar gaf-blogs-avatar--sm">
+            <div className="gaf-blogs-right">
+              {featuredPost && (
+                <article className="gaf-blogs-featured-card">
+                  <div className="gaf-blogs-featured-image-wrap">
                     <Image
-                      src={FEATURED.authorAvatar}
-                      alt={FEATURED.authorName}
+                      src={featuredPost.image}
+                      alt={featuredPost.title}
                       fill
-                      className="gaf-blogs-avatar-img"
+                      className="gaf-blogs-featured-image"
                     />
-                  </span>
-                  <span className="gaf-blogs-author-name">{FEATURED.authorName}</span>
-                  <span className="gaf-blogs-post-date">{FEATURED.date}</span>
-                </div>
-              </div>
-            </article>
+                  </div>
 
-            <button type="button" className="gaf-blogs-explore-btn">
-              Explore New Articles
-              <span className="gaf-blogs-explore-icon">
-                <ArrowIcon />
-              </span>
-            </button>
+                  <div className="gaf-blogs-featured-body">
+                    {featuredPost.category && (
+                      <span className="gaf-blogs-featured-tag">{formatTag(featuredPost.category)}</span>
+                    )}
+                    <h3 className="gaf-blogs-featured-title">{featuredPost.title}</h3>
+                    <p className="gaf-blogs-featured-desc">{featuredPost.excerpt}</p>
+
+                    <div className="gaf-blogs-featured-footer">
+                      {featuredPost.authorName && (
+                        <>
+                          {featuredPost.authorAvatar && (
+                            <span className="gaf-blogs-avatar gaf-blogs-avatar--sm">
+                              <Image
+                                src={featuredPost.authorAvatar}
+                                alt={featuredPost.authorName}
+                                fill
+                                className="gaf-blogs-avatar-img"
+                              />
+                            </span>
+                          )}
+                          <span className="gaf-blogs-author-name">{featuredPost.authorName}</span>
+                        </>
+                      )}
+                      <span className="gaf-blogs-post-date">{formatDate(featuredPost.published_at)}</span>
+                    </div>
+                  </div>
+                </article>
+              )}
+
+              <button type="button" className="gaf-blogs-explore-btn">
+                Explore New Articles
+                <span className="gaf-blogs-explore-icon">
+                  <ArrowIcon />
+                </span>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

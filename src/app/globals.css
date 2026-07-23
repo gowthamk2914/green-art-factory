@@ -2012,6 +2012,19 @@ justify-content:center;
   justify-content: space-between;
 }
 
+/* ---------- status states (loading / error / empty) ---------- */
+
+.gaf-blogs-status {
+  text-align: center;
+  color: #5a5a48;
+  font-size: 15px;
+  padding: 60px 0;
+}
+
+.gaf-blogs-status--error {
+  color: #a13d3d;
+}
+
 /* ---------- post cards (left column) ---------- */
 
 .gaf-blogs-post-card {
@@ -6669,6 +6682,11 @@ a.gaf-footer-contact-text:hover {
   background: #f7f5ec;
 }
 
+.browse-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
 
 /* ---------- search + filter pills ---------- */
 
@@ -6879,9 +6897,9 @@ a.gaf-footer-contact-text:hover {
 
 .browse-card-badge {
   position: absolute;
-  bottom: 14px;
+  top: 14px;
   left: 14px;
-  background: #515A26E5;
+  background: rgba(16, 17, 10, 0.7);
   color: #ffffff;
   font-size: 10px;
   font-weight: 700;
@@ -6908,6 +6926,10 @@ a.gaf-footer-contact-text:hover {
   font-size: 13px;
   line-height: 1.6;
   margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .browse-card-readmore {
