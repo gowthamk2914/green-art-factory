@@ -4,6 +4,7 @@ import CoreValues from "../../components/about/CoreValues";
 import TeamMembers from "../../components/about/TeamMembers";
 import WorkshopFacility from "../../components/about/WorkshopFacility";
 import Certifications from "../../components/about/Certifications";
+import Catalogue from "../../components/about/CatalogueLoader";
 import Clients from "../../components/about/Clients";
 
 export default function About() {
@@ -16,6 +17,7 @@ export default function About() {
       <WorkshopFacility />
       <Certifications />
       <Clients />
+      <Catalogue />
 
     </>
   );
