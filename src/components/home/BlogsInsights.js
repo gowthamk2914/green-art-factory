@@ -87,22 +87,22 @@ function PostCard({ post }) {
         <p className="gaf-blogs-post-desc">{post.excerpt}</p>
 
         <div className="gaf-blogs-post-footer">
-          {post.authorName ? (
+          {post.author ? (
             <div className="gaf-blogs-author">
-              {post.authorAvatar && (
+              {post.avatar && (
                 <span className="gaf-blogs-avatar">
-                  <Image src={post.authorAvatar} alt={post.authorName} fill className="gaf-blogs-avatar-img" />
+                  <Image src={post.avatar} alt={post.author} fill className="gaf-blogs-avatar-img" />
                 </span>
               )}
               <span className="gaf-blogs-author-text">
-                <span className="gaf-blogs-author-name">{post.authorName}</span>
+                <span className="gaf-blogs-author-name">{post.author}</span>
                 {post.authorHandle && <span className="gaf-blogs-author-handle">{post.authorHandle}</span>}
               </span>
             </div>
           ) : (
             <span />
           )}
-          <span className="gaf-blogs-post-date">{formatDate(post.published_at)}</span>
+          <span className="gaf-blogs-post-date">{formatDate(post.blog_date)}</span>
         </div>
       </div>
     </article>
@@ -252,22 +252,22 @@ export default function BlogsInsights() {
                     <p className="gaf-blogs-featured-desc">{featuredPost.excerpt}</p>
 
                     <div className="gaf-blogs-featured-footer">
-                      {featuredPost.authorName && (
+                      {featuredPost.author && (
                         <>
-                          {featuredPost.authorAvatar && (
+                          {featuredPost.avatar && (
                             <span className="gaf-blogs-avatar gaf-blogs-avatar--sm">
                               <Image
-                                src={featuredPost.authorAvatar}
-                                alt={featuredPost.authorName}
+                                src={featuredPost.avatar}
+                                alt={featuredPost.author}
                                 fill
                                 className="gaf-blogs-avatar-img"
                               />
                             </span>
                           )}
-                          <span className="gaf-blogs-author-name">{featuredPost.authorName}</span>
+                          <span className="gaf-blogs-author-name">{featuredPost.author}</span>
                         </>
                       )}
-                      <span className="gaf-blogs-post-date">{formatDate(featuredPost.published_at)}</span>
+                      <span className="gaf-blogs-post-date">{formatDate(featuredPost.blog_date)}</span>
                     </div>
                   </div>
                 </article>

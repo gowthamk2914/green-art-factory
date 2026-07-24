@@ -68,8 +68,9 @@ export default function LatestArticles() {
         category: formatTag(post.category),
         title: post.title,
         description: post.excerpt,
-        author: undefined,
-        date: formatDate(post.published_at),
+        author: post.author,
+        avatar: post.avatar,
+        date: formatDate(post.blog_date),
       })),
     [sortedPosts]
   );
@@ -149,18 +150,18 @@ function ArticleCardFeatured({ article }) {
 }
 
 function ArticleCardFooter({ article }) {
-  const { author, date } = article;
+  const { author, avatar, date } = article;
 
   return (
     <div className="article-card-footer article-card-footer-spread">
       <div className="article-card-author">
-        {author?.avatar && (
+        {author && (
           <span className="article-card-avatar-wrap">
-            <Image src={author.avatar} alt={author?.name || ""} fill className="article-card-avatar" />
+            <Image src={avatar} alt={author || ""} fill className="article-card-avatar" />
           </span>
         )}
         <div className="article-card-author-info article-card-author-info-stacked">
-          <span className="article-card-author-name">{author?.name}</span>
+          <span className="article-card-author-name">{author}</span>
           {author?.handle && <span className="article-card-author-handle">{author.handle}</span>}
         </div>
       </div>
