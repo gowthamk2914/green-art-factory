@@ -1,39 +1,5 @@
 "use client";
 
-/**
- * AnimatedCatalogue
- * ------------------
- * Renders a real PDF as an interactive, animated page-flip book (drag,
- * swipe, click-corner-to-turn) using react-pdf (pdf.js under the hood) to
- * rasterize each page onto a canvas, and react-pageflip to drive the 3D
- * turning animation. Includes prev/next controls, a page counter,
- * keyboard arrow-key navigation, a fullscreen toggle, and a real
- * "Download Catalogue" button that serves the actual PDF file.
- *
- * REQUIRED PACKAGES (not preinstalled — run this in your project):
- *   npm install react-pdf react-pageflip
- *
- * Do NOT also run `npm install pdfjs-dist` separately — react-pdf already
- * ships its own pinned pdfjs-dist internally. Installing a second, newer
- * copy at the top level is exactly what causes an "API version does not
- * match Worker version" error, since Node then has two different
- * versions to choose between. If you already ran that install, it's
- * safe to remove: `npm uninstall pdfjs-dist`.
- *
- * IMPORTANT — Next.js usage:
- * Both react-pdf and react-pageflip touch browser-only APIs (canvas,
- * window, DOMMatrix) at import time, so this component must never be
- * evaluated on the server. If the parent that renders this is a Server
- * Component, don't import it directly — use a small "use client" wrapper
- * that does:
- *
- *   import dynamic from "next/dynamic";
- *   export default dynamic(() => import("./AnimatedCatalogue"), { ssr: false });
- *
- * Drop your actual PDF file in /public (e.g. /public/catalogue.pdf) and
- * point `pdfUrl` at it. `downloadFileName` controls what the browser
- * names the file when someone clicks "Download Catalogue".
- */
 
 import { useEffect, useMemo, useRef, useState, forwardRef } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
@@ -44,35 +10,33 @@ import {
   FiDownload,
   FiMaximize,
   FiMinimize,
+  FiLayers,
+  FiRefreshCw,
+  FiBookOpen,
 } from "react-icons/fi";
 
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-// Pin the worker to pdfjs.version — the version string read directly off
-// react-pdf's own bundled pdfjs-dist instance, guaranteed to match the
-// API. Resolving a *locally installed* pdfjs-dist package (via
-// import.meta.url) is what caused the "API version does not match Worker
-// version" error: a separately npm-installed pdfjs-dist can end up on a
-// different major version than the one react-pdf ships internally, and
-// Node module resolution has no way to know which one you meant. Pinning
-// to pdfjs.version on a CDN URL sidesteps that entirely — it always
-// matches, no matter what else is in node_modules.
+
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-// A4-ish portrait aspect ratio for page sizing. Adjust if your catalogue
-// pages are a different shape (e.g. square, landscape).
+
 const PAGE_ASPECT_RATIO = 1.414; // height / width
 
-// Normal (non-fullscreen) and fullscreen page-width caps. Fullscreen gets
-// a much larger cap so the book actually grows to fill the screen instead
-// of staying pinned at its normal small size inside a big black backdrop.
+
 const MAX_PAGE_WIDTH = 480;
 const MAX_PAGE_WIDTH_FULLSCREEN = 780;
 
-// A single catalogue page — react-pdf's <Page> renders straight onto a
-// <canvas>. Wrapped in forwardRef because react-pageflip clones each
-// child and needs a ref to the DOM node to animate it.
+
+const DEFAULT_FEATURES = [
+  { icon: FiLayers, label: "Comprehensive Guide", detail: "Full range, every finish" },
+  { icon: FiRefreshCw, label: "Updated Quarterly", detail: "New releases as they ship" },
+  { icon: FiBookOpen, label: "Spec Sheets Included", detail: "Dimensions, materials, care" },
+  { icon: FiDownload, label: "Print-Ready PDF", detail: "Same file, offline" },
+];
+
+
 const CataloguePage = forwardRef(({ pageNumber, width }, ref) => (
   <div className="catalogue-page" ref={ref}>
     <Page
@@ -90,9 +54,13 @@ const CataloguePage = forwardRef(({ pageNumber, width }, ref) => (
 CataloguePage.displayName = "CataloguePage";
 
 export default function AnimatedCatalogue({
-  pdfUrl = "/catalogue.pdf",
+  pdfUrl = "/catalogue1.pdf",
   title = "Catalogue",
+  eyebrow = "The Full Catalogue",
+  headline = "Every product, spec, and finish — in one flip-through book.",
+  intro = "Browse the full line the way it was meant to be read: page by page, corner to corner. Or skip ahead to the download for the version you can print, mark up, and keep on the shelf.",
   downloadFileName = "catalogue.pdf",
+  features = DEFAULT_FEATURES,
 }) {
   const containerRef = useRef(null);
   const bookRef = useRef(null);
@@ -103,10 +71,7 @@ export default function AnimatedCatalogue({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loadError, setLoadError] = useState(null);
 
-  // Measure available width so the book scales responsively instead of
-  // using a hardcoded pixel size. This also re-fires automatically when
-  // entering/exiting fullscreen, since the container's actual size
-  // changes with it.
+
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -122,7 +87,6 @@ export default function AnimatedCatalogue({
 
   const maxPageWidth = isFullscreen ? MAX_PAGE_WIDTH_FULLSCREEN : MAX_PAGE_WIDTH;
 
-  // Two-page spread on wide screens, single page on narrow ones.
   const isSpread = containerWidth > 720;
   const pageWidth = Math.min(
     isSpread ? containerWidth / 2 - 24 : containerWidth - 24,
@@ -160,9 +124,7 @@ export default function AnimatedCatalogue({
     }
   };
 
-  // Single source of truth for fullscreen state — driven by the browser
-  // event, not by the button click, so it stays correct even if the user
-  // exits fullscreen via Esc instead of the button.
+
   useEffect(() => {
     const handleChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
     document.addEventListener("fullscreenchange", handleChange);
@@ -171,17 +133,43 @@ export default function AnimatedCatalogue({
 
   return (
     <section className="catalogue-section">
-      <div className="catalogue-header">
-        <h2 className="catalogue-title">{title}</h2>
+      {/* ---------- intro / hero ---------- */}
+      <div className="catalogue-intro">
+        <div className="catalogue-intro-copy">
+          <span className="catalogue-eyebrow">{eyebrow}</span>
+          <h2 className="catalogue-headline">{headline}</h2>
+          <p className="catalogue-intro-text">{intro}</p>
 
-        <a
-          href={pdfUrl}
-          download={downloadFileName}
-          className="catalogue-download-btn"
-        >
-          <FiDownload />
-          Download Catalogue
-        </a>
+          <a
+            href={pdfUrl}
+            download={downloadFileName}
+            className="catalogue-download-btn"
+          >
+            <FiDownload />
+            Download {title}
+          </a>
+        </div>
+
+        {/* ---------- hang-tag feature highlights ---------- */}
+        <ul className="catalogue-tags" role="list">
+          {features.map(({ icon: Icon, label, detail }, i) => (
+            <li
+              className="catalogue-tag"
+              key={label}
+              style={{ "--tilt": i % 2 === 0 ? "-2.5deg" : "2deg" }}
+            >
+              <span className="catalogue-tag-hole" aria-hidden="true" />
+              <Icon className="catalogue-tag-icon" aria-hidden="true" />
+              <span className="catalogue-tag-label">{label}</span>
+              <span className="catalogue-tag-detail">{detail}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* ---------- flipbook viewer ---------- */}
+      <div className="catalogue-viewer-header">
+        <span className="catalogue-eyebrow catalogue-eyebrow--muted">Or read it here</span>
       </div>
 
       <div

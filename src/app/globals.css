@@ -7624,27 +7624,58 @@ a.gaf-footer-contact-text:hover {
 
 .catalogue-section {
   background: #14140f;
-  padding: 56px 24px;
+  padding: 72px 24px 56px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 32px;
 }
 
-.catalogue-header {
+/* ---------- intro / hero ---------- */
+
+.catalogue-intro {
   width: 100%;
   max-width: 1100px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
 }
 
-.catalogue-title {
+.catalogue-intro-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.catalogue-eyebrow {
+  font-family: "Fraunces", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  color: #a7b25a;
+}
+
+.catalogue-eyebrow--muted {
+  color: #6f7264;
+}
+
+.catalogue-headline {
+  font-weight: 600;
+  font-size: clamp(28px, 3.4vw, 42px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
   color: #ffffff;
-  font-size: 28px;
-  font-weight: 700;
+  max-width: 15ch;
+}
+
+.catalogue-intro-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #b9bcae;
+  max-width: 46ch;
 }
 
 .catalogue-download-btn {
@@ -7658,12 +7689,90 @@ a.gaf-footer-contact-text:hover {
   font-weight: 600;
   border-radius: 999px;
   padding: 12px 24px;
+  margin-top: 6px;
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .catalogue-download-btn:hover {
   background: #7a8724;
   transform: translateY(-2px);
+}
+
+.catalogue-download-btn:focus-visible,
+.catalogue-nav-btn:focus-visible {
+  outline: 2px solid #a7b25a;
+  outline-offset: 2px;
+}
+
+/* ---------- hang-tag feature highlights ---------- */
+
+.catalogue-tags {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 18px;
+}
+
+.catalogue-tag {
+  position: relative;
+  background: #f4f1e6;
+  color: #201f16;
+  border-radius: 4px 4px 10px 10px;
+  padding: 22px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transform: rotate(var(--tilt, 0deg));
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.catalogue-tag:hover {
+  transform: rotate(0deg) translateY(-3px);
+  box-shadow: 0 18px 28px rgba(0, 0, 0, 0.4);
+}
+
+/* the little die-cut hole a real hang tag is punched through */
+.catalogue-tag-hole {
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #14140f;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.catalogue-tag-icon {
+  font-size: 18px;
+  color: #66711e;
+  margin-bottom: 2px;
+}
+
+.catalogue-tag-label {
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.catalogue-tag-detail {
+  font-size: 12.5px;
+  color: #5c5e50;
+  line-height: 1.4;
+}
+
+/* ---------- viewer section label ---------- */
+
+.catalogue-viewer-header {
+  width: 100%;
+  max-width: 1100px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ---------- viewer ---------- */
@@ -7677,11 +7786,6 @@ a.gaf-footer-contact-text:hover {
   gap: 24px;
 }
 
-/* When the viewer element itself is the fullscreen element (via
-   requestFullscreen), it needs to fill the entire viewport, center its
-   content, and have an explicit background — otherwise some browsers
-   default the fullscreen backdrop to white, and the book stays pinned at
-   its normal small size inside a big empty area. */
 .catalogue-viewer:fullscreen,
 .catalogue-viewer--fullscreen {
   max-width: none;
@@ -7715,9 +7819,9 @@ a.gaf-footer-contact-text:hover {
 }
 
 .catalogue-page canvas {
-    display: block;
-    width: 100% !important;
-    height: auto !important;
+  display: block;
+  width: 100% !important;
+  height: auto !important;
 }
 
 .catalogue-page-loading {
@@ -7787,12 +7891,36 @@ a.gaf-footer-contact-text:hover {
 
 /* ---------- responsive ---------- */
 
-@media (max-width: 640px) {
-  .catalogue-section {
-    padding: 36px 16px;
+@media (max-width: 860px) {
+  .catalogue-intro {
+    grid-template-columns: 1fr;
+    gap: 32px;
   }
 
-  .catalogue-title {
-    font-size: 22px;
+  .catalogue-tags {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .catalogue-section {
+    padding: 48px 16px 36px;
+  }
+
+  .catalogue-headline {
+    font-size: 26px;
+    max-width: 100%;
+  }
+
+  .catalogue-tags {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-tag,
+  .catalogue-download-btn,
+  .catalogue-nav-btn {
+    transition: none;
   }
 }
