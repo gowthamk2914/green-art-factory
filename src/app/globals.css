@@ -7924,3 +7924,47 @@ a.gaf-footer-contact-text:hover {
     transition: none;
   }
 }
+
+/* Google Website Translator — hide its default UI since we drive
+   language switching from our own Navbar buttons instead */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+.goog-te-gadget-icon {
+  display: none !important;
+}
+#google_translate_element {
+  display: none !important;
+}
+body {
+  top: 0px !important;
+}
+/* Google wraps translated text in these spans; this stops it from
+   adding an unwanted underline/highlight on hover */
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+.skiptranslate{
+  display: none;
+}
+
+#goog-gt-tt{
+  display: none !important;
+}
+
+.goog-text-highlight,
+font.goog-text-highlight {
+  background: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+/* font:hover{
+  background-color: transparent !important;
+  background: none !important;
+  box-shadow: none !important;
+} */

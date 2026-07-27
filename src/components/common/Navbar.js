@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FiSearch } from "react-icons/fi";
@@ -9,9 +9,17 @@ import { FaXTwitter } from "react-icons/fa6";
 import { IoChevronDownOutline } from "react-icons/io5";
 import { RxHamburgerMenu } from "react-icons/rx";
 import FilterPanel from "./FilterPanel";
+import { switchToLanguage, getCurrentLanguage } from "./GoogleTranslate";
 
 const Navbar = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [activeLang, setActiveLang] = useState("en");
+
+  // Read the cookie after mount (avoids server/client mismatch, since
+  // document.cookie isn't available during server rendering).
+  useEffect(() => {
+    setActiveLang(getCurrentLanguage());
+  }, []);
 
   return (
     <>
@@ -93,10 +101,10 @@ const Navbar = () => {
             </Link>
           </nav>
 
-          <div className="navbar-icon-wrapper">
-            <button className="hidden text-black transition-all hover:text-[#0AA15B] lg:block">
+          <div className="navbar-icon-wrapper flex items-center gap-4">
+            {/* <button className="hidden text-black transition-all hover:text-[#0AA15B] lg:block">
               <FiSearch size={24} />
-            </button>
+            </button> */}
 
             <button
               type="button"
@@ -106,6 +114,35 @@ const Navbar = () => {
             >
               <RxHamburgerMenu size={24} />
             </button>
+
+            {/* Language switcher — drives the Google Translate widget.
+                "notranslate" keeps Google from translating EN/عربي themselves. */}
+            <div className="notranslate flex items-center gap-1 rounded-full border border-[#7A8C2F]/30 p-1 text-[13px] font-medium">
+              <button
+                type="button"
+                onClick={() => switchToLanguage("en")}
+                disabled={activeLang === "en"}
+                className={`rounded-full px-2.5 py-1 transition-all ${
+                  activeLang === "en"
+                    ? "bg-[#5E671F] text-white"
+                    : "text-[#111] hover:text-[#0AA15B]"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => switchToLanguage("ar")}
+                disabled={activeLang === "ar"}
+                className={`rounded-full px-2.5 py-1 transition-all ${
+                  activeLang === "ar"
+                    ? "bg-[#5E671F] text-white"
+                    : "text-[#111] hover:text-[#0AA15B]"
+                }`}
+              >
+                عربي
+              </button>
+            </div>
           </div>
         </div>
       </header>
