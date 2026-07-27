@@ -7353,6 +7353,7 @@ a.gaf-footer-contact-text:hover {
   display: flex;
   flex-direction: column;
   gap: 28px;
+  padding: 20px 0;
 }
 
 .blog-body-author {
@@ -7549,11 +7550,11 @@ a.gaf-footer-contact-text:hover {
   padding: 40px 0 60px;
 }
 
-.related-articles-container {
+/* .related-articles-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
-}
+} */
 
 .related-articles-heading{
   font-size: 28px;
@@ -7968,3 +7969,18 @@ font.goog-text-highlight {
   background: none !important;
   box-shadow: none !important;
 } */
+
+.blog-body-content h2{
+  font-size: 32px;
+  padding: 20px 0;
+}
+
+.blog-body-content p{
+  font-size: 18px;
+  padding: 10px 0;
+  color: black;
+}
+
+.blog-body-content img{
+  padding: 25px 0;
+}

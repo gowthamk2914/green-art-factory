@@ -50,7 +50,7 @@ export default function RelatedArticles() {
 
   return (
     <section className="related-articles-section">
-      <div className="related-articles-container">
+      <div className="container">
         <h3 className="related-articles-heading">Recommended Articles</h3>
         <div className="related-articles-grid">
           {relatedBlogs.map((article) => (
