@@ -80,13 +80,6 @@ const Navbar = () => {
             </Link>
 
             <Link
-              href="/blog-detail"
-              className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
-            >
-              Blogs Detail
-            </Link>
-
-            <Link
               href="/services"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >

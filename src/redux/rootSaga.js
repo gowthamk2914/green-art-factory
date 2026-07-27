@@ -6,6 +6,7 @@ import TestimonialsSaga from "./Testimonials/saga";
 import PartnersSaga from "./Clients/saga";
 import BlogPreviewSaga from "./BlogPreview/saga";
 import NatureShowcaseSaga from "./NatureShowcase/saga";
+import BlogDetailSaga from "./BlogDetail/saga";
 
 export default function* rootSaga() {
   yield all([
@@ -15,5 +16,6 @@ export default function* rootSaga() {
     PartnersSaga(),
     BlogPreviewSaga(),
     NatureShowcaseSaga(),
+    BlogDetailSaga(),
   ]);
 }
