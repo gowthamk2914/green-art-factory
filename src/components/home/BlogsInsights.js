@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+
 import { useDispatch, useSelector } from "react-redux";
 
 import { getBlogPreviewRequest } from "../../redux/BlogPreview/actions";
@@ -76,36 +78,38 @@ function formatTag(category) {
 
 function PostCard({ post }) {
   return (
-    <article className="gaf-blogs-post-card">
-      <div className="gaf-blogs-post-image-wrap">
-        <Image src={post.image} alt={post.title} fill className="gaf-blogs-post-image" />
-      </div>
-
-      <div className="gaf-blogs-post-body">
-        {post.category && <span className="gaf-blogs-post-tag">{formatTag(post.category)}</span>}
-        <h3 className="gaf-blogs-post-title">{post.title}</h3>
-        <p className="gaf-blogs-post-desc">{post.excerpt}</p>
-
-        <div className="gaf-blogs-post-footer">
-          {post.author ? (
-            <div className="gaf-blogs-author">
-              {post.avatar && (
-                <span className="gaf-blogs-avatar">
-                  <Image src={post.avatar} alt={post.author} fill className="gaf-blogs-avatar-img" />
-                </span>
-              )}
-              <span className="gaf-blogs-author-text">
-                <span className="gaf-blogs-author-name">{post.author}</span>
-                {post.authorHandle && <span className="gaf-blogs-author-handle">{post.authorHandle}</span>}
-              </span>
-            </div>
-          ) : (
-            <span />
-          )}
-          <span className="gaf-blogs-post-date">{formatDate(post.blog_date)}</span>
+    <Link href={`/blog/${post.slug}`}>
+      <article className="gaf-blogs-post-card">
+        <div className="gaf-blogs-post-image-wrap">
+          <Image src={post.image} alt={post.title} fill className="gaf-blogs-post-image" />
         </div>
-      </div>
-    </article>
+
+        <div className="gaf-blogs-post-body">
+          {post.category && <span className="gaf-blogs-post-tag">{formatTag(post.category)}</span>}
+          <h3 className="gaf-blogs-post-title">{post.title}</h3>
+          <p className="gaf-blogs-post-desc">{post.excerpt}</p>
+
+          <div className="gaf-blogs-post-footer">
+            {post.author ? (
+              <div className="gaf-blogs-author">
+                {post.avatar && (
+                  <span className="gaf-blogs-avatar">
+                    <Image src={post.avatar} alt={post.author} fill className="gaf-blogs-avatar-img" />
+                  </span>
+                )}
+                <span className="gaf-blogs-author-text">
+                  <span className="gaf-blogs-author-name">{post.author}</span>
+                  {post.authorHandle && <span className="gaf-blogs-author-handle">{post.authorHandle}</span>}
+                </span>
+              </div>
+            ) : (
+              <span />
+            )}
+            <span className="gaf-blogs-post-date">{formatDate(post.blog_date)}</span>
+          </div>
+        </div>
+      </article>
+    </Link>
   );
 }
 
@@ -132,12 +136,16 @@ export default function BlogsInsights() {
 
   // "All" is a local pseudo-category, not part of the API response.
   const filters = useMemo(
-    () => [{ id: "all", slug: "all", label: "All", count: null }, ...(categories || []).map((cat) => ({
-      id: cat.id,
-      slug: cat.slug,
-      label: cat.name,
-      count: null,
-    }))],
+    () => [
+      { id: "all", slug: "all", label: "All", count: null },
+      ...(categories || []).map((cat) => ({
+        id: cat.id,
+        slug: cat.slug,
+        label: cat.name,
+        href: `/blog/${cat.slug}`,
+        count: null,
+      })),
+    ],
     [categories]
   );
 
@@ -234,51 +242,55 @@ export default function BlogsInsights() {
 
             <div className="gaf-blogs-right">
               {featuredPost && (
-                <article className="gaf-blogs-featured-card">
-                  <div className="gaf-blogs-featured-image-wrap">
-                    <Image
-                      src={featuredPost.image}
-                      alt={featuredPost.title}
-                      fill
-                      className="gaf-blogs-featured-image"
-                    />
-                  </div>
-
-                  <div className="gaf-blogs-featured-body">
-                    {featuredPost.category && (
-                      <span className="gaf-blogs-featured-tag">{formatTag(featuredPost.category)}</span>
-                    )}
-                    <h3 className="gaf-blogs-featured-title">{featuredPost.title}</h3>
-                    <p className="gaf-blogs-featured-desc">{featuredPost.excerpt}</p>
-
-                    <div className="gaf-blogs-featured-footer">
-                      {featuredPost.author && (
-                        <>
-                          {featuredPost.avatar && (
-                            <span className="gaf-blogs-avatar gaf-blogs-avatar--sm">
-                              <Image
-                                src={featuredPost.avatar}
-                                alt={featuredPost.author}
-                                fill
-                                className="gaf-blogs-avatar-img"
-                              />
-                            </span>
-                          )}
-                          <span className="gaf-blogs-author-name">{featuredPost.author}</span>
-                        </>
-                      )}
-                      <span className="gaf-blogs-post-date">{formatDate(featuredPost.blog_date)}</span>
+                <Link href={`/blog/${featuredPost.slug}`}>
+                  <article className="gaf-blogs-featured-card">
+                    <div className="gaf-blogs-featured-image-wrap">
+                      <Image
+                        src={featuredPost.image}
+                        alt={featuredPost.title}
+                        fill
+                        className="gaf-blogs-featured-image"
+                      />
                     </div>
-                  </div>
-                </article>
-              )}
 
+                    <div className="gaf-blogs-featured-body">
+                      {featuredPost.category && (
+                        <span className="gaf-blogs-featured-tag">{formatTag(featuredPost.category)}</span>
+                      )}
+                      <h3 className="gaf-blogs-featured-title">{featuredPost.title}</h3>
+                      <p className="gaf-blogs-featured-desc">{featuredPost.excerpt}</p>
+
+                      <div className="gaf-blogs-featured-footer">
+                        {featuredPost.author && (
+                          <>
+                            {featuredPost.avatar && (
+                              <span className="gaf-blogs-avatar gaf-blogs-avatar--sm">
+                                <Image
+                                  src={featuredPost.avatar}
+                                  alt={featuredPost.author}
+                                  fill
+                                  className="gaf-blogs-avatar-img"
+                                />
+                              </span>
+                            )}
+                            <span className="gaf-blogs-author-name">{featuredPost.author}</span>
+                          </>
+                        )}
+                        <span className="gaf-blogs-post-date">{formatDate(featuredPost.blog_date)}</span>
+                      </div>
+                    </div>
+                  </article>
+                </Link>
+              )}
+              
+              <Link href="/blogs" className="gaf-blogs-explore-btn-wrapper">
               <button type="button" className="gaf-blogs-explore-btn">
                 Explore New Articles
                 <span className="gaf-blogs-explore-icon">
                   <ArrowIcon />
                 </span>
               </button>
+              </Link>
             </div>
           </div>
         )}

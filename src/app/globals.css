@@ -2224,6 +2224,10 @@ justify-content:center;
   transform: translateY(-2px);
 }
 
+.gaf-blogs-explore-btn-wrapper{
+  align-self: flex-end;
+}
+
 .gaf-blogs-explore-icon {
   width: 34px;
   height: 34px;
