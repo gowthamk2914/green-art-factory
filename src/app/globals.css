@@ -7993,3 +7993,355 @@ font.goog-text-highlight {
 .blog-body-content img{
   padding: 25px 0;
 }
+
+.portfolio-banner {
+  position: relative;
+  width: 100%;
+  min-height: 620px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 32px 16px;
+}
+
+.portfolio-banner-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.portfolio-banner-bg-img {
+  object-fit: cover;
+}
+
+.portfolio-banner-container {
+  position: relative;
+  z-index: 1;
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* frosted-glass card overlay */
+.portfolio-banner-card {
+  width: 100%;
+  max-width: 1400px;
+  padding: 64px 40px;
+  border-radius: 28px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.portfolio-banner-eyebrow {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #14140f;
+  margin-bottom: 20px;
+}
+
+.portfolio-banner-title {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #14140f;
+  max-width: 780px;
+  margin: 0 0 20px;
+}
+
+.portfolio-banner-desc {
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: #2b2b24;
+  max-width: 800px;
+  margin: 0 0 32px;
+}
+
+.portfolio-banner-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: #1c2a13;
+  color: #f4f2ea;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 10px 10px 24px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.portfolio-banner-cta:hover {
+  background: #263c19;
+  transform: translateY(-1px);
+}
+
+.portfolio-banner-cta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1c2a13;
+}
+
+/* ---- responsive ---- */
+@media (max-width: 768px) {
+  .portfolio-banner-card {
+    padding: 40px 20px;
+    border-radius: 20px;
+  }
+
+  .portfolio-banner-eyebrow {
+    font-size: 24px;
+  }
+
+  .portfolio-banner-title {
+    font-size: 22px;
+  }
+
+  .portfolio-banner-desc {
+    font-size: 15px;
+  }
+}
+
+/* ---- reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-banner-cta {
+    transition: none;
+  }
+}
+
+
+.plg-section {
+  width: 100%;
+  padding: 40px 16px 64px;
+  background: #fbfaf1;
+}
+
+.plg-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ---------- filter bar ---------- */
+
+.plg-filterbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 999px;
+  margin-bottom: 32px;
+
+  background: linear-gradient(90deg, #bfe3c4 0%, #eef0dd 45%, #fbfaf1 100%);
+}
+
+.plg-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1c1c16;
+  background: #eef0e4;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.plg-pill-search {
+  background: #ffffff;
+  color: #6b6b60;
+  flex: 1 1 160px;
+  min-width: 140px;
+}
+
+.plg-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #1c1c16;
+  width: 100%;
+}
+
+.plg-search-input::placeholder {
+  color: #8a8a7c;
+}
+
+.plg-pill-filter:hover,
+.plg-pill-filter-open {
+  background: #e2e5d5;
+}
+
+.plg-pill-reset {
+  background: #14140f;
+  color: #ffffff;
+  margin-left: auto;
+}
+
+.plg-pill-reset:hover {
+  background: #262620;
+}
+
+.plg-filter-wrap {
+  position: relative;
+}
+
+.plg-filter-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  min-width: 170px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(20, 20, 15, 0.14);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plg-filter-menu-item {
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1c1c16;
+  cursor: pointer;
+}
+
+.plg-filter-menu-item:hover {
+  background: #f1f2e8;
+}
+
+/* ---------- heading ---------- */
+
+.plg-heading {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #14140f;
+  margin: 0 0 28px;
+}
+
+/* ---------- Pinterest-style masonry grid ---------- */
+
+.plg-grid {
+  column-count: 1;
+  column-gap: 20px;
+}
+
+@media (min-width: 640px) {
+  .plg-grid {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .plg-grid {
+    column-count: 3;
+  }
+}
+
+.plg-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-height: 340px;
+  break-inside: avoid;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #e5e5e5;
+  text-decoration: none;
+}
+
+.plg-card-image {
+  object-fit: cover;
+}
+
+.plg-card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.15) 40%,
+    rgba(0, 0, 0, 0) 65%
+  );
+}
+
+.plg-card-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px;
+}
+
+.plg-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  max-width: 65%;
+}
+
+.plg-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  background: #1c2a13;
+  color: #f4f2ea;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 6px 6px 14px;
+  border-radius: 999px;
+}
+
+.plg-card-cta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1c2a13;
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .plg-pill,
+  .plg-pill-reset {
+    transition: none;
+  }
+}

@@ -66,7 +66,14 @@ const Navbar = () => {
             </Link>
 
             <Link
-              href="/categories"
+              href="/portfolio"
+              className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
+            >
+              Portfolio
+            </Link>
+
+            <Link
+              href="/products"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               Products
