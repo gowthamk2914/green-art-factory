@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 const HERO_IMAGE = "/images/workshop-hero.jpg";
@@ -63,8 +63,41 @@ function GalleryVideo({ item }) {
 }
 
 export default function WorkshopFacility() {
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    // Progressive enhancement: no IntersectionObserver support just
+    // shows the content immediately, no animation gate.
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="gaf-workshop-section">
+    <section
+      ref={sectionRef}
+      className={`gaf-workshop-section ${
+        isVisible ? "gaf-workshop-section--visible" : ""
+      }`}
+    >
       <h2 className="gaf-workshop-title">Workshop and Production Facility</h2>
 
       <div className="gaf-workshop-hero">

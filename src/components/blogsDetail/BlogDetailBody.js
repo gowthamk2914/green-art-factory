@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
-import { FiLink } from "react-icons/fi";
+import { FiLink, FiCheck } from "react-icons/fi";
 import { FaLinkedinIn, FaInstagram, FaFacebookF } from "react-icons/fa";
 
 import { getBlogDetailRequest } from "../../redux/BlogDetail/actions";
@@ -24,6 +24,87 @@ export default function BlogDetailBody({ slug: slugProp, shareUrl }) {
     }
   }, [slug, loading, data, dispatch]);
 
+  // Scroll-gated sidebar reveal, guarded with a fallback timer so it
+  // can never stay stuck invisible if the observer doesn't fire.
+  const sidebarRef = useRef(null);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+
+  useEffect(() => {
+    const el = sidebarRef.current;
+    if (!el) return;
+
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setIsSidebarVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsSidebarVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -5% 0px" }
+    );
+
+    observer.observe(el);
+    const fallbackTimer = window.setTimeout(() => setIsSidebarVisible(true), 2000);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallbackTimer);
+    };
+  }, [data]);
+
+  // Per-element reveal for the raw HTML content. Since the markup
+  // comes from dangerouslySetInnerHTML, React doesn't control these
+  // nodes individually — so after mount, walk the container's direct
+  // children (headings, paragraphs, quotes, images...) and observe
+  // each one, adding a class as it scrolls into view. Same fallback
+  // safety net: anything not yet revealed gets forced visible after
+  // 2.5s so nothing can be left permanently hidden.
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    const container = contentRef.current;
+    if (!container || !data?.content) return;
+
+    const items = Array.from(container.children);
+    if (items.length === 0) return;
+
+    items.forEach((el) => el.classList.add("blog-reveal-item"));
+
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      items.forEach((el) => el.classList.add("blog-reveal-item--visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("blog-reveal-item--visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -8% 0px" }
+    );
+
+    items.forEach((el) => observer.observe(el));
+
+    const fallbackTimer = window.setTimeout(() => {
+      items.forEach((el) => el.classList.add("blog-reveal-item--visible"));
+      observer.disconnect();
+    }, 2500);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallbackTimer);
+    };
+  }, [data?.content]);
+
   // BlogDetailHero already renders the loading/error state for this page,
   // so the body just waits quietly until the same store slice is ready.
   if (loading || !data || error) return null;
@@ -35,7 +116,12 @@ export default function BlogDetailBody({ slug: slugProp, shareUrl }) {
     <section className="blog-body-section">
       <div className="container">
         <div className="blog-body-container">
-          <aside className="blog-body-sidebar">
+          <aside
+            ref={sidebarRef}
+            className={`blog-body-sidebar ${
+              isSidebarVisible ? "blog-body-sidebar--visible" : ""
+            }`}
+          >
             <div className="blog-body-author">
               <span className="blog-body-avatar-wrap">
                 <Image
@@ -75,6 +161,7 @@ export default function BlogDetailBody({ slug: slugProp, shareUrl }) {
             your CSS to match the original block-based look.
           */}
           <div
+            ref={contentRef}
             className="blog-body-content blog-body-richtext"
             dangerouslySetInnerHTML={{ __html: data.content || "" }}
           />
@@ -108,11 +195,13 @@ function ShareBar({ shareUrl }) {
       <button
         type="button"
         onClick={handleCopyLink}
-        className="blog-body-share-icon blog-body-share-copy"
+        className={`blog-body-share-icon blog-body-share-copy ${
+          copied ? "blog-body-share-copy--copied" : ""
+        }`}
         aria-label="Copy link"
         title={copied ? "Copied!" : "Copy link"}
       >
-        <FiLink />
+        {copied ? <FiCheck /> : <FiLink />}
       </button>
 
       <a

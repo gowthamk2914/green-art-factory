@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 /* Replace with your real files in /public */
@@ -21,8 +24,41 @@ const ROWS = [
 ];
 
 function MissionVisionRow({ row }) {
+  const rowRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = rowRef.current;
+    if (!el) return;
+
+    // Progressive enhancement: no IntersectionObserver support just
+    // shows the content immediately, no animation gate.
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className={`gaf-mv-row ${row.reverse ? "gaf-mv-row--reverse" : ""}`}>
+    <div
+      ref={rowRef}
+      className={`gaf-mv-row ${row.reverse ? "gaf-mv-row--reverse" : ""} ${
+        isVisible ? "gaf-mv-row--visible" : ""
+      }`}
+    >
 
       <div className="gaf-mv-panel">
         <p className="gaf-mv-paragraph">{row.paragraph}</p>

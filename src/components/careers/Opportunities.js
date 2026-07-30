@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MapPin, Clock, ArrowRight } from 'lucide-react';
 
 const CORNER_IMAGE_SRC = '/images/card-corner-leaf.png';
@@ -46,27 +46,87 @@ const JOBS = [
   },
 ];
 
+function getJobsForFilter(dept) {
+  if (dept === 'All Departments') return JOBS;
+  return JOBS.filter((job) => job.department === dept);
+}
+
 export default function Opportunities() {
   const [activeFilter, setActiveFilter] = useState('All Departments');
+  const [displayedJobs, setDisplayedJobs] = useState(() => getJobsForFilter('All Departments'));
+  const [isLeaving, setIsLeaving] = useState(false);
+  const pendingFilterRef = useRef(null);
 
-  const filteredJobs = useMemo(() => {
-    if (activeFilter === 'All Departments') return JOBS;
-    return JOBS.filter((job) => job.department === activeFilter);
-  }, [activeFilter]);
+  const headerRef = useRef(null);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(false);
+
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      setIsHeaderVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsHeaderVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const handleFilterClick = (dept) => {
+    if (dept === activeFilter || isLeaving) return;
+
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      setActiveFilter(dept);
+      setDisplayedJobs(getJobsForFilter(dept));
+      return;
+    }
+
+    // Play the exit animation on the current cards first, then swap
+    // the data and let the (already-existing) entrance animation
+    // handle the new set — avoids the old "cards just vanish" cut.
+    pendingFilterRef.current = dept;
+    setIsLeaving(true);
+
+    window.setTimeout(() => {
+      const nextDept = pendingFilterRef.current;
+      setActiveFilter(nextDept);
+      setDisplayedJobs(getJobsForFilter(nextDept));
+      setIsLeaving(false);
+    }, 260);
+  };
 
   return (
     <section className="ops-section">
-      <div className="ops-header">
+      <div
+        ref={headerRef}
+        className={`ops-header ${isHeaderVisible ? 'ops-header--visible' : ''}`}
+      >
         <h2 className="ops-title">Current Opportunities</h2>
         <p className="ops-subtitle">Discover where your talents can flourish.</p>
 
         <div className="ops-filters">
-          {DEPARTMENTS.map((dept) => (
+          {DEPARTMENTS.map((dept, i) => (
             <button
               key={dept}
               type="button"
               className={`ops-filter-btn ${activeFilter === dept ? 'ops-filter-btn--active' : ''}`}
-              onClick={() => setActiveFilter(dept)}
+              style={{ transitionDelay: `${0.25 + i * 0.07}s` }}
+              onClick={() => handleFilterClick(dept)}
             >
               {dept}
             </button>
@@ -74,11 +134,14 @@ export default function Opportunities() {
         </div>
       </div>
 
-      <div className="ops-grid" key={activeFilter}>
-        {filteredJobs.length === 0 ? (
+      <div
+        className={`ops-grid ${isLeaving ? 'ops-grid--leaving' : ''}`}
+        key={activeFilter}
+      >
+        {displayedJobs.length === 0 ? (
           <p className="ops-empty">No open positions in this department right now.</p>
         ) : (
-          filteredJobs.map((job, i) => (
+          displayedJobs.map((job, i) => (
             <div
               key={job.id}
               className="ops-card"

@@ -98,8 +98,7 @@ export default function EnquirySection() {
             <span className="enq-title-accent">First Project</span>
           </h2>
           <p className="enq-subtitle">
-            Tell us about your space and vision. Our design consultants will respond within
-            24 hours.
+            Tell us about your space and vision. Our design consultants will respond within 24 hours.
           </p>
 
           <form onSubmit={handleSubmit} className="enq-form">

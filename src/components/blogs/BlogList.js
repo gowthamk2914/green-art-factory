@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -54,6 +54,35 @@ export default function BlogList() {
 
   const [activeCategory, setActiveCategory] = useState("all");
   const [query, setQuery] = useState("");
+
+  // Scroll-triggered reveal for the filter bar + heading row. The
+  // marquee itself is intentionally left out of this gate — it has
+  // its own continuous animation and shouldn't wait on scroll.
+  const filterbarRef = useRef(null);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(false);
+
+  useEffect(() => {
+    const el = filterbarRef.current;
+    if (!el) return;
+
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setIsHeaderVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsHeaderVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // "All Blogs" is a local pseudo-category, not part of the API response.
   const pillCategories = useMemo(
@@ -136,7 +165,12 @@ export default function BlogList() {
       <div className="container">
 
         {/* search + category filter pills */}
-        <div className="browse-filterbar">
+        <div
+          ref={filterbarRef}
+          className={`browse-filterbar ${
+            isHeaderVisible ? "browse-filterbar--visible" : ""
+          }`}
+        >
           <div className="browse-search">
             <FiSearch />
             <input
@@ -148,7 +182,7 @@ export default function BlogList() {
           </div>
 
           <div className="browse-pills">
-            {pillCategories.map((cat) => {
+            {pillCategories.map((cat, i) => {
               const Icon = cat.icon;
               const isActive = activeCategory === cat.id;
               return (
@@ -156,6 +190,7 @@ export default function BlogList() {
                   key={cat.id}
                   type="button"
                   onClick={() => setActiveCategory(cat.id)}
+                  style={{ transitionDelay: `${0.2 + i * 0.05}s` }}
                   className={`browse-pill ${isActive ? "browse-pill-active" : ""}`}
                 >
                   <Icon />
@@ -170,20 +205,28 @@ export default function BlogList() {
         </div>
 
         {/* section heading + total */}
-        <div className="browse-heading-row">
-          <h2 className="browse-heading">
+        <div
+          className={`browse-heading-row ${
+            isHeaderVisible ? "browse-heading-row--visible" : ""
+          }`}
+        >
+          {/* key forces a remount on category change, replaying the
+              fade/rise entrance each time the label swaps */}
+          <h2 className="browse-heading" key={activeCategory}>
             {headingLead}{" "}
             {headingAccent && (
               <span className="browse-heading-accent">{headingAccent}</span>
             )}
           </h2>
 
-          <span className="browse-total">Total ({filteredCards.length})</span>
+          <span className="browse-total" key={filteredCards.length}>
+            Total ({filteredCards.length})
+          </span>
         </div>
 
         {/* infinite auto-scrolling card marquee */}
         {loading ? (
-          <p className="browse-empty">Loading articles…</p>
+          <BrowseSkeletonTrack />
         ) : error ? (
           <p className="browse-empty">Couldn&apos;t load articles right now.</p>
         ) : filteredCards.length === 0 ? (
@@ -229,5 +272,26 @@ export default function BlogList() {
 
       </div>
     </section>
+  );
+}
+
+/* Static shimmer placeholder shown while the Redux request is in
+   flight — same card shape as the real marquee, but not looping. */
+function BrowseSkeletonTrack() {
+  return (
+    <div className="browse-track-outer">
+      <div className="browse-track browse-track--skeleton">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div className="browse-card browse-skeleton-card" key={i}>
+            <div className="browse-card-image-wrap browse-skeleton-block" />
+            <div className="browse-card-body">
+              <div className="browse-skeleton-line browse-skeleton-line--title browse-skeleton-block" />
+              <div className="browse-skeleton-line browse-skeleton-block" />
+              <div className="browse-skeleton-line browse-skeleton-line--short browse-skeleton-block" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

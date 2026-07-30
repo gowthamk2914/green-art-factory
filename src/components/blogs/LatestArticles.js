@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -78,8 +78,52 @@ export default function LatestArticles() {
   const [primary, secondary, featured] = articles;
   const leftArticles = [primary, secondary].filter(Boolean);
 
+  // Scroll-gated, one-shot reveal for the whole section. Guarded
+  // against the failure mode where the observer never fires (element
+  // has zero size when observed, a hydration race, etc.) with a hard
+  // timeout fallback — the section is *never* allowed to stay
+  // invisible indefinitely, only delayed at worst.
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -5% 0px" }
+    );
+
+    observer.observe(el);
+
+    // Safety net: force visible after 2s no matter what the observer
+    // does. This is what makes it safe to gate opacity on `isVisible`
+    // at all — worst case the reveal is a little late, it can never
+    // be stuck forever.
+    const fallbackTimer = window.setTimeout(() => setIsVisible(true), 2000);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallbackTimer);
+    };
+  }, []);
+
   return (
-    <section className="latest-section">
+    <section
+      ref={sectionRef}
+      className={`latest-section ${isVisible ? "latest-section--visible" : ""}`}
+    >
       <div className="container">
         <h2 className="latest-heading">
           Latest <span className="latest-heading-accent">Articles</span>

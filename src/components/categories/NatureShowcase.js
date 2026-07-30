@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FiArrowUpRight } from "react-icons/fi";
@@ -26,7 +26,8 @@ export default function NatureShowcase() {
       <section className="showcase-section">
         <div className="container">
           <div className="showcase-wrapper">
-            <h3>Loading...</h3>
+            <ShowcaseSkeletonRow />
+            <ShowcaseSkeletonRow reverse />
           </div>
         </div>
       </section>
@@ -38,7 +39,9 @@ export default function NatureShowcase() {
       <section className="showcase-section">
         <div className="container">
           <div className="showcase-wrapper">
-            <h3>{error}</h3>
+            <div className="showcase-error">
+              <h3>{error}</h3>
+            </div>
           </div>
         </div>
       </section>
@@ -50,51 +53,91 @@ export default function NatureShowcase() {
       <div className="container">
         <div className="showcase-wrapper">
           {[...(categories || [])]
-  .sort((a, b) => a.id - b.id)
-  .map((category, index) => {
-            const imageFirst = index % 2 === 0;
+            .sort((a, b) => a.id - b.id)
+            .map((category, index) => {
+              const imageFirst = index % 2 === 0;
 
-            const heroImage =
-              category?.variants?.[0]?.image ||
-              category.cover_image ||
-              "/images/placeholder.jpg";
+              const heroImage =
+                category?.variants?.[0]?.image ||
+                category.cover_image ||
+                "/images/placeholder.jpg";
 
-            const thumbnails =
-              category?.variants
-                ?.slice(1, 5)
-                .map((item) => item.image) || [];
+              const thumbnails =
+                category?.variants
+                  ?.slice(1, 5)
+                  .map((item) => item.image) || [];
 
-            const item = {
-              id: category.id,
-              title: category.name,
-              description: category.description || "",
-              href: category.cta_url,
-              image: heroImage,
-              thumbnails,
-            };
+              const item = {
+                id: category.id,
+                title: category.name,
+                description: category.description || "",
+                href: category.cta_url,
+                image: heroImage,
+                thumbnails,
+              };
 
-            return (
-              <div
-                className="showcase-row"
-                key={item.id}
-              >
-                {imageFirst ? (
-                  <>
-                    <ShowcaseMedia item={item} />
-                    <ShowcaseText item={item} />
-                  </>
-                ) : (
-                  <>
-                    <ShowcaseText item={item} />
-                    <ShowcaseMedia item={item} />
-                  </>
-                )}
-              </div>
-            );
-          })}
+              return (
+                <ShowcaseRow
+                  key={item.id}
+                  item={item}
+                  imageFirst={imageFirst}
+                />
+              );
+            })}
         </div>
       </div>
     </section>
+  );
+}
+
+function ShowcaseRow({ item, imageFirst }) {
+  const rowRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = rowRef.current;
+    if (!el) return;
+
+    // Progressive enhancement: no IntersectionObserver support just
+    // shows the content immediately, no animation gate.
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={rowRef}
+      className={`showcase-row ${
+        imageFirst ? "showcase-row--image-first" : "showcase-row--text-first"
+      } ${isVisible ? "showcase-row--visible" : ""}`}
+    >
+      {imageFirst ? (
+        <>
+          <ShowcaseMedia item={item} />
+          <ShowcaseText item={item} />
+        </>
+      ) : (
+        <>
+          <ShowcaseText item={item} />
+          <ShowcaseMedia item={item} />
+        </>
+      )}
+    </div>
   );
 }
 
@@ -113,10 +156,7 @@ function ShowcaseMedia({ item }) {
       {item.thumbnails?.length > 0 && (
         <div className="showcase-thumbs">
           {item.thumbnails.map((thumb, index) => (
-            <div
-              className="showcase-thumb"
-              key={index}
-            >
+            <div className="showcase-thumb" key={index}>
               <Image
                 src={thumb}
                 alt={`${item.title}-${index + 1}`}
@@ -134,26 +174,59 @@ function ShowcaseMedia({ item }) {
 function ShowcaseText({ item }) {
   return (
     <div className="showcase-text">
-      <h3 className="showcase-title">
-        {item.title}
-      </h3>
+      <h3 className="showcase-title">{item.title}</h3>
 
-      <p className="showcase-desc">
-        {item.description}
-      </p>
+      <p className="showcase-desc">{item.description}</p>
 
-      <Link
-        href={item.href}
-        className="showcase-btn"
-      >
-        <span className="showcase-btn-label">
-          View Now
-        </span>
+      <Link href={item.href} className="showcase-btn">
+        <span className="showcase-btn-label">View Now</span>
 
         <span className="showcase-btn-icon">
           <FiArrowUpRight />
         </span>
       </Link>
+    </div>
+  );
+}
+
+/* Shimmer placeholder mirroring the real row's grid shape, shown
+   while the Redux request is in flight. */
+function ShowcaseSkeletonRow({ reverse }) {
+  const media = (
+    <div className="showcase-media">
+      <div className="showcase-media-hero showcase-skeleton-block" />
+      <div className="showcase-thumbs">
+        <div className="showcase-thumb showcase-skeleton-block" />
+        <div className="showcase-thumb showcase-skeleton-block" />
+        <div className="showcase-thumb showcase-skeleton-block" />
+        <div className="showcase-thumb showcase-skeleton-block" />
+      </div>
+    </div>
+  );
+
+  const text = (
+    <div className="showcase-text">
+      <div className="showcase-skeleton-line showcase-skeleton-line--title showcase-skeleton-block" />
+      <div className="showcase-skeleton-line showcase-skeleton-block" />
+      <div className="showcase-skeleton-line showcase-skeleton-block" />
+      <div className="showcase-skeleton-line showcase-skeleton-line--short showcase-skeleton-block" />
+      <div className="showcase-skeleton-btn showcase-skeleton-block" />
+    </div>
+  );
+
+  return (
+    <div className="showcase-row">
+      {reverse ? (
+        <>
+          {text}
+          {media}
+        </>
+      ) : (
+        <>
+          {media}
+          {text}
+        </>
+      )}
     </div>
   );
 }

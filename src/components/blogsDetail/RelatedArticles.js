@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 import Link from "next/link";
@@ -44,17 +44,56 @@ export default function RelatedArticles() {
     }
   }, [categorySlug, currentSlug, dispatch]);
 
+  // Scroll-gated reveal for the section, guarded with a fallback
+  // timer so it can only ever be delayed, never left permanently
+  // invisible if the observer fails to fire for any reason.
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -8% 0px" }
+    );
+
+    observer.observe(el);
+    const fallbackTimer = window.setTimeout(() => setIsVisible(true), 2000);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(fallbackTimer);
+    };
+  }, [relatedBlogs]);
+
   if (relatedLoading || !relatedBlogs || relatedBlogs.length === 0) {
     return null;
   }
 
   return (
-    <section className="related-articles-section">
+    <section
+      ref={sectionRef}
+      className={`related-articles-section ${
+        isVisible ? "related-articles-section--visible" : ""
+      }`}
+    >
       <div className="container">
         <h3 className="related-articles-heading">Recommended Articles</h3>
         <div className="related-articles-grid">
-          {relatedBlogs.map((article) => (
-            <ArticleCard key={article.id} article={article} />
+          {relatedBlogs.map((article, i) => (
+            <ArticleCard key={article.id} article={article} index={i} />
           ))}
         </div>
       </div>
@@ -62,12 +101,16 @@ export default function RelatedArticles() {
   );
 }
 
-function ArticleCard({ article }) {
+function ArticleCard({ article, index }) {
   const { slug, image, blog_date, published_at, title, excerpt } = article;
   const date = formatDate(blog_date || published_at);
 
   return (
-    <Link href={`/blog/${slug}`} className="related-article-card">
+    <Link
+      href={`/blog/${slug}`}
+      className="related-article-card"
+      style={{ transitionDelay: `${0.15 + index * 0.1}s` }}
+    >
       <div
         className="related-article-image-wrap"
         style={{ aspectRatio: DEFAULT_ASPECT_RATIO }}

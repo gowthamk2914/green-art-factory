@@ -128,6 +128,20 @@ export default function AboutStories() {
   const [activeId, setActiveId] = useState("origins");
   const activeTab = TABS.find((t) => t.id === activeId) ?? TABS[0];
 
+  /* Drives the tab switch through the View Transitions API when the
+     browser supports it, so the image/video/badge/heading crossfade
+     and morph instead of hard-cutting. Falls back to a plain state
+     update (which still gets the CSS fade-in below) everywhere else. */
+  const handleTabClick = (id) => {
+    if (id === activeId) return;
+
+    if (typeof document !== "undefined" && document.startViewTransition) {
+      document.startViewTransition(() => setActiveId(id));
+    } else {
+      setActiveId(id);
+    }
+  };
+
   return (
     <section className="gaf-about-section">
       <h1 className="gaf-about-title">About Us</h1>
@@ -162,7 +176,7 @@ export default function AboutStories() {
           <button
             type="button"
             key={tab.id}
-            onClick={() => setActiveId(tab.id)}
+            onClick={() => handleTabClick(tab.id)}
             className={`gaf-about-tab ${
               activeId === tab.id ? "gaf-about-tab--active" : ""
             }`}

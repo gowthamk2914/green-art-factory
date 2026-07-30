@@ -48,7 +48,7 @@ export default function BlogHero() {
             into any interior.
           </p>
 
-          <Link href="/stories/living-walls" className="livingwall-cta">
+          <Link href="/blog/why-moss-walls-are-transforming-modern-interior-design" className="livingwall-cta">
             READ STORY
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14" />
