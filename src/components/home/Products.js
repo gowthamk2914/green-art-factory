@@ -136,7 +136,8 @@ useEffect(() => {
                               <span className="text-[30px] font-medium">
                                 {featuredProduct.name}
                               </span>
-                              <Link href={featuredProduct.cta_url}>
+                              {/* <Link href={featuredProduct.cta_url}> */}
+                              <Link href="#">
                                 <button className="rounded-full bg-white px-5 py-2 text-sm transition-all duration-300 hover:bg-[#66711E] hover:text-white hover:shadow-2xl">
                                   Explore
                                 </button>
@@ -163,7 +164,8 @@ useEffect(() => {
                                 <span className="text-sm font-medium">
                                   {product.name}
                                 </span>
-                                <Link href={product.cta_url}>
+                                {/* <Link href={product.cta_url}> */}
+                                <Link href="#">
                                   <button className="rounded-full bg-white px-3 py-1 text-[11px] transition-all duration-300 hover:bg-[#66711E] hover:text-white">
                                     Explore
                                   </button>

@@ -15,11 +15,11 @@ function* getNatureShowcaseSaga() {
   try {
     const response = yield call(
       axios.get,
-      `${API_URL}/productcategory/categories`
+      `${API_URL}/v1/pages/products`
     );
 
     yield put(
-      getNatureShowcaseSuccess(response.data.data || [])
+      getNatureShowcaseSuccess(response.data.data || {})
     );
   } catch (error) {
     yield put(

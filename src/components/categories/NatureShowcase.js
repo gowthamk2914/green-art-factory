@@ -13,7 +13,7 @@ export default function NatureShowcase() {
 
   const {
     loading,
-    data: categories,
+    data: pageData,
     error,
   } = useSelector((state) => state.NatureShowcase);
 
@@ -48,30 +48,33 @@ export default function NatureShowcase() {
     );
   }
 
+  const products = pageData?.products || [];
+
   return (
     <section className="showcase-section">
       <div className="container">
         <div className="showcase-wrapper">
-          {[...(categories || [])]
+          {[...products]
             .sort((a, b) => a.id - b.id)
-            .map((category, index) => {
+            .map((product, index) => {
               const imageFirst = index % 2 === 0;
 
               const heroImage =
-                category?.variants?.[0]?.image ||
-                category.cover_image ||
+                product?.variants?.[0]?.image ||
+                product?.cover_image ||
                 "/images/placeholder.jpg";
 
               const thumbnails =
-                category?.variants
+                product?.variants
                   ?.slice(1, 5)
-                  .map((item) => item.image) || [];
+                  .map((item) => item.image)
+                  .filter(Boolean) || [];
 
               const item = {
-                id: category.id,
-                title: category.name,
-                description: category.description || "",
-                href: category.cta_url,
+                id: product.id,
+                title: product.name,
+                description: product.description || "",
+                href: product.cta_url || "#",
                 image: heroImage,
                 thumbnails,
               };
@@ -96,11 +99,13 @@ function ShowcaseRow({ item, imageFirst }) {
 
   useEffect(() => {
     const el = rowRef.current;
+
     if (!el) return;
 
-    // Progressive enhancement: no IntersectionObserver support just
-    // shows the content immediately, no animation gate.
-    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+    if (
+      typeof window === "undefined" ||
+      !("IntersectionObserver" in window)
+    ) {
       setIsVisible(true);
       return;
     }
@@ -112,10 +117,14 @@ function ShowcaseRow({ item, imageFirst }) {
           observer.disconnect();
         }
       },
-      { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
+      {
+        threshold: 0.2,
+        rootMargin: "0px 0px -10% 0px",
+      }
     );
 
     observer.observe(el);
+
     return () => observer.disconnect();
   }, []);
 
@@ -123,8 +132,14 @@ function ShowcaseRow({ item, imageFirst }) {
     <div
       ref={rowRef}
       className={`showcase-row ${
-        imageFirst ? "showcase-row--image-first" : "showcase-row--text-first"
-      } ${isVisible ? "showcase-row--visible" : ""}`}
+        imageFirst
+          ? "showcase-row--image-first"
+          : "showcase-row--text-first"
+      } ${
+        isVisible
+          ? "showcase-row--visible"
+          : ""
+      }`}
     >
       {imageFirst ? (
         <>
@@ -156,7 +171,10 @@ function ShowcaseMedia({ item }) {
       {item.thumbnails?.length > 0 && (
         <div className="showcase-thumbs">
           {item.thumbnails.map((thumb, index) => (
-            <div className="showcase-thumb" key={index}>
+            <div
+              className="showcase-thumb"
+              key={index}
+            >
               <Image
                 src={thumb}
                 alt={`${item.title}-${index + 1}`}
@@ -174,12 +192,23 @@ function ShowcaseMedia({ item }) {
 function ShowcaseText({ item }) {
   return (
     <div className="showcase-text">
-      <h3 className="showcase-title">{item.title}</h3>
+      <h3 className="showcase-title">
+        {item.title}
+      </h3>
 
-      <p className="showcase-desc">{item.description}</p>
+      {item.description && (
+        <p className="showcase-desc">
+          {item.description}
+        </p>
+      )}
 
-      <Link href={item.href} className="showcase-btn">
-        <span className="showcase-btn-label">View Now</span>
+      <Link
+        href={item.href}
+        className="showcase-btn"
+      >
+        <span className="showcase-btn-label">
+          View Now
+        </span>
 
         <span className="showcase-btn-icon">
           <FiArrowUpRight />
@@ -189,12 +218,11 @@ function ShowcaseText({ item }) {
   );
 }
 
-/* Shimmer placeholder mirroring the real row's grid shape, shown
-   while the Redux request is in flight. */
 function ShowcaseSkeletonRow({ reverse }) {
   const media = (
     <div className="showcase-media">
       <div className="showcase-media-hero showcase-skeleton-block" />
+
       <div className="showcase-thumbs">
         <div className="showcase-thumb showcase-skeleton-block" />
         <div className="showcase-thumb showcase-skeleton-block" />
@@ -207,9 +235,13 @@ function ShowcaseSkeletonRow({ reverse }) {
   const text = (
     <div className="showcase-text">
       <div className="showcase-skeleton-line showcase-skeleton-line--title showcase-skeleton-block" />
+
       <div className="showcase-skeleton-line showcase-skeleton-block" />
+
       <div className="showcase-skeleton-line showcase-skeleton-block" />
+
       <div className="showcase-skeleton-line showcase-skeleton-line--short showcase-skeleton-block" />
+
       <div className="showcase-skeleton-btn showcase-skeleton-block" />
     </div>
   );
