@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { IoClose, IoCheckmark } from "react-icons/io5";
 
-const FILTERS_API = "https://mindmadeitech.com/gaf/public/api/filters";
+const FILTERS_API = "https://mindmadeitech.com/gaf2/public/api/filters";
 
 /* ---------- small building blocks ---------- */
 

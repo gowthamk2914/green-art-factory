@@ -1,1 +1,1 @@
-export const API_URL = "https://mindmadeitech.com/gaf/public/api";
+export const API_URL = "https://mindmadeitech.com/gaf2/public/api";
