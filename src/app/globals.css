@@ -10039,3 +10039,760 @@ font.goog-text-highlight {
     transition: none;
   }
 }
+
+
+
+
+
+
+
+/* ==========================================================================
+   Product Detail Showcase
+   ========================================================================== */
+
+.productDetailSection {
+  background: #faf8f1;
+  padding: clamp(3rem, 6vw, 6rem) clamp(1.25rem, 5vw, 3rem);
+  color: #14140f;
+}
+
+.productDetailInner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4rem, 8vw, 7rem);
+}
+
+/* ==========================================================================
+   Row layout — alternates image-left/text-right and text-left/image-right
+   ========================================================================== */
+
+.productDetailRow {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.productDetailRowReversed {
+  flex-direction: row-reverse;
+}
+
+.productDetailMediaCol {
+  position: relative;
+  flex: 0 0 62%;
+  z-index: 1;
+}
+
+.productDetailTextCol {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ==========================================================================
+   Image frame
+   ========================================================================== */
+
+.productDetailImageFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #dcdccf;
+}
+
+.productDetailImage {
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   Material badge — overlaps the bottom-left corner of the image
+   ========================================================================== */
+
+.productDetailBadge {
+  position: absolute;
+  left: clamp(0.75rem, 3vw, 2rem);
+  bottom: clamp(0.75rem, 3vw, 2rem);
+  z-index: 2;
+  width: 190px;
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 12px 30px rgba(20, 20, 15, 0.18);
+}
+
+.productDetailBadgeLabel {
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  color: #2c2b24;
+  opacity: 0.6;
+  margin-bottom: 0.35rem;
+}
+
+.productDetailBadgeTitle {
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  margin: 0 0 0.6rem;
+}
+
+.productDetailBadgeTags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.productDetailBadgeTags li {
+  font-size: 0.78rem;
+  color: #2c2b24;
+}
+
+
+.productDetailRowReversed .productDetailMediaCol .productDetailBadge{
+  right: clamp(.75rem, 3vw, 2rem);
+  left: unset;
+}
+
+/* ==========================================================================
+   Text panel — overlaps into the image on desktop, alternates color/order
+   ========================================================================== */
+
+.productDetailTextPanel {
+  position: relative;
+  z-index: 3;
+  padding: clamp(1.75rem, 3vw, 2.75rem);
+  border-radius: 28px;
+  color: #14140f;
+  margin-left: -14%;
+}
+
+.productDetailRowReversed .productDetailTextPanel {
+  margin-left: 0;
+  margin-right: -14%;
+}
+
+.productDetailPanelBase {
+  background: #7fb89a;
+  opacity: 0.95;
+}
+
+.productDetailPanelAlt {
+  background: #a9ae86;
+  opacity: 0.95;
+}
+
+.productDetailHeading {
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.4rem, 2vw, 1.9rem);
+  line-height: 1.15;
+  margin: 0 0 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.productDetailRowReversed .productDetailHeading {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.productDetailIndex {
+  font-size: 0.6em;
+  font-weight: 700;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  background: rgba(20, 20, 15, 0.14);
+}
+
+.productDetailDescription {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #2c2b24;
+  max-width: 46ch;
+  margin: 0 0 1.75rem;
+}
+
+.productDetailRowReversed .productDetailDescription {
+  margin-left: auto;
+}
+
+/* ==========================================================================
+   CTAs
+   ========================================================================== */
+
+.productDetailCtaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.productDetailRowReversed .productDetailCtaRow {
+  justify-content: flex-end;
+}
+
+.productDetailCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.productDetailCta:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.productDetailCta:focus-visible {
+  outline: 2px solid #14140f;
+  outline-offset: 2px;
+}
+
+.productDetailCtaDark {
+  background: #14140f;
+  color: #ffffff;
+}
+
+.productDetailCtaSolid {
+  background: #1f6b4a;
+  color: #ffffff;
+}
+
+.productDetailCtaOutline {
+  background: #6e7350;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .productDetailRow,
+  .productDetailRowReversed {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25rem;
+  }
+
+  .productDetailMediaCol {
+    flex: none;
+    width: 100%;
+  }
+
+  .productDetailBadge {
+    width: 160px;
+    padding: 0.85rem 0.9rem;
+  }
+
+  .productDetailTextPanel,
+  .productDetailRowReversed .productDetailTextPanel {
+    margin: -2.5rem 0.75rem 0;
+  }
+
+  .productDetailHeading,
+  .productDetailRowReversed .productDetailHeading {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  .productDetailDescription,
+  .productDetailRowReversed .productDetailDescription {
+    margin-left: 0;
+    max-width: none;
+  }
+
+  .productDetailCtaRow,
+  .productDetailRowReversed .productDetailCtaRow {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .productDetailBadge {
+    position: static;
+    width: 100%;
+    margin-top: 0.75rem;
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .productDetailTextPanel,
+  .productDetailRowReversed .productDetailTextPanel {
+    margin: 0.75rem 0 0;
+    border-radius: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .productDetailCta {
+    transition: none;
+  }
+}
+
+
+
+
+/* ==========================================================================
+   Texture Showcase 
+   ========================================================================== */
+
+.textureShowcaseSection {
+  background: #eef0dd;
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 5vw, 3rem);
+  color: #14140f;
+}
+
+.textureShowcaseInner {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.textureShowcaseHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.textureShowcaseTitle {
+  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 2.85rem);
+  line-height: 1.15;
+  margin: 0;
+  color: #14140f;
+}
+
+.textureShowcaseTitleAccent {
+  color: #4c6b2f;
+}
+
+.textureShowcaseEyebrow {
+  max-width: 320px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #6b6b5f;
+  margin: 0.5rem 0 0;
+}
+
+/* ==========================================================================
+   Grid
+   ========================================================================== */
+
+.textureShowcaseGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 3rem);
+}
+
+/* ==========================================================================
+   Card
+   ========================================================================== */
+
+.textureShowcaseCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.textureShowcaseImageFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #d7dcc4;
+  margin-bottom: 1rem;
+}
+
+.textureShowcaseImage {
+  object-fit: cover;
+}
+
+.textureShowcaseGalleryBtn {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #14140f;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(20, 20, 15, 0.18);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.textureShowcaseGalleryBtn:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.textureShowcaseGalleryBtn:focus-visible {
+  outline: 2px solid #14140f;
+  outline-offset: 2px;
+}
+
+.textureShowcaseVariety {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #14140f;
+  margin-bottom: 0.4rem;
+}
+
+.textureShowcaseName {
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  margin: 0 0 0.6rem;
+  color: #14140f;
+}
+
+.textureShowcaseDescription {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #6b6b5f;
+  margin: 0;
+  /* max-width: 46ch; */
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.textureShowcaseFooter {
+  text-align: center;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: #1f6b4a;
+  margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .textureShowcaseGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .textureShowcaseHeader {
+    flex-direction: column;
+  }
+
+  .textureShowcaseEyebrow {
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .textureShowcaseGalleryBtn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
+    right: 0.85rem;
+    bottom: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .textureShowcaseGalleryBtn {
+    transition: none;
+  }
+}
+
+
+
+/* ==========================================================================
+   Related Products 
+   ========================================================================== */
+
+
+.relatedProductsSection {
+  background: #ffffff;
+  padding: clamp(2.5rem, 6vw, 5rem) 0;
+  color: #14140f;
+}
+
+.relatedProductsInner {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.relatedProductsTitle {
+  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 2.85rem);
+  line-height: 1.15;
+  margin: 0 0 clamp(1.5rem, 4vw, 2.5rem);
+  padding: 0 clamp(1.25rem, 5vw, 3rem);
+  color: #14140f;
+}
+
+.relatedProductsTitleAccent {
+  color: #4c6b2f;
+}
+
+
+/* ============================================================
+   Horizontal Scroller
+   ============================================================ */
+
+.relatedProductsScroller {
+  display: flex;
+
+  gap: clamp(1rem, 2vw, 1.5rem);
+
+  /*
+   * Allows horizontal scrolling only when
+   * the cards overflow the available width.
+   */
+  overflow-x: auto;
+
+  padding: 0 clamp(1.25rem, 5vw, 3rem) 0.75rem;
+
+  -webkit-overflow-scrolling: touch;
+
+  /*
+   * Hide scrollbar.
+   */
+  scrollbar-width: none;
+
+  /*
+   * Keep all cards in one row.
+   */
+  flex-wrap: nowrap;
+}
+
+.relatedProductsScroller::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* ============================================================
+   Card
+   ============================================================ */
+
+.relatedProductsCard {
+  flex: 0 0 auto;
+
+  width: clamp(220px, 22vw, 300px);
+
+  scroll-snap-align: start;
+
+  display: block;
+
+  text-decoration: none;
+
+  color: inherit;
+}
+
+.relatedProductsImageFrame {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 3 / 4;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  background: #e5e5dc;
+}
+
+.relatedProductsImage {
+  object-fit: cover;
+
+  transition: transform 0.3s ease;
+}
+
+.relatedProductsCard:hover .relatedProductsImage {
+  transform: scale(1.04);
+}
+
+.relatedProductsOverlay {
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, 0.65) 100%
+  );
+
+  pointer-events: none;
+}
+
+.relatedProductsCaption {
+  position: absolute;
+
+  left: 1.1rem;
+  right: 1.1rem;
+  bottom: 1rem;
+
+  z-index: 2;
+}
+
+.relatedProductsLabel {
+  display: block;
+
+  font-size: 0.65rem;
+
+  font-weight: 600;
+
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+
+  color: rgba(255, 255, 255, 0.75);
+
+  margin-bottom: 0.35rem;
+}
+
+.relatedProductsName {
+  font-weight: 700;
+
+  font-size: 1.15rem;
+
+  line-height: 1.25;
+
+  margin: 0;
+
+  color: #ffffff;
+}
+
+
+/* ============================================================
+   Mobile
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .relatedProductsCard {
+    width: 68vw;
+  }
+}
+
+
+/* ============================================================
+   Reduced Motion
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .relatedProductsImage {
+    transition: none;
+  }
+}
+
+
+.productDetailLoading {
+  min-height: 60vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  padding: 4rem 1.5rem;
+
+  background: #ffffff;
+  color: #14140f;
+
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+
+  text-align: center;
+}
+
+/* Loading animation */
+.productDetailLoading::before {
+  content: "";
+
+  width: 42px;
+  height: 42px;
+
+  margin-bottom: 1.25rem;
+
+  border: 3px solid #e5e8df;
+  border-top-color: #4c6b2f;
+
+  border-radius: 50%;
+
+  animation: productDetailLoader 0.8s linear infinite;
+}
+
+@keyframes productDetailLoader {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* Error state */
+.productDetailError {
+  min-height: 60vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4rem 1.5rem;
+
+  background: #ffffff;
+
+  color: #8a2f2f;
+
+  font-size: 1rem;
+  font-weight: 500;
+
+  text-align: center;
+}
+
+
+/* Mobile */
+@media (max-width: 640px) {
+  .productDetailLoading,
+  .productDetailError {
+    min-height: 50vh;
+  }
+
+  .productDetailLoading::before {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .productDetailLoading::before {
+    animation: none;
+  }
+}
+

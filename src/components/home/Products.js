@@ -50,41 +50,47 @@ const Products = () => {
   }, [dispatch]);
 
 useEffect(() => {
-  if (loading || !sortedProducts?.length || !containerRef.current) return;
+  if (
+    loading ||
+    !sortedProducts?.length ||
+    !containerRef.current
+  ) {
+    return;
+  }
 
   const ctx = gsap.context(() => {
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 1024px)", () => {
-      gsap.utils.toArray(".product-stack-item").forEach((card) => {
-        gsap.fromTo(
-          card,
-          { y: 120, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 80%",
-              // no `end` needed — this isn't scrubbed, it just plays once
-              toggleActions: "play none none none",
-              // "play" on enter (scrolling down)
-              // "none" on leave (scrolling down past it — stays visible)
-              // "none" on enter back (scrolling up into it — stays visible)
-              // "none" on leave back (scrolling up past it — stays visible)
-              once: true, // extra safety: never re-trigger, in either direction
+      gsap.utils
+        .toArray(".product-stack-item")
+        .forEach((card) => {
+          gsap.fromTo(
+            card,
+            {
+              y: 120,
+              opacity: 0,
             },
-          }
-        );
-      });
-
-      return () => mm.revert();
+            {
+              y: 0,
+              opacity: 1,
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 80%",
+                toggleActions: "play none none none",
+                once: true,
+              },
+            }
+          );
+        });
     });
   }, containerRef);
 
-  // ...(image-load + ScrollTrigger.refresh() logic stays exactly the same)
+  return () => {
+    ctx.revert();
+  };
 }, [loading, sortedProducts?.length]);
 
   if (error) {

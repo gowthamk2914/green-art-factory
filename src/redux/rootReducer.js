@@ -7,6 +7,7 @@ import PartnersReducer from "./Clients/reducer";
 import BlogPreviewReducer from "./BlogPreview/reducer";
 import NatureShowcaseReducer from "./NatureShowcase/reducer";
 import BlogDetailReducer from "./BlogDetail/reducer";
+import ProductDetailReducer from "./ProductDetail/reducer"; 
 
 const rootReducer = combineReducers({
   Products: ProductsReducer,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   BlogPreview: BlogPreviewReducer,
   NatureShowcase: NatureShowcaseReducer,
   BlogDetail: BlogDetailReducer,
+  ProductDetail: ProductDetailReducer, 
 });
 
 export default rootReducer;

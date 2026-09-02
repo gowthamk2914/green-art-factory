@@ -40,17 +40,25 @@ const Navbar = () => {
 
           {/* Phone */}
 
-          <div className="hidden items-center gap-1 lg:flex">
+          {/* <div className="hidden items-center gap-1 lg:flex">
             <span className="text-[18px] font-medium text-[#1A1A1A]">
               +91 1234567890
             </span>
 
             <IoChevronDownOutline size={14} className="mt-[2px] text-[#7A8C2F]" />
-          </div>
+          </div> */}
 
           {/* Menu */}
 
           <nav className="hidden items-center gap-10 lg:flex">
+
+            {/* <Link
+              href="/"
+              className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
+            >
+              Home
+            </Link> */}
+
             <Link
               href="/about"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
@@ -73,11 +81,12 @@ const Navbar = () => {
             </Link>
 
             <Link
-              href="/products"
+              href="/products-list"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
               Products
             </Link>
+
 
             <Link
               href="/blogs"
