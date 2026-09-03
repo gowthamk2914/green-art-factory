@@ -108,7 +108,7 @@ useEffect(() => {
       <div className="products-top-curve"></div>
 
       <div className="container products-section-wrapper">
-        <h2 className="products-title">OUR PRODUCTS</h2>
+        <h2 className="products-title">Our Products</h2>
 
         <div className="products-stack-container">
           {loading || !sortedProducts?.length

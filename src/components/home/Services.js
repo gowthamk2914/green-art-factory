@@ -69,7 +69,7 @@ const [activeService, setActiveService] = useState(categories[0].items[0]);
       <div className="container">
 
         <h2 className="services-title">
-          SERVICES
+          Services
         </h2>
 
         <div className="services-grid">

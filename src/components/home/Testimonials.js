@@ -59,7 +59,7 @@ export default function Testimonials() {
   return (
     <section className="testimonials-section">
       <div className="testimonials-wrapper">
-        <h5 className="testimonial-small-title">TESTIMONIALS</h5>
+        <h5 className="testimonial-small-title">Testimonials</h5>
 
         <h2 className="testimonial-title">What Our Customers Say</h2>
 

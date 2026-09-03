@@ -135,7 +135,7 @@ useEffect(() => {
       <section className="featured-projects">
         <div className="container">
           <div className="featured-wrapper">
-            <h2 className="featured-title">FEATURED PROJECTS</h2>
+            <h2 className="featured-title">Featured Projects</h2>
             <p className="featured-description">Loading featured projects…</p>
           </div>
         </div>
@@ -171,7 +171,7 @@ useEffect(() => {
     <section className="featured-projects">
       <div className="container">
         <div className="featured-wrapper">
-          <h2 className="featured-title">FEATURED PROJECTS</h2>
+          <h2 className="featured-title">Featured Projects</h2>
 
           <div
             className="featured-stage"
