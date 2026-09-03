@@ -15,9 +15,7 @@ import { useEffect } from "react";
 
 import { getTestimonialsRequest } from "../../redux/Testimonials/actions";
 
-// Max cards ever shown at once (desktop breakpoint below). Used to decide
-// whether looping/nav actually make sense for however many testimonials
-// the API returns.
+
 const MAX_SLIDES_PER_VIEW = 3;
 
 export default function Testimonials() {
@@ -39,12 +37,7 @@ export default function Testimonials() {
 
   if (total === 0) return null;
 
-  // Swiper's loop mode needs at least (slidesPerView * 2) real slides in
-  // the DOM to duplicate/loop smoothly — with fewer than that, it pads the
-  // track with blank slides to make the math work, which is the empty-space
-  // bug. Instead of disabling loop, we pad the *data* by repeating the
-  // testimonials until there's a safe minimum, so every slide slot always
-  // has real content and the loop is seamless no matter the API count.
+
   const MIN_SLIDES_FOR_LOOP = MAX_SLIDES_PER_VIEW * 2;
   const loopSlides =
     total >= MIN_SLIDES_FOR_LOOP
