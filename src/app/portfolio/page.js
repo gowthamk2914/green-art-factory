@@ -1,11 +1,11 @@
 import PortfolioBanner from "../../components/portfolio/PortfolioBanner";
-// import PortfolioListingGrid from "../../components/portfolio/PortfolioListingGrid";
+import ProjectsListing from "../../components/portfolio/ProjectsListing";
 
 export default function Categories() {
   return (
     <>
       <PortfolioBanner />
-      {/* <PortfolioListingGrid /> */}
+      <ProjectsListing />
     </>
   );
 }
