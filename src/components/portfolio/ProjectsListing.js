@@ -3,131 +3,34 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-
-/**
- * Static placeholder data for now. Field names are kept generic
- * (slug, title, description, image, aspect, projectUrl, filters) so this
- * same shape can later be swapped for data fetched from an API — at that
- * point the filter dropdowns and search below can stay as-is and just
- * drive a query instead of an in-memory .filter().
- *
- * `aspect` controls each card's height in the masonry layout (portrait,
- * square, landscape) — vary it per project the way a real photo set would.
- */
-const DEFAULT_PROJECTS = [
-  {
-    slug: "artificial-tree-installation",
-    title: "Artificial Tree Installation",
-    sector: "Commercial",
-    location: "Dubai, UAE",
-    projectType: "Interior Projects",
-    installationType: "Indoor",
-    description:
-      "Preserved moss walls bring nature indoors with a timeless, maintenance-free aesthetic. They enhance interiors with rich texture, acoustic comfort, and biophilic appeal.",
-    image: "/images/projects/artificial-tree-installation.jpg",
-    aspect: "4 / 3",
-    projectUrl: "/projects/artificial-tree-installation",
-  },
-  {
-    slug: "world-map-moss-wall-1",
-    title: "World Map Moss Wall",
-    sector: "Commercial",
-    location: "Abu Dhabi, UAE",
-    projectType: "Interior Projects",
-    installationType: "Indoor",
-    description:
-      "A custom moss world map installed as a striking reception feature, blending geography and greenery into one talking-point wall.",
-    image: "/images/projects/world-map-moss-wall-1.jpg",
-    aspect: "1 / 1",
-    projectUrl: "/projects/world-map-moss-wall-1",
-  },
-  {
-    slug: "greenart-factory-logo-1",
-    title: "GreenArt Factory Logo",
-    sector: "Commercial",
-    location: "Dubai, UAE",
-    projectType: "Special Projects",
-    installationType: "Indoor",
-    description:
-      "A branded moss logo wall custom-designed to complement the architecture and spatial identity of the reception area.",
-    image: "/images/projects/greenart-factory-logo-1.jpg",
-    aspect: "3 / 4",
-    projectUrl: "/projects/greenart-factory-logo-1",
-  },
-  {
-    slug: "greenhouse-corridor-1",
-    title: "Greenhouse Corridor",
-    sector: "Beachside",
-    location: "Abu Dhabi, UAE",
-    projectType: "Exterior Projects",
-    installationType: "Outdoor",
-    description:
-      "A living plant corridor designed for a beachside hospitality venue, creating an immersive walk-through garden experience.",
-    image: "/images/projects/greenhouse-corridor-1.jpg",
-    aspect: "3 / 4",
-    projectUrl: "/projects/greenhouse-corridor-1",
-  },
-  {
-    slug: "greenart-factory-logo-2",
-    title: "GreenArt Factory Logo — Feature Wall",
-    sector: "Commercial",
-    location: "Dubai, UAE",
-    projectType: "Special Projects",
-    installationType: "Indoor",
-    description:
-      "A large-format version of the branded moss logo, installed as the centerpiece of a corporate lobby.",
-    image: "/images/projects/greenart-factory-logo-2.jpg",
-    aspect: "1 / 1",
-    projectUrl: "/projects/greenart-factory-logo-2",
-  },
-  {
-    slug: "world-map-moss-wall-2",
-    title: "World Map Moss Wall — Lobby Edition",
-    sector: "Commercial",
-    location: "Abu Dhabi, UAE",
-    projectType: "Interior Projects",
-    installationType: "Indoor",
-    description:
-      "A second world map installation, custom-fitted to a narrower lobby wall while keeping every continent legible.",
-    image: "/images/projects/world-map-moss-wall-2.jpg",
-    aspect: "4 / 3",
-    projectUrl: "/projects/world-map-moss-wall-2",
-  },
-  {
-    slug: "moss-globe-frame",
-    title: "Moss Globe Frame",
-    sector: "Commercial",
-    location: "Dubai, UAE",
-    projectType: "Special Projects",
-    installationType: "Indoor",
-    description:
-      "A circular framed moss and fern composition, designed as standalone wall art for a boutique office space.",
-    image: "/images/projects/moss-globe-frame.jpg",
-    aspect: "1 / 1",
-    projectUrl: "/projects/moss-globe-frame",
-  },
-  {
-    slug: "greenhouse-corridor-2",
-    title: "Greenhouse Corridor — Entrance",
-    sector: "Beachside",
-    location: "Abu Dhabi, UAE",
-    projectType: "Exterior Projects",
-    installationType: "Outdoor",
-    description:
-      "The entrance stretch of a beachside greenhouse corridor, lined with potted cacti and seasonal planting.",
-    image: "/images/projects/greenhouse-corridor-2.jpg",
-    aspect: "3 / 4",
-    projectUrl: "/projects/greenhouse-corridor-2",
-  },
-];
-
-const PROJECT_TYPES = ["Exterior Projects", "Interior Projects", "Special Projects"];
-const INSTALLATION_TYPES = ["Indoor", "Outdoor"];
-const LOCATIONS = ["Abu Dhabi, UAE", "Dubai, UAE"];
-const SECTORS = ["Beachside", "Commercial"];
+import { useSelector } from "react-redux";
 
 const FALLBACK_IMAGE = "/images/product-detail-common-img.png";
+
+/**
+ * The repeating Pinterest-style rhythm: one big 2×2 tile, three normal
+ * tiles, one tall 1×2 tile, three more normal tiles — 8 slots total.
+ *
+ * Cards are placed with `grid-auto-flow: row dense`, so the browser packs
+ * each one into the next open slot automatically. Combined with cycling
+ * this array by `index % GRID_PATTERN.length`, the same rhythm repeats
+ * indefinitely as more projects arrive from the API / dashboard later —
+ * no manual placement ever needed.
+ */
+const GRID_PATTERN = [
+  { colSpan: 2, rowSpan: 2 }, // big square
+  { colSpan: 1, rowSpan: 1 },
+  { colSpan: 1, rowSpan: 1 },
+  { colSpan: 1, rowSpan: 1 },
+  { colSpan: 1, rowSpan: 2 }, // tall
+  { colSpan: 1, rowSpan: 1 },
+  { colSpan: 1, rowSpan: 1 },
+  { colSpan: 1, rowSpan: 1 },
+];
+
+function getCardSpan(index) {
+  return GRID_PATTERN[index % GRID_PATTERN.length];
+}
 
 function FilterSelect({ label, value, onChange, options }) {
   return (
@@ -140,8 +43,8 @@ function FilterSelect({ label, value, onChange, options }) {
       >
         <option value="">{label}</option>
         {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
+          <option key={option.slug} value={option.slug}>
+            {option.name}
           </option>
         ))}
       </select>
@@ -149,18 +52,23 @@ function FilterSelect({ label, value, onChange, options }) {
   );
 }
 
-function ProjectCard({ project }) {
+function ProjectCard({ project, index }) {
+  const { colSpan, rowSpan } = getCardSpan(index);
+
   return (
     <Link
-      href={project.projectUrl}
+      href={project.cta_url}
       className="projectsListingCard"
-      style={{ aspectRatio: project.aspect }}
+      style={{
+        gridColumn: `span ${colSpan}`,
+        gridRow: `span ${rowSpan}`,
+      }}
     >
       <Image
-        src={project.image || FALLBACK_IMAGE}
+        src={project.cover_image || FALLBACK_IMAGE}
         alt={project.title}
         fill
-        sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
+        sizes="(max-width: 560px) 100vw, (max-width: 860px) 50vw, 33vw"
         className="projectsListingImage"
       />
 
@@ -168,10 +76,12 @@ function ProjectCard({ project }) {
 
       <div className="projectsListingCaption">
         <h3 className="projectsListingTitle">{project.title}</h3>
-        <p className="projectsListingMeta">
-          {[project.sector, project.location].filter(Boolean).join(" • ")}
-        </p>
-        <p className="projectsListingDescription">{project.description}</p>
+        {project.meta_line && (
+          <p className="projectsListingMeta">{project.meta_line}</p>
+        )}
+        {project.excerpt && (
+          <p className="projectsListingDescription">{project.excerpt}</p>
+        )}
         <span className="projectsListingViewBtn">
           View Project
           <svg
@@ -195,39 +105,70 @@ function ProjectCard({ project }) {
   );
 }
 
-export default function ProjectsListing({
-  projects = DEFAULT_PROJECTS,
-  totalCount,
-}) {
+export default function ProjectsListing({ projects, filters, totalCount }) {
+  // Same fallback chain used across the other sections: explicit prop >
+  // Redux store (shared Portfolio slice) > empty array, so this
+  // section never crashes on `.map` before the API has responded.
+  const reduxData = useSelector((state) => state.Portfolio?.data);
+  const reduxMeta = useSelector((state) => state.Portfolio?.meta);
+
+  const allProjects = projects ?? reduxData?.projects ?? [];
+  const filterOptions = filters ?? reduxData?.filters ?? {
+    categories: [],
+    installation_types: [],
+    locations: [],
+    sectors: [],
+  };
+
   const [search, setSearch] = useState("");
-  const [projectType, setProjectType] = useState("");
-  const [installationType, setInstallationType] = useState("");
-  const [location, setLocation] = useState("");
-  const [sector, setSector] = useState("");
+  const [categorySlug, setCategorySlug] = useState("");
+  const [installationTypeSlug, setInstallationTypeSlug] = useState("");
+  const [locationSlug, setLocationSlug] = useState("");
+  const [sectorSlug, setSectorSlug] = useState("");
 
   const hasActiveFilters =
-    search || projectType || installationType || location || sector;
+    search || categorySlug || installationTypeSlug || locationSlug || sectorSlug;
 
   const filteredProjects = useMemo(() => {
     const query = search.trim().toLowerCase();
 
-    return projects.filter((project) => {
+    return allProjects.filter((project) => {
       if (query && !project.title.toLowerCase().includes(query)) return false;
-      if (projectType && project.projectType !== projectType) return false;
-      if (installationType && project.installationType !== installationType)
+
+      if (categorySlug && project.category?.slug !== categorySlug) return false;
+
+      // NOTE: individual projects in the current API response don't carry
+      // an `installation_type` field yet (only `filters.installation_types`
+      // exists, for populating the dropdown). Until the backend attaches
+      // it per-project, this filter is a no-op pass-through rather than
+      // excluding every project — remove this guard once the field ships.
+      if (
+        installationTypeSlug &&
+        project.installation_type &&
+        project.installation_type.slug !== installationTypeSlug
+      ) {
         return false;
-      if (location && project.location !== location) return false;
-      if (sector && project.sector !== sector) return false;
+      }
+
+      if (locationSlug && project.location?.slug !== locationSlug) return false;
+
+      if (
+        sectorSlug &&
+        !(project.sectors ?? []).some((s) => s.slug === sectorSlug)
+      ) {
+        return false;
+      }
+
       return true;
     });
-  }, [projects, search, projectType, installationType, location, sector]);
+  }, [allProjects, search, categorySlug, installationTypeSlug, locationSlug, sectorSlug]);
 
   function handleReset() {
     setSearch("");
-    setProjectType("");
-    setInstallationType("");
-    setLocation("");
-    setSector("");
+    setCategorySlug("");
+    setInstallationTypeSlug("");
+    setLocationSlug("");
+    setSectorSlug("");
   }
 
   return (
@@ -262,27 +203,27 @@ export default function ProjectsListing({
 
           <FilterSelect
             label="Project Type"
-            value={projectType}
-            onChange={setProjectType}
-            options={PROJECT_TYPES}
+            value={categorySlug}
+            onChange={setCategorySlug}
+            options={filterOptions.categories}
           />
           <FilterSelect
             label="Installation Type"
-            value={installationType}
-            onChange={setInstallationType}
-            options={INSTALLATION_TYPES}
+            value={installationTypeSlug}
+            onChange={setInstallationTypeSlug}
+            options={filterOptions.installation_types}
           />
           <FilterSelect
             label="Location"
-            value={location}
-            onChange={setLocation}
-            options={LOCATIONS}
+            value={locationSlug}
+            onChange={setLocationSlug}
+            options={filterOptions.locations}
           />
           <FilterSelect
             label="Sector"
-            value={sector}
-            onChange={setSector}
-            options={SECTORS}
+            value={sectorSlug}
+            onChange={setSectorSlug}
+            options={filterOptions.sectors}
           />
 
           <button
@@ -296,12 +237,12 @@ export default function ProjectsListing({
         </div>
 
         <p className="projectsListingCount">
-          Total projects ({totalCount ?? filteredProjects.length})
+          Total projects ({totalCount ?? reduxMeta?.total ?? filteredProjects.length})
         </p>
 
         <div className="projectsListingMasonry">
-          {filteredProjects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+          {filteredProjects.map((project, index) => (
+            <ProjectCard key={project.slug ?? project.id} project={project} index={index} />
           ))}
         </div>
 

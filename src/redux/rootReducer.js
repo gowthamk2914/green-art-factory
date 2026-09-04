@@ -8,6 +8,7 @@ import BlogPreviewReducer from "./BlogPreview/reducer";
 import NatureShowcaseReducer from "./NatureShowcase/reducer";
 import BlogDetailReducer from "./BlogDetail/reducer";
 import ProductDetailReducer from "./ProductDetail/reducer"; 
+import PortfolioReducer from "./Portfolio/reducer";
 
 const rootReducer = combineReducers({
   Products: ProductsReducer,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   NatureShowcase: NatureShowcaseReducer,
   BlogDetail: BlogDetailReducer,
   ProductDetail: ProductDetailReducer, 
+  Portfolio: PortfolioReducer, 
 });
 
 export default rootReducer;

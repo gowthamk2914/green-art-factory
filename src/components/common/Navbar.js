@@ -99,7 +99,7 @@ const Navbar = () => {
               href="/services"
               className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
             >
-              Services
+              Services 
             </Link>
 
             <Link
@@ -115,14 +115,14 @@ const Navbar = () => {
               <FiSearch size={24} />
             </button> */}
 
-            <button
+            {/* <button
               type="button"
               onClick={() => setIsFilterOpen(true)}
               aria-label="Open filters"
               className="hidden text-black transition-all hover:text-[#0AA15B] lg:block"
             >
               <RxHamburgerMenu size={24} />
-            </button>
+            </button> */}
 
             {/* Language switcher — drives the Google Translate widget.
                 "notranslate" keeps Google from translating EN/عربي themselves. */}
