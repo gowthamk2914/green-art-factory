@@ -160,9 +160,9 @@ button{
 
   margin-bottom: 120px;
 
-  transition:
+  /* transition:
     transform 0.5s ease,
-    opacity 0.5s ease;
+    opacity 0.5s ease; */
 }
 
 @media (max-width:768px){
@@ -11080,7 +11080,6 @@ font.goog-text-highlight {
   justify-content: center;
   gap: 1.25rem;
   padding: 2rem;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #6b6b5f;
   font-size: 0.95rem;
   text-align: center;
@@ -11105,5 +11104,357 @@ font.goog-text-highlight {
 @media (prefers-reduced-motion: reduce) {
   .portfolioPageStatus::before {
     animation: none;
+  }
+}
+
+
+/* ==========================================================================
+   Gallery Hero — all class names prefixed with "galleryHero"
+   to avoid collisions when dropped into a larger app.
+   ========================================================================== */
+
+.galleryHeroSection {
+  position: relative;
+  width: 100%;
+  height: clamp(220px, 30vw, 340px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.galleryHeroBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.galleryHeroBgImg {
+  object-fit: cover;
+}
+
+.galleryHeroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(4, 10, 6, 0.55) 0%,
+    rgba(4, 10, 6, 0.4) 50%,
+    rgba(4, 10, 6, 0.55) 100%
+  );
+}
+
+.galleryHeroContent {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 0 1.5rem;
+}
+
+.galleryHeroTitle {
+  font-weight: 700;
+  font-size: clamp(1.4rem, 3.2vw, 2.1rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .galleryHeroSection {
+    height: clamp(160px, 45vw, 220px);
+  }
+
+  .galleryHeroTitle {
+    letter-spacing: 0.03em;
+  }
+}
+
+
+
+
+
+
+
+/* ==========================================================================
+   Gallery List — all class names prefixed with "galleryList"
+   to avoid collisions when dropped into a larger app.
+   ========================================================================== */
+
+.galleryListSection {
+  background: #ffffff;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
+}
+
+.galleryListTitle{
+    margin-bottom: 30px;
+    font-size: 26px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.galleryListInner {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   Rows — each pair of images shares one row and one height; only the
+   width ratio between the two cells changes, alternating pair to pair.
+   ========================================================================== */
+
+.galleryListRow {
+  display: flex;
+  gap: 1rem;
+  height: clamp(260px, 34vw, 460px);
+  margin-bottom: 1rem;
+}
+
+.galleryListRow:last-child {
+  margin-bottom: 0;
+}
+
+.galleryListRowWideFirst > .galleryListCell:nth-child(1) {
+  flex: 3;
+}
+.galleryListRowWideFirst > .galleryListCell:nth-child(2) {
+  flex: 2;
+}
+
+.galleryListRowWideSecond > .galleryListCell:nth-child(1) {
+  flex: 2;
+}
+.galleryListRowWideSecond > .galleryListCell:nth-child(2) {
+  flex: 3;
+}
+
+.galleryListRowSingle > .galleryListCell {
+  flex: 1;
+}
+
+/* ==========================================================================
+   Cell
+   ========================================================================== */
+
+.galleryListCell {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #e5e5dc;
+}
+
+.galleryListImage {
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   Responsive — asymmetric widths only make sense with room to breathe;
+   stack to full-width single-column cells below tablet width.
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .galleryListRow {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .galleryListRowWideFirst > .galleryListCell,
+  .galleryListRowWideSecond > .galleryListCell,
+  .galleryListRowSingle > .galleryListCell {
+    flex: none;
+    width: 100%;
+    height: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .galleryListRowWideFirst > .galleryListCell,
+  .galleryListRowWideSecond > .galleryListCell,
+  .galleryListRowSingle > .galleryListCell {
+    height: 220px;
+  }
+}
+
+
+/* ==========================================================================
+   Related Images — all class names prefixed with "relatedImages"
+   to avoid collisions when dropped into a larger app.
+   ========================================================================== */
+
+.relatedImagesSection {
+  background: #ffffff;
+  padding: clamp(2.5rem, 6vw, 5rem) 0;
+  color: #14140f;
+}
+
+.relatedImagesInner {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.relatedImagesTitle {
+  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 1.85rem);
+  line-height: 1.15;
+  margin: 0 0 clamp(1.5rem, 4vw, 2.5rem);
+  padding: 0 clamp(1.25rem, 5vw, 3rem);
+  color: #14140f;
+}
+
+/* ==========================================================================
+   Slider shell — holds the scroll track plus the two arrow buttons
+   ========================================================================== */
+
+.relatedImagesSlider {
+  position: relative;
+}
+
+.relatedImagesTrack {
+  display: flex;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding: 0 clamp(1.25rem, 5vw, 3rem) 0.5rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.relatedImagesTrack::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================================================
+   Arrow buttons — only rendered (by the component) when the track
+   actually overflows in that direction
+   ========================================================================== */
+
+.relatedImagesArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: #ffffff;
+  color: #14140f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(20, 20, 15, 0.22);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.relatedImagesArrow:hover {
+  transform: translateY(-50%) scale(1.06);
+}
+
+.relatedImagesArrow:focus-visible {
+  outline: 2px solid #14140f;
+  outline-offset: 2px;
+}
+
+.relatedImagesArrowLeft {
+  left: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+.relatedImagesArrowRight {
+  right: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+/* ==========================================================================
+   Card
+   ========================================================================== */
+
+.relatedImagesCard {
+  flex: 0 0 auto;
+  width: clamp(220px, 22vw, 300px);
+  scroll-snap-align: start;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.relatedImagesImageFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #e5e5dc;
+}
+
+.relatedImagesImage {
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.relatedImagesCard:hover .relatedImagesImage {
+  transform: scale(1.04);
+}
+
+.relatedImagesOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, 0.65) 100%
+  );
+  pointer-events: none;
+}
+
+.relatedImagesCaption {
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  bottom: 1rem;
+  z-index: 2;
+}
+
+.relatedImagesLabel {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 0.35rem;
+}
+
+.relatedImagesName {
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.25;
+  margin: 0;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .relatedImagesCard {
+    width: 68vw;
+  }
+
+  .relatedImagesArrow {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .relatedImagesImage,
+  .relatedImagesArrow {
+    transition: none;
   }
 }

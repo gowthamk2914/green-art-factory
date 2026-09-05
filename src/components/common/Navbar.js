@@ -87,6 +87,13 @@ const Navbar = () => {
               Products
             </Link>
 
+            <Link
+              href="/gallery"
+              className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
+            >
+              Gallery
+            </Link>
+
 
             <Link
               href="/blogs"
