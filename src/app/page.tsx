@@ -5,6 +5,7 @@ import Services from "../components/home/Services";
 import Testimonials from "../components/home/Testimonials";
 import Clients from "../components/home/Clients";
 import LatestPosts from "../components/home/LatestPosts";
+import LatestVideos from "../components/home/LatestVideos";
 import BlogsInsights from "../components/home/BlogsInsights";
 import "../app/globals.css";
 
@@ -18,6 +19,7 @@ export default function Home() {
       <Testimonials />
       <Clients />
       <LatestPosts />
+      <LatestVideos />
       <BlogsInsights />
     </>
   );
