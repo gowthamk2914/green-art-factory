@@ -35,7 +35,7 @@ const DEFAULT_VIDEOS = [
   {
     id: "video-6",
     videoId: "v7_MoCsVjNM",
-    title: "Grand Opening Ceremony Flower Decor! ",
+    title: "Indoor Plants!",
     description: "Breathe life into your home or office with our vibrant indoor plants. 🌱 From lush greens to elegant designs, create a fresh and calming atmosphere effortlessly! ",
   },
 ];
