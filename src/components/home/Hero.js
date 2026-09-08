@@ -35,7 +35,7 @@ const heroSlides = [
     ),
     description:
       "Bring life into your interiors with our premium moss walls and biophilic solutions.",
-    image: "/images/hero-plant.png",
+    image: "/images/hero-plant2.png",
   },
   {
   id: 3,
