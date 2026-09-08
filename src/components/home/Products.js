@@ -139,7 +139,7 @@ useEffect(() => {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-all duration-500 group-hover:opacity-100"></div>
                             <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between rounded-xl bg-[#ffffffd8] px-5 py-3">
-                              <span className="text-[30px] font-medium">
+                              <span className="text-[30px] font-medium featured-big-product-name">
                                 {featuredProduct.name}
                               </span>
                               {/* <Link href={featuredProduct.cta_url}> */}

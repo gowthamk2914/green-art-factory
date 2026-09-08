@@ -78,11 +78,11 @@ useEffect(() => {
         ]);
       } else if (width >= 768) {
         setPositions([
-          { x: -180, y: 0, scale: 0.85, z: 1, opacity: 0.3, h: 220 },
-          { x: -90, y: 0, scale: 0.95, z: 2, opacity: 0.75, h: 260 },
+          { x: -180, y: 0, scale: 0.85, z: 1, opacity: 0, h: 220 },
+          { x: -250, y: 0, scale: 0.95, z: 2, opacity: 0.75, h: 260 },
           { x: 0, y: 35, scale: 1, z: 5, opacity: 1, h: 230 },
-          { x: 90, y: 0, scale: 0.95, z: 2, opacity: 0.75, h: 260 },
-          { x: 180, y: 0, scale: 0.85, z: 1, opacity: 0.3, h: 220 },
+          { x: 250, y: 0, scale: 0.95, z: 2, opacity: 0.75, h: 260 },
+          { x: 180, y: 0, scale: 0.85, z: 1, opacity: 0, h: 220 },
         ]);
       } else {
         setPositions([
