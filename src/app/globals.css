@@ -11121,6 +11121,15 @@ font.goog-text-highlight {
   color: #14140f;
 }
 
+.projectsListingCardWrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.projectsListingCard {
+  height: 100%;
+}
+
 .projectsListingInner {
   max-width: 1600px;
   margin: 0 auto;
@@ -11170,19 +11179,172 @@ font.goog-text-highlight {
   position: relative;
 }
 
-.projectsListingFilterSelect {
-  appearance: none;
-  -webkit-appearance: none;
+/* ==========================================================================
+   Filter dropdown (checkbox multi-select)
+   ========================================================================== */
+
+.projectsListingFilter {
+  position: relative;
+}
+
+.projectsListingFilterButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   border: none;
   outline: none;
-  background: #eef0e2 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1L5 5L9 1' stroke='%236B6B5F' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>")
-    no-repeat right 0.9rem center;
+  background: #eef0e2;
   border-radius: 999px;
-  padding: 0.65rem 2.1rem 0.65rem 1.1rem;
+  padding: 0.65rem 1.1rem;
   font-size: 0.85rem;
   font-weight: 600;
   color: #14140f;
   cursor: pointer;
+  white-space: nowrap;
+}
+
+.projectsListingFilterButton.isActive {
+  background: #dfe4cd;
+}
+
+.projectsListingFilterCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #4c6b2f;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.projectsListingFilterPanel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 20;
+  min-width: 220px;
+  max-width: 280px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(20, 20, 15, 0.16);
+  padding: 0.6rem;
+}
+
+.projectsListingFilterEmpty {
+  font-size: 0.8rem;
+  color: #8b8b7e;
+  padding: 0.5rem;
+  margin: 0;
+}
+
+.projectsListingFilterOption {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.4rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #14140f;
+  cursor: pointer;
+}
+
+.projectsListingFilterOption:hover {
+  background: #f4f5ec;
+}
+
+.projectsListingFilterOption.isIndented {
+  padding-left: 1.6rem;
+  font-size: 0.8rem;
+  color: #4a4a40;
+}
+
+.projectsListingFilterOptionInput {
+  width: 16px;
+  height: 16px;
+  accent-color: #4c6b2f;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.projectsListingProductGroup {
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid #eef0e2;
+}
+
+.projectsListingProductGroup:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.projectsListingVariantList {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   Active filter chips
+   ========================================================================== */
+
+.projectsListingActiveFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -0.35rem 0 1.25rem;
+}
+
+.projectsListingChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem 0.4rem 0.85rem;
+  border-radius: 999px;
+  background: #eef0e2;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #14140f;
+}
+
+.projectsListingChipRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(20, 20, 15, 0.08);
+  color: #4a4a40;
+  cursor: pointer;
+}
+
+.projectsListingChipRemove:hover {
+  background: rgba(20, 20, 15, 0.16);
+}
+
+.projectsListingChipClearAll {
+  border: none;
+  background: none;
+  padding: 0.4rem 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #c1272d;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+  .projectsListingFilterPanel {
+    max-width: 85vw;
+  }
 }
 
 .projectsListingReset {
@@ -11592,7 +11754,11 @@ font.goog-text-highlight {
   }
 }
 
-
+.galleryListEmpty {
+  text-align: center;
+  color: #6b6b5f;
+  padding: 3rem 0;
+}
 /* ==========================================================================
    Related Images — all class names prefixed with "relatedImages"
    to avoid collisions when dropped into a larger app.
