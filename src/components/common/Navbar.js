@@ -24,6 +24,7 @@ const NAV_LINKS = [
   { href: "/contact", label: "Contact us" },
 ];
 
+
 const Navbar = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
