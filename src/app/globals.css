@@ -11141,10 +11141,15 @@ font.goog-text-highlight {
 
 .projectsListingToolbar {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 1.25rem;
+}
+
+@media (max-width: 1050px) {
+  .projectsListingToolbar {
+    flex-wrap: wrap;
+  }
 }
 
 .projectsListingSearch {
@@ -11154,7 +11159,7 @@ font.goog-text-highlight {
   padding: 0.6rem 1.1rem;
   border-radius: 999px;
   background: #eef0e2;
-  min-width: 160px;
+  width: stretch;
 }
 
 .projectsListingSearchIcon {

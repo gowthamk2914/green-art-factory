@@ -35,6 +35,15 @@ const ProductSkeleton = () => (
   </div>
 );
 
+// Builds /gallery/:productSlug/:variantSlug for a variant's Explore button.
+// The API's variant.cta_url is currently always null, so this constructs
+// the route directly from the parent category's slug + the variant's own
+// slug rather than relying on a per-variant URL from the backend.
+function buildGalleryUrl(categorySlug, variantSlug) {
+  if (!categorySlug || !variantSlug) return "#";
+  return `/gallery/${categorySlug}/${variantSlug}`;
+}
+
 const Products = () => {
   const dispatch = useDispatch();
   const containerRef = useRef(null);
@@ -142,8 +151,9 @@ useEffect(() => {
                               <span className="text-[30px] font-medium featured-big-product-name">
                                 {featuredProduct.name}
                               </span>
-                              {/* <Link href={featuredProduct.cta_url}> */}
-                              <Link href="#">
+                              <Link
+                                href={buildGalleryUrl(category.slug, featuredProduct.slug)}
+                              >
                                 <button className="rounded-full bg-white px-5 py-2 text-sm transition-all duration-300 hover:bg-[#66711E] hover:text-white hover:shadow-2xl">
                                   Explore
                                 </button>
@@ -170,8 +180,9 @@ useEffect(() => {
                                 <span className="text-sm font-medium">
                                   {product.name}
                                 </span>
-                                {/* <Link href={product.cta_url}> */}
-                                <Link href="#">
+                                <Link
+                                  href={buildGalleryUrl(category.slug, product.slug)}
+                                >
                                   <button className="rounded-full bg-white px-3 py-1 text-[11px] transition-all duration-300 hover:bg-[#66711E] hover:text-white">
                                     Explore
                                   </button>
