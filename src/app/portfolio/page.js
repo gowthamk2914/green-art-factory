@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getPortfolioPageRequest } from "../../redux/Portfolio/actions";
 import PortfolioBanner from "../../components/portfolio/PortfolioBanner";
 import ProjectsListing from "../../components/portfolio/ProjectsListing";
+import { Suspense } from "react";
+
 
 export default function PortfolioPage() {
   const dispatch = useDispatch();
@@ -41,7 +43,9 @@ export default function PortfolioPage() {
   return (
     <>
       <PortfolioBanner />
-      <ProjectsListing />
+      <Suspense fallback={null}>
+        <ProjectsListing />
+      </Suspense>
     </>
   );
 }
