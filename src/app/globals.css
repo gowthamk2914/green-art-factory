@@ -1239,6 +1239,8 @@ height:40px;
 
     justify-content:flex-end;
 
+    display:none;
+
 }
 
 .testimonial-viewall button{
@@ -5343,424 +5345,453 @@ a.gaf-footer-contact-text:hover {
         }
 
 
-        /* ==========================================================================
-   ExpertCareSection.css
-   All layout, styling, and animations for the "Expert Care for Every
-   Green Space" section. Paired with ExpertCareSection.jsx.
-   ========================================================================== */
 
-.ecs-section {
+        .servicesBannerSection {
   position: relative;
   width: 100%;
-  background: linear-gradient(180deg, #fbfaf0 0%, #f7f6e9 100%);
-  padding: 96px 24px;
+  min-height: clamp(560px, 90vh, 900px);
   overflow: hidden;
-  max-width: 1500px;
-  margin: 0 auto;
-}
-
-/* ambient drifting glows */
-.ecs-glow {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(110px);
-  opacity: 0.3;
-  pointer-events: none;
-}
-.ecs-glow--a {
-  width: 420px;
-  height: 420px;
-  top: -140px;
-  left: -120px;
-  background: radial-gradient(circle, #eef2d0 0%, transparent 70%);
-  animation: ecs-drift-a 14s ease-in-out infinite;
-}
-.ecs-glow--b {
-  width: 360px;
-  height: 360px;
-  top: 20%;
-  right: -100px;
-  background: radial-gradient(circle, #d9e8c4 0%, transparent 70%);
-  animation: ecs-drift-b 17s ease-in-out infinite;
-}
-@keyframes ecs-drift-a {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(30px, 25px); }
-}
-@keyframes ecs-drift-b {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-25px, -20px); }
-}
-
-.services-head-wrapper{
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 40px;
 }
 
-.services-heading-black{
-  font-size: 35px;
-  font-weight: 700;
-}
-
-.services-title-green{
-  font-size: 35px;
-  font-weight: 700;
-  color: #009652;
-}
-
-.ecs-grid {
-  position: relative;
-  max-width: 1280px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 48px;
-  align-items: center;
-  padding: 40px 0;
-}
-
-@media (min-width: 1024px) {
-  .ecs-grid {
-    grid-template-columns: 620px 1fr;
-    gap: 80px;
-  }
-}
-
-/* ---------- generic reveal-on-scroll utility ---------- */
-.ecs-anim {
-  opacity: 0;
-  transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.ecs-anim--up {
-  transform: translateY(28px);
-}
-.ecs-anim--left {
-  transform: translateX(-36px) scale(0.98);
-}
-.ecs-visible .ecs-anim--up,
-.ecs-visible .ecs-anim--left {
-  opacity: 1;
-  transform: translate(0, 0) scale(1);
-}
-
-/* ---------- image column ---------- */
-.ecs-image-wrap {
-  position: relative;
-  border-radius: 28px;
-  overflow: hidden;
-  aspect-ratio: 4 / 3;
-  box-shadow: 0 40px 70px -30px rgba(43, 51, 20, 0.35);
-}
-.ecs-image {
+.servicesBannerMedia {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  z-index: 0;
+}
+
+.servicesBannerImage {
   object-fit: cover;
-  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.ecs-image-wrap:hover .ecs-image {
-  transform: scale(1.06);
-}
-.ecs-image-shade {
+
+/* Fades the left side toward a soft light tone so the dark text stays
+   legible over whatever the photo happens to show there. */
+.servicesBannerGradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, rgba(10, 20, 5, 0.55) 100%);
-  pointer-events: none;
-}
-
-.ecs-badge {
-  position: absolute;
-  left: 24px;
-  bottom: 24px;
-  padding: 16px 22px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  animation: ecs-badge-float 4.5s ease-in-out infinite;
-}
-@keyframes ecs-badge-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-.ecs-badge-number {
-  font-size: 28px;
-  font-weight: 800;
-  color: #4ade80;
-  line-height: 1;
-}
-.ecs-badge-label {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-/* ---------- content column ---------- */
-.ecs-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.ecs-heading {
-  font-size: 44px;
-  font-weight: 800;
-  line-height: 1.15;
-  color: #4b5320;
-  letter-spacing: -0.01em;
-}
-@media (min-width: 640px) {
-  .ecs-heading {
-    font-size: 52px;
-  }
-}
-
-.ecs-heading-underline {
-  display: block;
-  width: 56px;
-  height: 4px;
-  margin: 14px 0 24px;
-  border-radius: 4px;
-  background: linear-gradient(90deg, #34d399, #4b5320);
-  transform-origin: left center;
-}
-
-.ecs-paragraph {
-  font-size: 16px;
-  line-height: 1.75;
-  color: #5a6247;
-  max-width: 640px;
-  margin-bottom: 20px;
-}
-
-.ecs-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 12px 0 32px;
-}
-.ecs-tag {
-  padding: 9px 18px;
-  border-radius: 9999px;
-  background: #eef0dd;
-  color: #4b5320;
-  font-size: 13.5px;
-  font-weight: 600;
-  white-space: nowrap;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease,
-    opacity 0.6s ease, transform 0.6s ease;
-}
-.ecs-tag:hover {
-  background: #dbe5c4;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px -10px rgba(75, 83, 32, 0.35);
-}
-
-/* ---------- dark stats bar ---------- */
-.ecs-stats-bar {
-  position: relative;
-  border-radius: 24px;
-  background: linear-gradient(135deg, #4b5320, #313a15);
-  padding: 36px 40px 30px;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: repeat(2, auto);
-  column-gap: 56px;
-  row-gap: 14px;
-}
-@media (max-width: 480px) {
-  .ecs-stats-bar {
-    grid-template-columns: 1fr;
-    row-gap: 20px;
-  }
-}
-
-.ecs-stats-glow {
-  position: absolute;
-  top: -60%;
-  right: -10%;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(74, 222, 128, 0.25) 0%, transparent 70%);
-  filter: blur(40px);
-  animation: ecs-stats-pulse 5s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes ecs-stats-pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
-}
-
-.ecs-stat {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.ecs-stat-number {
-  font-size: 40px;
-  font-weight: 800;
-  color: #4ade80;
-  line-height: 1;
-}
-.ecs-stat-label {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.ecs-stat-divider {
-  display: none;
-}
-
-.ecs-stats-note {
-  grid-column: 1 / -1;
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 14px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.55);
-  max-width: 560px;
+  /* background: linear-gradient(
+    to right,
+    rgba(250, 248, 241, 0.92) 0%,
+    rgba(250, 248, 241, 0.75) 28%,
+    rgba(250, 248, 241, 0.15) 52%,
+    rgba(250, 248, 241, 0) 68%
+  ); */
 }
 
 /* ==========================================================================
-   BenefitsSection.css
-   Styling + animations for the "Benefits" section. Paired with
-   BenefitsSection.jsx. Assumes the section's background is a full-bleed
-   image (set via inline style backgroundImage in the JSX).
+   Content
    ========================================================================== */
 
-.bfs-section {
+.servicesBannerContent {
   position: relative;
+  z-index: 1;
   width: 100%;
-  padding: 100px 24px 110px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  overflow: hidden;
-}
-
-/* Optional soft tint so white cards + dark text stay readable regardless of
-   the exact background image supplied. Tune or remove opacity as needed. */
-.bfs-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 40%);
-  pointer-events: none;
-}
-
-.bfs-inner {
-  position: relative;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  text-align: center;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 5vw, 3rem);
 }
 
-/* ---------- reveal-on-scroll utility ---------- */
-.bfs-anim {
-  opacity: 0;
-  transform: translateY(26px);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.bfs-visible .bfs-anim {
-  opacity: 1;
-  transform: translateY(0);
+.servicesBannerEyebrow {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #3f5325;
 }
 
-/* ---------- heading ---------- */
-.bfs-title {
-  font-size: 46px;
+.servicesBannerTitle {
+  margin: 0 0 1.25rem;
+  max-width: 640px;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
   font-weight: 800;
-  color: #4b5320;
-  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: #14140f;
 }
 
-.bfs-subtitle {
-  margin: 18px auto 56px;
-  max-width: 760px;
-  font-size: 17px;
-  line-height: 1.7;
-  color: #5c6350;
+.servicesBannerDescription {
+  margin: 0 0 1.75rem;
+  max-width: 520px;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #3a3a30;
 }
 
-/* ---------- grid ---------- */
-.bfs-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 28px;
-  text-align: left;
-}
-@media (min-width: 768px) {
-  .bfs-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (min-width: 1024px) {
-  .bfs-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+/* ==========================================================================
+   CTA pill
+   ========================================================================== */
+
+.servicesBannerCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  border-radius: 999px;
+  background: #1c2e1d;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 2.5rem;
+  transition: opacity 0.2s ease;
 }
 
-/* ---------- card ---------- */
-.bfs-card {
-  position: relative;
+.servicesBannerCta:hover {
+  opacity: 0.9;
+}
+
+.servicesBannerCtaIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   background: #ffffff;
-  border-radius: 22px;
-  padding: 34px 30px 36px;
-  box-shadow: 0 20px 45px -22px rgba(43, 51, 20, 0.22);
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.bfs-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 30px 60px -22px rgba(43, 51, 20, 0.32);
+  color: #14140f;
 }
 
-.bfs-icon-box {
-  width: 56px;
-  height: 56px;
+/* ==========================================================================
+   Stats card
+   ========================================================================== */
+
+.servicesBannerStatsCard {
+  max-width: 700px;
   border-radius: 16px;
-  background: #eef4ec;
+  background: rgba(63, 78, 30, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 1.75rem 2rem;
+}
+
+.servicesBannerStatsRow {
+  display: flex;
+  align-items: stretch;
+  gap: 2rem;
+  margin-bottom: 1.25rem;
+}
+
+.servicesBannerStat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-right: 2rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.servicesBannerStat:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
+.servicesBannerStatValue {
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  font-weight: 800;
+  color: #4ee08a;
+  line-height: 1;
+}
+
+.servicesBannerStatLabel {
+  font-size: 0.85rem;
+  color: #eef2e4;
+}
+
+.servicesBannerStatsFootnote {
+  margin: 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #d7ddc9;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .servicesBannerGradient {
+    background: linear-gradient(#faf8f180 0%, #faf8f1eb 80%, #faf8f1f5 90%);
+  }
+
+  .servicesBannerTitle,
+  .servicesBannerDescription {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .servicesBannerStatsRow {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .servicesBannerStat {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    padding-bottom: 1rem;
+  }
+
+  .servicesBannerStat:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+
+ 
+
+
+.service-type-section {
+  background: #f8f6ef;
+  padding: 64px 24px 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---------- Tab switch ---------- */
+
+.service-type-tab-switch {
+  position: relative;
+  display: inline-flex;
+  background: #ffffff;
+  border: 1px solid rgba(28, 28, 23, 0.08);
+  border-radius: 999px;
+  padding: 6px;
+  margin-bottom: 48px;
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+
+.service-type-tab-indicator {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: calc(50% - 6px);
+  height: calc(100% - 12px);
+  background: linear-gradient(180deg, #5c6b2e 0%, #47531f 100%);
+  border-radius: 999px;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: 0;
+}
+
+.service-type-tab-btn {
+  position: relative;
+  z-index: 1;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #6f6d63;
+  padding: 12px 28px;
+  border-radius: 999px;
+  transition: color 0.35s ease;
+  white-space: nowrap;
+}
+
+.service-type-tab-btn-active {
+  color: #fdfdfa;
+}
+
+.service-type-tab-btn:focus-visible {
+  outline: 2px solid #5c6b2e;
+  outline-offset: 2px;
+}
+
+/* ---------- List / rows ---------- */
+
+.service-type-list {
+  width: 100%;
+  max-width: 1080px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.service-type-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 40px;
+  opacity: 0;
+  animation: service-type-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.service-type-row-reverse .service-type-image-wrap {
+  order: 2;
+}
+
+.service-type-row-reverse .service-type-card-wrap {
+  order: 1;
+}
+
+@keyframes service-type-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* whole-list enter transition, keyed by tab change */
+.service-type-enter-forward,
+.service-type-enter-backward {
+  animation: service-type-fade-in 0.35s ease both;
+}
+
+@keyframes service-type-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- Image ---------- */
+
+.service-type-image-wrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #d9d6c8;
+}
+
+.service-type-shape-a {
+  border-radius: 28px 28px 28px 120px;
+}
+
+.service-type-shape-b {
+  border-radius: 28px 120px 28px 28px;
+}
+
+.service-type-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---------- Card + badge ---------- */
+
+.service-type-card-wrap {
+  position: relative;
+}
+
+.service-type-badge-slot {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(50%, -50%);
+  z-index: 2;
+}
+
+.service-type-row-reverse .service-type-badge-slot {
+  right: auto;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.service-type-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px 34px;
+  box-shadow: 0 12px 28px rgba(28, 28, 23, 0.06);
+}
+
+.service-type-title {
+  margin: 0 0 14px;
+  font-size: 1.35rem;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #1c1c17;
+}
+
+.service-type-title-accent {
+  color: #5c6b2e;
+  border-bottom: 2px solid rgba(92, 107, 46, 0.35);
+  padding-bottom: 2px;
+}
+
+.service-type-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #6f6d63;
+}
+
+.service-type-badge {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 22px;
-  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.35s ease;
-}
-.bfs-card:hover .bfs-icon-box {
-  transform: rotate(-8deg) scale(1.08);
-  background: #dcecdf;
-}
-
-.bfs-icon {
-  width: 26px;
-  height: 26px;
-  color: #2f9e5b;
-  transition: transform 0.4s ease;
-}
-.bfs-card:hover .bfs-icon {
-  transform: scale(1.1);
-}
-
-.bfs-card-title {
-  font-size: 19px;
+  border-radius: 50%;
   font-weight: 700;
-  color: #4b5320;
-  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: #ffffff;
+  background: radial-gradient(circle at 35% 30%, #4ade80, #16a34a);
+  box-shadow: 0 0 0 6px rgba(52, 211, 153, 0.18), 0 6px 16px rgba(22, 163, 74, 0.35);
 }
 
-.bfs-card-desc {
-  font-size: 14.5px;
-  line-height: 1.7;
-  color: #6b7160;
-} 
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+  .service-type-row,
+  .service-type-row-reverse {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .service-type-row-reverse .service-type-image-wrap,
+  .service-type-row-reverse .service-type-card-wrap {
+    order: initial;
+  }
+
+  .service-type-badge-slot,
+  .service-type-row-reverse .service-type-badge-slot {
+    left: 24px;
+    right: auto;
+    top: -20px;
+    transform: translate(0, 0);
+  }
+
+  .service-type-card {
+    padding: 26px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .service-type-tab-btn {
+    padding: 10px 16px;
+    font-size: 0.72rem;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .service-type-row,
+  .service-type-enter-forward,
+  .service-type-enter-backward,
+  .service-type-tab-indicator {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
 
 
 /* ==========================================================================
@@ -12108,5 +12139,985 @@ font.goog-text-highlight {
 @media (prefers-reduced-motion: reduce) {
   .latestVideosCta {
     transition: none;
+  }
+}
+
+
+
+
+
+.projectDetailHeroSection {
+  position: relative;
+  width: 100%;
+  height: clamp(320px, 46vw, 560px);
+  overflow: hidden;
+}
+
+.projectDetailHeroMedia {
+  position: absolute;
+  inset: 0;
+}
+
+.projectDetailHeroMedia::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.projectDetailHeroOverlayPanel {
+  z-index: 2;
+}
+
+.projectDetailHeroImage {
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   Frosted overlay panel — centered, translucent-white, blurred behind so
+   the tree canopy still reads through it, matching the reference image.
+   ========================================================================== */
+
+.projectDetailHeroOverlayPanel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: min(640px, 82%);
+  padding: 2rem 2.5rem;
+
+  border-radius: 18px;
+
+  /* Frosted / blurred background */
+  background: #ffffff78;
+  backdrop-filter: blur(8px);
+  /* -webkit-backdrop-filter: blur(5px); */
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+
+  z-index: 2;
+}
+
+.projectDetailHeroTitle {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #14140f;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   Breadcrumb
+   ========================================================================== */
+
+.projectDetailHeroBreadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.projectDetailHeroBreadcrumbItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.projectDetailHeroCrumb {
+  color: #4a4a40;
+  text-decoration: none;
+}
+
+.projectDetailHeroCrumb:hover {
+  text-decoration: underline;
+}
+
+.projectDetailHeroCrumb.isCurrent {
+  color: #009652;
+}
+
+.projectDetailHeroCrumbSep {
+  color: #8b8b7e;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .projectDetailHeroOverlayPanel {
+    width: 90%;
+    padding: 1.25rem 1.25rem;
+  }
+
+  .projectDetailHeroBreadcrumb {
+    font-size: 0.75rem;
+  }
+}
+
+
+
+
+
+
+
+
+.projectDetailStatsSection {
+  background: #ffffff;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem);
+}
+
+/* ==========================================================================
+   Card shell
+   ========================================================================== */
+
+.projectDetailStatsCard {
+  position: relative;
+  max-width: 1600px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  min-height: 300px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #eef2e2;
+  box-shadow: 0 24px 60px rgba(20, 30, 10, 0.1);
+}
+
+.projectDetailStatsBody {
+  position: relative;
+  z-index: 2;
+  padding: clamp(1.5rem, 3vw, 2.75rem) clamp(1.5rem, 3vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+/* ==========================================================================
+   Heading row — badge, title, trailing rule
+   ========================================================================== */
+
+.projectDetailStatsHeading {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.projectDetailStatsBadge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid #7a8a5f;
+  color: #3f5325;
+}
+
+.projectDetailStatsTitle {
+  margin: 0;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  font-weight: 800;
+  color: #2f4318;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.projectDetailStatsDot {
+  color: #7a8a5f;
+  padding: 0 0.15rem;
+}
+
+.projectDetailStatsRule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(to right, #c7d0b4, transparent);
+  min-width: 40px;
+}
+
+/* ==========================================================================
+   Description
+   ========================================================================== */
+
+.projectDetailStatsDescription {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: #55654a;
+}
+
+/* ==========================================================================
+   Stat pills
+   ========================================================================== */
+
+.projectDetailStatsRow {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 0.5rem;
+  border-radius: 999px;
+  background: #cfe0ac;
+  max-width: 100%;
+}
+
+@media(max-width:768px){
+  .projectDetailStatsRow{
+    border-radius: 5px;
+  }
+}
+
+.projectDetailStatsRowSecondary {
+  background: #cfe0ac;
+  width: 80%;
+  margin-left: 100px;
+}
+
+@media(max-width:768px){
+    .projectDetailStatsRowSecondary{
+    margin-left: 0;
+  }
+}
+
+.projectDetailStatPill {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.4rem 1rem 0.4rem 0.4rem;
+}
+
+.projectDetailStatIcon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #3f5325;
+}
+
+.projectDetailStatText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.projectDetailStatLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4d5c3c;
+}
+
+.projectDetailStatValue {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1c2412;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Right media panel — plain image, the wave edge is already baked into
+   the PNG artwork so no clip-path/mask is applied here.
+   ========================================================================== */
+
+.projectDetailStatsMedia {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.projectDetailStatsMediaImage {
+  object-fit: contain;
+  object-position: left center;
+  height: auto;
+}
+
+/* ==========================================================================
+   Bottom-left decorative wave image — positioned to peek out past the
+   card's left edge, sitting behind the content (z-index below body).
+   ========================================================================== */
+
+.projectDetailStatsBlobBottom {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 220px;
+  height: auto;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .projectDetailStatsCard {
+    grid-template-columns: 1fr;
+  }
+
+  .projectDetailStatsMedia {
+    display: none;
+  }
+
+  .projectDetailStatsHeading {
+    flex-wrap: wrap;
+  }
+
+  .projectDetailStatsTitle {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 560px) {
+  .projectDetailStatsRow,
+  .projectDetailStatsRowSecondary {
+    width: 100%;
+  }
+
+  .projectDetailStatPill {
+    flex: 1 1 100%;
+  }
+
+  .projectDetailStatsBlobBottom {
+    width: 160px;
+  }
+}
+
+
+.projectDetailGallerySection {
+  background: #ffffff;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
+}
+
+.projectDetailGalleryTitle {
+  margin: 0 0 1.75rem;
+  text-align: center;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 800;
+  color: #2f4318;
+}
+
+.projectDetailGalleryCell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #e5e5dc;
+}
+
+.projectDetailGalleryImage {
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   Desktop — 3 columns x 2 rows, 5 slots. Center column spans both rows.
+   All 5 data-slot cells are placed explicitly so none are left to grid
+   auto-placement (which is what caused images to "disappear" behind
+   each other before).
+   ========================================================================== */
+
+.projectDetailGalleryGrid {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 1rem;
+  height: clamp(520px, 62vw, 780px);
+}
+
+.projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1; }
+.projectDetailGalleryCell[data-slot="1"] { grid-column: 2; grid-row: 1 / span 2; }
+.projectDetailGalleryCell[data-slot="2"] { grid-column: 3; grid-row: 1; }
+.projectDetailGalleryCell[data-slot="3"] { grid-column: 1; grid-row: 2; }
+.projectDetailGalleryCell[data-slot="4"] { grid-column: 3; grid-row: 2; }
+
+/* ==========================================================================
+   Tablet — 2 columns x 3 rows, 6 cells total. All 5 images are placed
+   explicitly so every cell is filled with no gaps and nothing hidden;
+   one column keeps a tall spanning cell for visual variety.
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .projectDetailGalleryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 220px);
+    height: auto;
+  }
+
+  .projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1; }
+  .projectDetailGalleryCell[data-slot="1"] { grid-column: 2; grid-row: 1 / span 2; }
+  .projectDetailGalleryCell[data-slot="2"] { grid-column: 1; grid-row: 2; }
+  .projectDetailGalleryCell[data-slot="3"] { grid-column: 1; grid-row: 3; }
+  .projectDetailGalleryCell[data-slot="4"] { grid-column: 2; grid-row: 3; }
+}
+
+/* ==========================================================================
+   Mobile — single column, every image stacked in its own full-width row.
+   All 5 slots stay visible; none are dropped.
+   ========================================================================== */
+
+@media (max-width: 560px) {
+  .projectDetailGalleryGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, 240px);
+  }
+
+  .projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1; }
+  .projectDetailGalleryCell[data-slot="1"] { grid-column: 1; grid-row: 2; }
+  .projectDetailGalleryCell[data-slot="2"] { grid-column: 1; grid-row: 3; }
+  .projectDetailGalleryCell[data-slot="3"] { grid-column: 1; grid-row: 4; }
+  .projectDetailGalleryCell[data-slot="4"] { grid-column: 1; grid-row: 5; }
+}
+
+
+
+
+.projectDetailDesignApproachSection {
+  background: #f4f1e8;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 5vw, 3rem);
+}
+
+/* ==========================================================================
+   Layout — flexbox, not grid. Both columns get `flex: 1`. When the media
+   column simply isn't rendered (see the `hasImage` check in the JS —
+   that's the only place this is decided now), the text column is the
+   only flex item left in the row and naturally grows to fill 100% of
+   the available width. No CSS :has() or extra classes are involved.
+   ========================================================================== */
+
+.projectDetailDesignApproachInner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+/* ==========================================================================
+   Media column — framed photo + floating caption pill overlapping the
+   bottom-right corner, matching the reference.
+   ========================================================================== */
+
+.projectDetailDesignApproachMediaCol {
+  position: relative;
+  flex: 1 1 420px;
+}
+
+.projectDetailDesignApproachImageFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3.4;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #e5e5dc;
+  border: 6px solid #f4f1e8;
+  box-shadow: 0 20px 45px rgba(20, 20, 15, 0.12);
+}
+
+.projectDetailDesignApproachImage {
+  object-fit: cover;
+}
+
+.projectDetailDesignApproachCaption {
+  position: absolute;
+  right: clamp(-1rem, -2vw, -0.5rem);
+  bottom: clamp(-1.25rem, -2.5vw, -0.75rem);
+  background: #faf8f1;
+  border-radius: 10px;
+  padding: 0.85rem 1.4rem;
+  box-shadow: 0 12px 28px rgba(20, 20, 15, 0.14);
+}
+
+.projectDetailDesignApproachCaption span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #14140f;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Text column — flex: 1 with no max-width, so it stretches fully to
+   whatever space is available: half the row alongside an image, or the
+   entire row when the image is absent.
+   ========================================================================== */
+
+.projectDetailDesignApproachTextCol {
+  flex: 1 1 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.projectDetailDesignApproachTitle {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 800;
+  color: #1a9c5b;
+}
+
+.projectDetailDesignApproachParagraph {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #1c1c14;
+}
+
+/* ==========================================================================
+   Responsive — below this width, flex-wrap has already stacked the two
+   columns; just cap the media column's width so it doesn't stretch too
+   wide on tablet.
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .projectDetailDesignApproachMediaCol {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .projectDetailDesignApproachCaption {
+    right: 0.75rem;
+    bottom: -1rem;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+.projectDetailProcessSection {
+  background: #faf8f1;
+}
+
+/* ==========================================================================
+   Row — full-bleed background band, content constrained + centered
+   inside it. Alternating rows get a soft sage background.
+   ========================================================================== */
+
+.projectDetailProcessRow {
+  background: #faf8f1;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 3rem);
+}
+
+.projectDetailProcessRow.isAlt {
+  background: #ecf0e6;
+}
+
+.projectDetailProcessInner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-evenly;
+  gap: clamp(1.5rem, 5vw, 4rem);
+}
+
+/* ==========================================================================
+   Left column — serif number + bold title
+   ========================================================================== */
+
+.projectDetailProcessHeadingCol {
+  flex: 0 0 auto;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.projectDetailProcessNumber {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1;
+  color: #14140f;
+}
+
+.projectDetailProcessTitle {
+  margin: 0;
+  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+  font-weight: 800;
+  color: #1a9c5b;
+}
+
+/* ==========================================================================
+   Right column — description
+   ========================================================================== */
+
+.projectDetailProcessDescription {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #1c1c14;
+  max-width: 62ch;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 700px) {
+  .projectDetailProcessHeadingCol {
+    width: 100%;
+  }
+
+  .projectDetailProcessInner {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+
+
+
+
+
+
+
+.projectDetailKeyHighlightsSection {
+  background: #ffffff;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
+}
+
+/* ==========================================================================
+   Card — cream background, green rounded border, matching the reference.
+   ========================================================================== */
+
+.projectDetailKeyHighlightsCard {
+  max-width: 1600px;
+  margin: 0 auto;
+  border: 2px solid #1a9c5b;
+  border-radius: 20px;
+  background: #f4f1e8;
+  padding: clamp(1.75rem, 4vw, 3rem) clamp(1.75rem, 4vw, 3.5rem);
+}
+
+.projectDetailKeyHighlightsTitle {
+  margin: 0 0 2.5rem;
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+  font-weight: 800;
+  color: #1a9c5b;
+}
+
+/* ==========================================================================
+   Grid — 3 columns x 2 rows on desktop
+   ========================================================================== */
+
+.projectDetailKeyHighlightsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem 2rem;
+}
+
+.projectDetailKeyHighlightsItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.projectDetailKeyHighlightsBullet {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.15rem;
+  color: #8b8b6f;
+}
+
+.projectDetailKeyHighlightsText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.projectDetailKeyHighlightsItemTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #14140f;
+}
+
+.projectDetailKeyHighlightsItemDescription {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #6b6b5f;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .projectDetailKeyHighlightsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .projectDetailKeyHighlightsGrid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+}
+
+
+
+
+
+
+.projectDetailWhyChooseUsSection {
+  background: #ffffff;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
+}
+
+/* ==========================================================================
+   Card — dark forest-green background, rounded corners.
+   ========================================================================== */
+
+.projectDetailWhyChooseUsCard {
+  max-width: 1050px;
+  margin: 0 auto;
+  border-radius: 24px;
+  background: #1c2e1d;
+  padding: clamp(2rem, 5vw, 3.5rem) clamp(1.75rem, 6vw, 4rem);
+}
+
+.projectDetailWhyChooseUsTitle {
+  margin: 0 0 2.75rem;
+  text-align: center;
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #faf8f1;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   List
+   ========================================================================== */
+
+.projectDetailWhyChooseUsList {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.projectDetailWhyChooseUsItem {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  column-gap: 0.75rem;
+}
+
+.projectDetailWhyChooseUsNumber {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.6rem, 2.6vw, 2rem);
+  font-weight: 400;
+  line-height: 1.3;
+  color: #a9b98a;
+}
+
+.projectDetailWhyChooseUsText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.projectDetailWhyChooseUsItemTitle {
+  margin: 0;
+  font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+  font-weight: 700;
+  color: #faf8f1;
+}
+
+.projectDetailWhyChooseUsItemDescription {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #d7ddc9;
+  max-width: 62ch;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 560px) {
+  .projectDetailWhyChooseUsItem {
+    grid-template-columns: 40px 1fr;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.projectDetailRelatedSection {
+  background: #ffffff;
+  padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(3rem, 6vw, 5rem);
+  overflow: hidden;
+}
+
+.projectDetailRelatedTitle {
+  margin: 0 0 1.75rem;
+  padding: 0 clamp(1.25rem, 5vw, 3rem);
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+  font-weight: 800;
+  color: #14140f;
+}
+
+.projectDetailRelatedTitleAccent {
+  color: #5a6b2f;
+}
+
+/* ==========================================================================
+   Viewport — clips the track; track itself may be wider than this when
+   the marquee is active.
+   ========================================================================== */
+
+.projectDetailRelatedViewport {
+  width: 100%;
+  overflow: hidden;
+  padding: 0 clamp(1.25rem, 5vw, 3rem);
+}
+
+.projectDetailRelatedTrack {
+  display: flex;
+  gap: 1.25rem;
+  width: max-content;
+}
+
+/* ==========================================================================
+   Marquee — continuous, non-pausing infinite loop. Only applied when
+   `.isMarquee` is present (i.e. the cards actually overflow the
+   viewport); otherwise the track just renders as a normal static row.
+   The track is rendered with the card list duplicated once, so
+   translateX(-50%) lands exactly at the start of the second copy,
+   making the loop seamless with no visible jump or reset.
+   ========================================================================== */
+
+.projectDetailRelatedTrack.isMarquee {
+  animation: projectDetailRelatedMarquee 30s linear infinite;
+}
+
+@keyframes projectDetailRelatedMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projectDetailRelatedTrack.isMarquee {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   Card
+   ========================================================================== */
+
+.projectDetailRelatedCard {
+  position: relative;
+  flex: 0 0 auto;
+  width: 280px;
+  height: 400px;
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  background: #e5e5dc;
+}
+
+.projectDetailRelatedCardImage {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.projectDetailRelatedCard:hover .projectDetailRelatedCardImage {
+  transform: scale(1.06);
+}
+
+.projectDetailRelatedCardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 8, 0.85) 0%,
+    rgba(10, 10, 8, 0.35) 35%,
+    rgba(10, 10, 8, 0) 65%
+  );
+  pointer-events: none;
+}
+
+.projectDetailRelatedCardCaption {
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.projectDetailRelatedCardLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.projectDetailRelatedCardTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .projectDetailRelatedCard {
+    width: 220px;
+    height: 320px;
   }
 }
