@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 const FALLBACK_IMAGE = "/images/product-detail-common-img.png";
-const SHUFFLE_INTERVAL_MS = 7000;
+const SHUFFLE_INTERVAL_MS = 10000;
 
 const GRID_PATTERN = [
   { colSpan: 2, rowSpan: 2 },
@@ -530,12 +530,12 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
             selected={categorySlugs}
             onToggle={toggleCategory}
           />
-          <SimpleCheckFilter
+          {/* <SimpleCheckFilter
             label="Installation Type"
             options={filterOptions.installation_types}
             selected={installationTypeSlugs}
             onToggle={toggleInstallationType}
-          />
+          /> */}
           <SimpleCheckFilter
             label="Location"
             options={filterOptions.locations}

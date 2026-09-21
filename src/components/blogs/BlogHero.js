@@ -5,7 +5,21 @@ import Link from "next/link";
 
 export default function BlogHero() {
   return (
-    <section className="py-12 md:py-20 px-4 md:px-6">
+    <section className="py-12 px-4 md:px-6">
+
+              <div className="breadcrumb container">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/blogs" className="breadcrumb-item active">
+    Blogs
+  </Link>
+</div>
+
+
       <div className="livingwall-wrap container mx-auto">
 
         {/* decorative "stacked card" peeking behind the text card */}

@@ -9,7 +9,8 @@ import NatureShowcaseSaga from "./NatureShowcase/saga";
 import BlogDetailSaga from "./BlogDetail/saga";
 import ProductDetailSaga from "./ProductDetail/saga";
 import PortfolioSaga from "./Portfolio/saga";
-import GallerySaga from "./Gallery/saga";      
+import GallerySaga from "./Gallery/saga";
+import TeamMembersSaga from "./TeamMembers/saga";      
 
 export default function* rootSaga() {
   yield all([
@@ -23,5 +24,6 @@ export default function* rootSaga() {
     ProductDetailSaga(),
     PortfolioSaga(),
     GallerySaga(), 
+    TeamMembersSaga(),
   ]);
 }

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { MessageCircle, ArrowRight, Send } from 'lucide-react';
+import Link from "next/link";
+
 
 /**
  * ContactSection
@@ -42,7 +44,26 @@ export default function ContactSection() {
   };
 
   return (
-    <section className="relative w-full min-h-[720px] flex items-center justify-center bg-[#F7F6F1] px-6 py-20 overflow-hidden">
+
+    <>
+
+                  <div className="breadcrumb container">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/contact" className="breadcrumb-item active">
+    Contact Us
+  </Link>
+</div>
+
+
+    <section className="relative w-full contact-us-page-form-section flex items-center justify-center bg-[#F7F6F1] px-6 py-20 overflow-hidden">
+      
+
+      
       {/* ambient botanical glow */}
       <div className="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#8A9A5B]/10 blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 right-0 w-[28rem] h-[28rem] rounded-full bg-[#4B5320]/10 blur-3xl" />
@@ -178,6 +199,8 @@ export default function ContactSection() {
       </div>
 
     </section>
+
+    </>
   );
 }
 

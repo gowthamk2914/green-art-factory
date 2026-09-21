@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 /* One entry per tab. Replace every image/video path with your real
    files in /public. `video` can point to the same clip reused across
@@ -145,6 +146,18 @@ export default function AboutStories() {
   return (
     <section className="gaf-about-section">
       <h1 className="gaf-about-title">About Us</h1>
+
+<div className="breadcrumb">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/about" className="breadcrumb-item active">
+    About Us
+  </Link>
+</div>
 
       <div className="gaf-about-card">
         <div className="gaf-about-media" key={`${activeTab.id}-media`}>

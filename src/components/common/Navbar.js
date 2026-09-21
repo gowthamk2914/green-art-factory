@@ -15,11 +15,12 @@ import { switchToLanguage, getCurrentLanguage } from "./GoogleTranslate";
 // row and the mobile slide-in menu, so adding a link only means editing
 // this array once.
 const NAV_LINKS = [
+  { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/products-list", label: "Products" },
-  { href: "/blogs", label: "Blogs" },
   { href: "/services", label: "Services" },
+  { href: "/blogs", label: "Blogs" },
   { href: "/careers", label: "Careers" },
   { href: "/contact", label: "Contact us" },
 ];
@@ -70,7 +71,7 @@ const Navbar = () => {
               width={110}
               height={80}
               priority
-              className="h-auto w-[90px] xl:w-[110px]"
+              className="h-auto w-[90px] xl:w-[130px]"
             />
           </Link>
 

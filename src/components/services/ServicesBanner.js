@@ -28,7 +28,18 @@ export default function ServicesBanner() {
       </div>
 
       <div className="servicesBannerContent">
-        <span className="servicesBannerEyebrow">Our Services</span>
+        {/* <span className="servicesBannerEyebrow">Our Services</span> */}
+        <div className="breadcrumb">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/services" className="breadcrumb-item active">
+    Services
+  </Link>
+</div>
 
         <h1 className="servicesBannerTitle">
           We Bring Nature&rsquo;s Balance To Every Space.

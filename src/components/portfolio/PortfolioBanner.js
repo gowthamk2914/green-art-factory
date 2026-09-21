@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useSelector } from "react-redux";
+import Link from "next/link";
 
 const DEFAULT_TITLE =
   "Creating Living Spaces Inspired By Nature, Designed For Modern Living";
@@ -44,6 +45,18 @@ export default function PortfolioBanner({
       <div className="portfolio-banner-container">
         <div className="portfolio-banner-card">
           <span className="portfolio-banner-eyebrow">{finalEyebrow}</span>
+
+          <div className="breadcrumb">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/portfolio" className="breadcrumb-item active">
+    Portfolio
+  </Link>
+</div>
 
           <h1 className="portfolio-banner-title">{finalTitle}</h1>
 

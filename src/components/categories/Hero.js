@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useSelector } from "react-redux";
 
 export default function Hero() {
@@ -24,6 +25,18 @@ export default function Hero() {
         <h2 className="gaf-categories-heading">
           {section.title || "Products"}
         </h2>
+
+        <div className="breadcrumb">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/products-list" className="breadcrumb-item active">
+    Our Products
+  </Link>
+</div>
 
         <p className="gaf-categories-subtext">
           {section.description ||

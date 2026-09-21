@@ -1,19 +1,18 @@
+"use client";
+
+import { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 
-/* Replace every team photo with your real one in /public. */
-const TEAM = [
-  { name: "John Smith", role: "Company CEO", image: "/images/about-team-1.png" },
-  { name: "David Johnson", role: "Co-Founder", image: "/images/about-team-2.png" },
-  { name: "Mary Johnson", role: "Property Managers", image: "/images/about-team-3.png" },
-  { name: "Patricia Davis", role: "Estate Consultant", image: "/images/about-team-4.png" },
-  { name: "Patricia Davis", role: "Estate Consultant", image: "/images/about-team-3.png" },
-];
+// Adjust this path to wherever your teamMembers/actions.js lives
+import { getTeamMembersRequest } from "../../redux/TeamMembers/actions";
 
-/* Your 6 wave-shape assets: 3 colors × up/down. File names below are
-   guesses — rename these to match whatever you actually saved them as
-   in /public/images/. */
+/* Your 6 wave-shape assets: 3 colors × up/down. */
 const COLORS = ["peach", "pink", "blue"];
 const DIRECTIONS = ["up", "down"];
+
+const SECONDS_PER_CARD = 6; // same speed as before (30s / 5 cards)
+const SECONDS_PER_CARD_MOBILE = 4.4;
 
 function getWaveVariant(index) {
   const color = COLORS[index % COLORS.length];
@@ -30,12 +29,8 @@ function TeamCard({ member, index }) {
   return (
     <div className={`gaf-team-card gaf-team-card--${wave.direction}`}>
       <div className="gaf-team-photo-wrap">
-        {/* The colored wave shape itself, sitting behind the photo */}
         <img src={wave.src} alt="" aria-hidden="true" className="gaf-team-wave-bg" />
 
-        {/* The portrait, masked to the exact same PNG shape so it only
-            shows through the wave silhouette — no hand-coded SVG path,
-            it uses your actual asset's alpha shape directly. */}
         <div
           className="gaf-team-photo-mask"
           style={{
@@ -60,12 +55,46 @@ function TeamCard({ member, index }) {
 }
 
 export default function TeamMembers() {
-  // Rendered 4x back-to-back. With only 2 copies, any screen wider than
-  // roughly half the track's total width runs out of duplicated cards
-  // before the animation reaches its wrap point — which is exactly the
-  // "blank space near the end of the loop" symptom. 4 copies leaves a
-  // much bigger content buffer ahead of the visible window at all times.
-  const loopedTeam = [...TEAM, ...TEAM, ...TEAM, ...TEAM];
+  const dispatch = useDispatch();
+
+  // `teamMembers` must match the key used in your rootReducer
+const { data, loading, error } = useSelector((state) => state.TeamMembers);
+
+
+  useEffect(() => {
+    dispatch(getTeamMembersRequest());
+  }, [dispatch]);
+
+  /* Map API fields (designation -> role) and build one "set" of cards.
+     If the API returns only a few people, the set is padded (min 6, even
+     count) so one set fills a wide screen and the up/down pattern stays
+     seamless at the loop point. */
+  const baseSet = useMemo(() => {
+    const base = (data || []).map((m) => ({
+      id: m.id,
+      name: m.name,
+      role: m.designation,
+      image: m.image,
+    }));
+    if (base.length === 0) return [];
+
+    const set = [...base];
+    while (set.length < 6 || set.length % 2 !== 0) {
+      set.push(base[set.length % base.length]);
+    }
+    return set;
+  }, [data]);
+
+  // 4 back-to-back copies (keeps the -25% keyframe valid)
+  const loopedTeam = useMemo(
+    () => [...baseSet, ...baseSet, ...baseSet, ...baseSet],
+    [baseSet]
+  );
+
+  const trackStyle = {
+    "--gaf-duration": `${baseSet.length * SECONDS_PER_CARD}s`,
+    "--gaf-duration-mobile": `${baseSet.length * SECONDS_PER_CARD_MOBILE}s`,
+  };
 
   return (
     <section className="gaf-team-section">
@@ -76,13 +105,36 @@ export default function TeamMembers() {
         passion for helping clients achieve their real estate goals.
       </p>
 
-      <div className="gaf-team-marquee">
-        <div className="gaf-team-track">
-          {loopedTeam.map((member, i) => (
-            <TeamCard key={`${member.name}-${i}`} member={member} index={i} />
-          ))}
+      {loading && baseSet.length === 0 && (
+        <p className="gaf-team-status" role="status">Loading our team…</p>
+      )}
+
+      {error && baseSet.length === 0 && (
+        <div className="gaf-team-status" role="alert">
+          <p>We couldn't load the team. {error}</p>
+          <button
+            type="button"
+            className="gaf-team-retry"
+            onClick={() => dispatch(getTeamMembersRequest())}
+          >
+            Try again
+          </button>
         </div>
-      </div>
+      )}
+
+      {baseSet.length > 0 && (
+        <div className="gaf-team-marquee">
+          <div className="gaf-team-track" style={trackStyle}>
+            {loopedTeam.map((member, i) => (
+              <TeamCard
+                key={`${member.id}-${i}`}
+                member={member}
+                index={i % baseSet.length}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

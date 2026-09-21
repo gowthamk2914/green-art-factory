@@ -10,7 +10,7 @@ const HERO_TITLE = "ARTIFICIAL TREE INSTALLATION";
 
 const BREADCRUMB_ITEMS = [
   { label: "Home", href: "/" },
-  { label: "Interior Projects", href: "/portfolio?category=interior-projects" },
+  { label: "Projects", href: "/portfolio" },
   { label: "Artificial tree installation", href: null },
 ];
 

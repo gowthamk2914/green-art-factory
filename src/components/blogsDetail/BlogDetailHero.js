@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
+import Link from "next/link";
+
 
 import { getBlogDetailRequest } from "../../redux/BlogDetail/actions";
 
@@ -73,6 +75,25 @@ export default function BlogDetailHero({ slug: slugProp }) {
   return (
     <section className="blog-hero-section">
       <div className="container">
+                <div className="breadcrumb">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/blogs" className="breadcrumb-item">
+    Blogs
+  </Link>
+
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="#" className="breadcrumb-item active">
+    Blog Detail
+  </Link>
+</div>
+
         <p className="blog-hero-meta">
           {date}
           {readTime && (

@@ -10,6 +10,7 @@ import BlogDetailReducer from "./BlogDetail/reducer";
 import ProductDetailReducer from "./ProductDetail/reducer"; 
 import PortfolioReducer from "./Portfolio/reducer";
 import GalleryReducer from "./Gallery/reducer";
+import TeamMembersReducer from "./TeamMembers/reducer";
 
 const rootReducer = combineReducers({
   Products: ProductsReducer,
@@ -22,6 +23,8 @@ const rootReducer = combineReducers({
   ProductDetail: ProductDetailReducer, 
   Portfolio: PortfolioReducer, 
   Gallery: GalleryReducer,
+  TeamMembers: TeamMembersReducer,
+
 });
 
 export default rootReducer;
