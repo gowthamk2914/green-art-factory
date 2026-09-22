@@ -1,8 +1,13 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { UploadCloud, ArrowUpRight, X, CheckCircle2 } from 'lucide-react';
 
+import {
+  submitApplicationRequest,
+  resetApplicationStatus,
+} from '../../redux/ApplyForm/actions';
 
 const HIRING_STEPS = [
   { step: 1, title: 'Application Review', meta: 'Within 2 weeks' },
@@ -23,14 +28,54 @@ const initialValues = {
   coverLetter: '',
 };
 
+// Maps the API's snake_case field names back onto our camelCase form state
+const API_FIELD_TO_LOCAL = {
+  full_name: 'fullName',
+  email: 'email',
+  phone: 'phone',
+  position: 'position',
+  portfolio: 'portfolio',
+  cover_letter: 'coverLetter',
+  resume: 'resume',
+  consent: 'agreed',
+};
+
 export default function ApplyForm() {
+  const dispatch = useDispatch();
+
+  // `ApplyForm` must match the key used in your rootReducer
+  const { loading, success, message, fieldErrors } = useSelector(
+    (state) => state.ApplyForm
+  );
+
   const [values, setValues] = useState(initialValues);
   const [file, setFile] = useState(null);
   const [agreed, setAgreed] = useState(false);
   const [errors, setErrors] = useState({});
   const [isDragging, setIsDragging] = useState(false);
-  const [status, setStatus] = useState('idle'); // idle | submitting | success
   const fileInputRef = useRef(null);
+
+  // Merge server-side field errors (from a failed submit) into the
+  // same `errors` object the client-side validation uses, so both
+  // render through the existing <Field error={...}> UI.
+  useEffect(() => {
+    if (!fieldErrors || Object.keys(fieldErrors).length === 0) return;
+
+    const mapped = {};
+    Object.entries(fieldErrors).forEach(([apiField, messages]) => {
+      const localField = API_FIELD_TO_LOCAL[apiField] || apiField;
+      mapped[localField] = Array.isArray(messages) ? messages[0] : messages;
+    });
+
+    setErrors((prev) => ({ ...prev, ...mapped }));
+  }, [fieldErrors]);
+
+  // Reset the redux submission state if the user leaves the page mid-flow
+  useEffect(() => {
+    return () => {
+      dispatch(resetApplicationStatus());
+    };
+  }, [dispatch]);
 
   const handleChange = (field) => (e) => {
     setValues((v) => ({ ...v, [field]: e.target.value }));
@@ -101,16 +146,22 @@ export default function ApplyForm() {
     e.preventDefault();
     if (!validate()) return;
 
-    setStatus('submitting');
-    // Simulated request — replace with your real submit call (fetch/axios/etc).
-    setTimeout(() => {
-      setStatus('success');
-    }, 1400);
+    const formData = new FormData();
+    formData.append('full_name', values.fullName);
+    formData.append('email', values.email);
+    formData.append('phone', values.phone);
+    formData.append('position', values.position);
+    if (values.portfolio) formData.append('portfolio', values.portfolio);
+    if (values.coverLetter) formData.append('cover_letter', values.coverLetter);
+    if (file) formData.append('resume', file);
+    formData.append('consent', agreed ? '1' : '0');
+
+    dispatch(submitApplicationRequest(formData));
   };
 
-  if (status === 'success') {
+  if (success) {
     return (
-      <section className="apl-section">
+      <section id="apply" className="apl-section">
         <div className="apl-success">
           <CheckCircle2 className="apl-success-icon" />
           <h2 className="apl-success-title">Application Sent!</h2>
@@ -124,7 +175,7 @@ export default function ApplyForm() {
   }
 
   return (
-    <section className="apl-section">
+    <section id="apply" className="apl-section">
       <div className="apl-grid">
         {/* LEFT: info panel */}
         <div className="apl-info-card">
@@ -158,6 +209,10 @@ export default function ApplyForm() {
 
         {/* RIGHT: form */}
         <form className="apl-form" onSubmit={handleSubmit} noValidate>
+          {message && !success && Object.keys(fieldErrors || {}).length === 0 && (
+            <p className="apl-error-text" role="alert">{message}</p>
+          )}
+
           <div className="apl-row">
             <Field
               label="Full Name"
@@ -274,12 +329,12 @@ export default function ApplyForm() {
             {errors.agreed && <span className="apl-error-text">{errors.agreed}</span>}
 
             <div className="apl-submit-row">
-              <button type="submit" className="apl-submit" disabled={status === 'submitting'}>
+              <button type="submit" className="apl-submit" disabled={loading}>
                 <span className="apl-submit-shine" />
                 <span className="apl-submit-text">
-                  {status === 'submitting' ? 'Submitting...' : 'Submit Application'}
+                  {loading ? 'Submitting...' : 'Submit Application'}
                 </span>
-                {status !== 'submitting' && <ArrowUpRight size={16} />}
+                {!loading && <ArrowUpRight size={16} />}
               </button>
               <p className="apl-footnote">We respond to every application. Thank you for your interest.</p>
             </div>

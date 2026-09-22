@@ -1,61 +1,69 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { MapPin, Clock, ArrowRight } from 'lucide-react';
 
+import { getCareersRequest } from '../../redux/Opportunities/actions';
+
 const CORNER_IMAGE_SRC = '/images/card-corner-leaf.png';
+const ALL_FILTER = 'All Departments';
 
-const DEPARTMENTS = ['All Departments', 'Landscape Design', 'Botanical Care', 'Operations'];
-
-const JOBS = [
-  {
-    id: 1,
-    department: 'Landscape Design',
-    title: 'Senior Landscape Architect',
-    location: 'Dubai, UAE',
-    type: 'Full-Time',
-    description:
-      'Lead the design and execution of premium botanical installations for luxury commercial and residential clients.',
-  },
-  {
-    id: 2,
-    department: 'Botanical Care',
-    title: 'Horticulture Specialist',
-    location: 'Tamilnadu, India',
-    type: 'Full-Time',
-    description:
-      'Maintain and nurture our signature indoor green spaces, ensuring optimal health and aesthetic perfection of exotic plants.',
-  },
-  {
-    id: 3,
-    department: 'Operations',
-    title: 'Project Manager',
-    location: 'Remote / Hybrid',
-    type: 'Full-Time',
-    description:
-      'Coordinate complex landscaping installations, liaising between designers, clients, and on-site horticultural teams.',
-  },
-  {
-    id: 4,
-    department: 'Studio',
-    title: 'Botanical Photographer',
-    location: 'Dubai, UAE',
-    type: 'Part-Time',
-    description:
-      'Capture the essence of our living designs for editorial features and premium portfolio presentations.',
-  },
-];
-
-function getJobsForFilter(dept) {
-  if (dept === 'All Departments') return JOBS;
-  return JOBS.filter((job) => job.department === dept);
+function getJobsForFilter(jobs, dept) {
+  if (dept === ALL_FILTER) return jobs;
+  return jobs.filter((job) => job.department === dept);
 }
 
 export default function Opportunities() {
-  const [activeFilter, setActiveFilter] = useState('All Departments');
-  const [displayedJobs, setDisplayedJobs] = useState(() => getJobsForFilter('All Departments'));
+  const dispatch = useDispatch();
+
+  // `Careers` must match the key used in your rootReducer
+  const { data, loading, error } = useSelector((state) => state.Opportunities);
+
+  useEffect(() => {
+    dispatch(getCareersRequest());
+  }, [dispatch]);
+
+  // Map API fields to the shape the card markup expects, and drop
+  // anything the API has flagged inactive (status: false).
+  const jobs = useMemo(() => {
+    return (data || [])
+      .filter((job) => job.status)
+      .map((job) => ({
+        id: job.id,
+        slug: job.slug,
+        department: job.category,
+        title: job.title,
+        location: job.location,
+        type: job.job_type,
+        description: job.description,
+        applyUrl: job.apply_url,
+      }));
+  }, [data]);
+
+  // Filter chips are built from whatever categories actually come back,
+  // so a new department added in the CMS shows up here automatically.
+  const departments = useMemo(() => {
+    const unique = Array.from(new Set(jobs.map((job) => job.department))).filter(Boolean);
+    return [ALL_FILTER, ...unique];
+  }, [jobs]);
+
+  const [activeFilter, setActiveFilter] = useState(ALL_FILTER);
+  const [displayedJobs, setDisplayedJobs] = useState([]);
   const [isLeaving, setIsLeaving] = useState(false);
   const pendingFilterRef = useRef(null);
+
+  // Keep the visible list (and the active filter, if it no longer
+  // exists) in sync once the jobs actually arrive from the API.
+  useEffect(() => {
+    if (!departments.includes(activeFilter)) {
+      setActiveFilter(ALL_FILTER);
+      setDisplayedJobs(jobs);
+      return;
+    }
+    setDisplayedJobs(getJobsForFilter(jobs, activeFilter));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobs]);
 
   const headerRef = useRef(null);
   const [isHeaderVisible, setIsHeaderVisible] = useState(false);
@@ -92,7 +100,7 @@ export default function Opportunities() {
 
     if (prefersReducedMotion) {
       setActiveFilter(dept);
-      setDisplayedJobs(getJobsForFilter(dept));
+      setDisplayedJobs(getJobsForFilter(jobs, dept));
       return;
     }
 
@@ -105,13 +113,13 @@ export default function Opportunities() {
     window.setTimeout(() => {
       const nextDept = pendingFilterRef.current;
       setActiveFilter(nextDept);
-      setDisplayedJobs(getJobsForFilter(nextDept));
+      setDisplayedJobs(getJobsForFilter(jobs, nextDept));
       setIsLeaving(false);
     }, 260);
   };
 
   return (
-    <section className="ops-section">
+    <section id="open-positions" className="ops-section">
       <div
         ref={headerRef}
         className={`ops-header ${isHeaderVisible ? 'ops-header--visible' : ''}`}
@@ -120,7 +128,7 @@ export default function Opportunities() {
         <p className="ops-subtitle">Discover where your talents can flourish.</p>
 
         <div className="ops-filters">
-          {DEPARTMENTS.map((dept, i) => (
+          {departments.map((dept, i) => (
             <button
               key={dept}
               type="button"
@@ -134,52 +142,79 @@ export default function Opportunities() {
         </div>
       </div>
 
-      <div
-        className={`ops-grid ${isLeaving ? 'ops-grid--leaving' : ''}`}
-        key={activeFilter}
-      >
-        {displayedJobs.length === 0 ? (
-          <p className="ops-empty">No open positions in this department right now.</p>
-        ) : (
-          displayedJobs.map((job, i) => (
-            <div
-              key={job.id}
-              className="ops-card"
-              style={{ animationDelay: `${i * 90}ms` }}
-            >
-              <img
-                src={CORNER_IMAGE_SRC}
-                alt=""
-                aria-hidden="true"
-                className="ops-corner-image"
-              />
+      {loading && jobs.length === 0 && (
+        <p className="ops-empty" role="status">Loading open positions…</p>
+      )}
 
-              <div className="ops-card-content">
-                <span className="ops-department">{job.department}</span>
-                <h3 className="ops-job-title">{job.title}</h3>
+      {error && jobs.length === 0 && !loading && (
+        <div className="ops-empty" role="alert">
+          <p>We couldn't load open positions. {error}</p>
+          <button
+            type="button"
+            className="ops-filter-btn"
+            onClick={() => dispatch(getCareersRequest())}
+          >
+            Try again
+          </button>
+        </div>
+      )}
 
-                <div className="ops-meta">
-                  <span className="ops-meta-item">
-                    <MapPin size={14} />
-                    {job.location}
-                  </span>
-                  <span className="ops-meta-item">
-                    <Clock size={14} />
-                    {job.type}
-                  </span>
+      {!loading && (jobs.length > 0 || !error) && (
+        <div
+          className={`ops-grid ${isLeaving ? 'ops-grid--leaving' : ''}`}
+          key={activeFilter}
+        >
+          {displayedJobs.length === 0 ? (
+            <p className="ops-empty">No open positions in this department right now.</p>
+          ) : (
+            displayedJobs.map((job, i) => (
+              <div
+                key={job.id}
+                className="ops-card"
+                style={{ animationDelay: `${i * 90}ms` }}
+              >
+                <img
+                  src={CORNER_IMAGE_SRC}
+                  alt=""
+                  aria-hidden="true"
+                  className="ops-corner-image"
+                />
+
+                <div className="ops-card-content">
+                  <span className="ops-department">{job.department}</span>
+                  <h3 className="ops-job-title">{job.title}</h3>
+
+                  <div className="ops-meta">
+                    <span className="ops-meta-item">
+                      <MapPin size={14} />
+                      {job.location}
+                    </span>
+                    <span className="ops-meta-item">
+                      <Clock size={14} />
+                      {job.type}
+                    </span>
+                  </div>
+
+                  <p className="ops-description">{job.description}</p>
+
+                  {/* Uses the API's own apply_url when the job has one;
+                      otherwise falls back to the shared #apply section
+                      on the page, same as before. */}
+                  <a
+                    href={job.applyUrl || '#apply'}
+                    target={job.applyUrl ? '_blank' : undefined}
+                    rel={job.applyUrl ? 'noopener noreferrer' : undefined}
+                    className="ops-apply"
+                  >
+                    Apply Now
+                    <ArrowRight size={16} className="ops-apply-arrow" />
+                  </a>
                 </div>
-
-                <p className="ops-description">{job.description}</p>
-
-                <a href={`#apply-${job.id}`} className="ops-apply">
-                  Apply Now
-                  <ArrowRight size={16} className="ops-apply-arrow" />
-                </a>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            ))
+          )}
+        </div>
+      )}
     </section>
   );
 }

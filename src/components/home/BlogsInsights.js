@@ -186,13 +186,15 @@ export default function BlogsInsights() {
           natural aesthetics, and inspiring spaces designed to bring balance
           into everyday life.
         </p>
-
+        
+        <Link href="/blogs">
         <button type="button" className="gaf-blogs-cta-btn">
           Explore Our Story
           <span className="gaf-blogs-cta-icon">
             <ArrowIcon />
           </span>
         </button>
+        </Link>
 
         <div className="gaf-blogs-filter-row">
           <label className="gaf-blogs-search-pill">

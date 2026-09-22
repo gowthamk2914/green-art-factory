@@ -10,6 +10,7 @@ import { Pagination, Autoplay } from "swiper/modules";
 // Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
+import Link from "next/link";
 
 const heroSlides = [
   {
@@ -84,6 +85,8 @@ speed={2000}
                   {slide.description}
                 </p>
 
+                
+                <Link href="/products">
                 <button className="mt-10 flex items-center gap-5 rounded-full bg-[#66711E] py-2 pl-8 pr-2 text-white transition-all duration-300 hover:scale-105">
                   <span className="explore-btn-text text-[15px] font-medium">
                     Explore Products
@@ -93,6 +96,7 @@ speed={2000}
                     <FiArrowUpRight size={22} />
                   </div>
                 </button>
+                </Link>
 
                 <p className="banner-discount-text mt-28 text-[20px] text-black">
                   Checkout our new offers and discounts{" "}

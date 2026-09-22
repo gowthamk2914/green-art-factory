@@ -10,7 +10,10 @@ import BlogDetailSaga from "./BlogDetail/saga";
 import ProductDetailSaga from "./ProductDetail/saga";
 import PortfolioSaga from "./Portfolio/saga";
 import GallerySaga from "./Gallery/saga";
-import TeamMembersSaga from "./TeamMembers/saga";      
+import TeamMembersSaga from "./TeamMembers/saga"; 
+import OpportunitiesSaga from "./Opportunities/saga";     
+import ApplyFormSaga from "./ApplyForm/saga";
+
 
 export default function* rootSaga() {
   yield all([
@@ -25,5 +28,7 @@ export default function* rootSaga() {
     PortfolioSaga(),
     GallerySaga(), 
     TeamMembersSaga(),
+    OpportunitiesSaga(),
+    ApplyFormSaga(),
   ]);
 }

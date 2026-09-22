@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { FiArrowUpRight } from "react-icons/fi";
+import Link from "next/link";
 
 
 
@@ -153,7 +154,8 @@ const [activeService, setActiveService] = useState(categories[0].items[0]);
         </div>
 
         <div className="services-bottom">
-
+          
+          <Link href="/services">
           <button className="services-btn">
 
             View All Services
@@ -165,6 +167,7 @@ const [activeService, setActiveService] = useState(categories[0].items[0]);
             </span>
 
           </button>
+          </Link>
 
         </div>
 

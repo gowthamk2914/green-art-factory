@@ -11,6 +11,9 @@ import ProductDetailReducer from "./ProductDetail/reducer";
 import PortfolioReducer from "./Portfolio/reducer";
 import GalleryReducer from "./Gallery/reducer";
 import TeamMembersReducer from "./TeamMembers/reducer";
+import OpportunitiesReducer from "./Opportunities/reducer";
+import ApplyFormReducer from "./ApplyForm/reducer";
+
 
 const rootReducer = combineReducers({
   Products: ProductsReducer,
@@ -24,7 +27,8 @@ const rootReducer = combineReducers({
   Portfolio: PortfolioReducer, 
   Gallery: GalleryReducer,
   TeamMembers: TeamMembersReducer,
-
+  Opportunities: OpportunitiesReducer,
+  ApplyForm: ApplyFormReducer,
 });
 
 export default rootReducer;
