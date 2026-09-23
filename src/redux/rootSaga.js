@@ -15,6 +15,7 @@ import OpportunitiesSaga from "./Opportunities/saga";
 import ApplyFormSaga from "./ApplyForm/saga";
 import ContactPageFormSaga from "./ContactPageForm/saga";
 import CommonContactEnquiryFormSaga from "./CommonContactEnquiryForm/saga";
+import ProjectDetailSaga from "./ProjectDetail/saga";
 
 
 export default function* rootSaga() {
@@ -34,5 +35,6 @@ export default function* rootSaga() {
     ApplyFormSaga(),
     ContactPageFormSaga(),
     CommonContactEnquiryFormSaga(), 
+    ProjectDetailSaga(),
   ]);
 }

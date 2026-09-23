@@ -1,32 +1,44 @@
 "use client";
 
-const HIGHLIGHTS = [
-  {
-    title: "Bespoke Artificial Olive Trees",
-    description: "Five Trees, Each 4m Tall With Mature, Realistic Trunks.",
-  },
-  {
-    title: "Trunk Craftsmanship",
-    description:
-      "Carefully Selected And Treated Trunks For Authentic Appearance And Durability.",
-  },
-  {
-    title: "Detailed Planning",
-    description: "Sketch Drawings Prepared And Approved Before Production.",
-  },
-  {
-    title: "Safe Transport & Handling",
-    description: "Coordinated Road Transport From UAE To KSA.",
-  },
-  {
-    title: "Secure Installation",
-    description: "Cement And Gypsum Anchoring For Long-Term Stability.",
-  },
-  {
-    title: "Corporate Lobby Integration",
-    description: "Designed To Harmonize With Head Office Interior Aesthetics.",
-  },
-];
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+
+// `content.key_highlights` comes through as an HTML list, e.g.:
+//   <ul><li><p>Bespoke Artificial Olive Trees – Five trees, each 4m
+//   tall with mature, realistic trunks.</p></li>...</ul>
+// Each <li> is "Title – Description", separated by an en dash. There's
+// no structured { title, description } field from the API for this, so
+// we parse it out of the HTML rather than guessing a different shape.
+function parseHighlights(html) {
+  if (typeof html !== "string") return [];
+
+  const items = html.match(/<li[\s\S]*?<\/li>/g) ?? [];
+
+  return items
+    .map((item) => {
+      const text = item
+        .replace(/<[^>]+>/g, "") // strip tags (<li>, <p>, etc.)
+        .replace(/&amp;/g, "&")
+        .replace(/&nbsp;/g, " ")
+        .trim();
+
+      if (!text) return null;
+
+      // en dash (–) is what the sample content uses; fall back to a
+      // plain hyphen in case a different item was authored differently.
+      const separatorMatch = text.match(/\s[\u2013-]\s/);
+      if (!separatorMatch) {
+        return { title: text, description: "" };
+      }
+
+      const splitIndex = separatorMatch.index;
+      return {
+        title: text.slice(0, splitIndex).trim(),
+        description: text.slice(splitIndex + separatorMatch[0].length).trim(),
+      };
+    })
+    .filter(Boolean);
+}
 
 function HighlightBullet() {
   return (
@@ -52,20 +64,33 @@ function HighlightItem({ title, description }) {
       </span>
       <div className="projectDetailKeyHighlightsText">
         <h3 className="projectDetailKeyHighlightsItemTitle">{title}</h3>
-        <p className="projectDetailKeyHighlightsItemDescription">{description}</p>
+        {description && (
+          <p className="projectDetailKeyHighlightsItemDescription">{description}</p>
+        )}
       </div>
     </div>
   );
 }
 
 export default function ProjectDetailKeyHighlights() {
+  // `ProjectDetail` must match the key used in your rootReducer.
+  // The [slug] page dispatches the fetch — this component only reads.
+  const project = useSelector((state) => state.ProjectDetail?.data);
+
+  const highlights = useMemo(
+    () => parseHighlights(project?.content?.key_highlights),
+    [project?.content?.key_highlights]
+  );
+
+  if (highlights.length === 0) return null;
+
   return (
     <section className="projectDetailKeyHighlightsSection" aria-label="Key highlights">
       <div className="projectDetailKeyHighlightsCard">
         <h2 className="projectDetailKeyHighlightsTitle">Key Highlights</h2>
 
         <div className="projectDetailKeyHighlightsGrid">
-          {HIGHLIGHTS.map((highlight) => (
+          {highlights.map((highlight) => (
             <HighlightItem key={highlight.title} {...highlight} />
           ))}
         </div>

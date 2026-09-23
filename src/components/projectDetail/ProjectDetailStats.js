@@ -1,5 +1,6 @@
 "use client";
 
+import { useSelector } from "react-redux";
 import Image from "next/image";
 import {
   Leaf,
@@ -18,18 +19,25 @@ import {
 const TOP_RIGHT_IMAGE = "/images/project-detail-stat-section-img-1.png";
 const BOTTOM_LEFT_IMAGE = "/images/project-detail-stat-section-img-2.png";
 
-const TOP_STATS = [
-  { icon: Maximize, label: "Area", value: "60 m\u00B2" },
-  { icon: MapPin, label: "Location", value: "[Your City]" },
-  { icon: Shield, label: "System", value: "Preserved Moss Wall" },
-  { icon: Calendar, label: "Install Year", value: "2026" },
-];
+// How many spec rows to put in the primary (larger) row before wrapping
+// to the secondary row — matches the original 4-then-3 layout, but works
+// for any number of specs the API sends back.
+const PRIMARY_ROW_SIZE = 4;
 
-const BOTTOM_STATS = [
-  { icon: User, label: "Client", value: "[Your Client]" },
-  { icon: Recycle, label: "Moss Coverage", value: "100%" },
-  { icon: Sprout, label: "Plant Species", value: "Mixed preserved moss" },
-];
+// The API sends specifications as free-text { label, value } pairs, not
+// icon keys, so we match on keywords in the label to pick an icon —
+// falling back to a generic leaf for anything unrecognized.
+function getIconForLabel(label = "") {
+  const normalized = label.toLowerCase();
+  if (normalized.includes("area")) return Maximize;
+  if (normalized.includes("location")) return MapPin;
+  if (normalized.includes("system")) return Shield;
+  if (normalized.includes("year") || normalized.includes("date")) return Calendar;
+  if (normalized.includes("client")) return User;
+  if (normalized.includes("coverage") || normalized.includes("recycl")) return Recycle;
+  if (normalized.includes("species") || normalized.includes("plant")) return Sprout;
+  return Leaf;
+}
 
 function StatPill({ icon: Icon, label, value }) {
   return (
@@ -46,6 +54,18 @@ function StatPill({ icon: Icon, label, value }) {
 }
 
 export default function ProjectDetailStats() {
+  // `ProjectDetail` must match the key used in your rootReducer.
+  // The [slug] page dispatches the fetch — this component only reads.
+  const project = useSelector((state) => state.ProjectDetail?.data);
+
+  if (!project) return null;
+
+  const overview = project.project_overview ?? {};
+  const specifications = overview.specifications ?? [];
+
+  const primaryStats = specifications.slice(0, PRIMARY_ROW_SIZE);
+  const secondaryStats = specifications.slice(PRIMARY_ROW_SIZE);
+
   return (
     <section className="projectDetailStatsSection" aria-label="Project overview">
       <div className="projectDetailStatsCard">
@@ -66,29 +86,47 @@ export default function ProjectDetailStats() {
               <Leaf size={16} strokeWidth={1.8} />
             </span>
             <h2 className="projectDetailStatsTitle">
-              Project Name <span className="projectDetailStatsDot">&middot;</span>{" "}
-              Artificial Tree Installations
+              {overview.title || project.title}
+              {project.category?.name && (
+                <>
+                  {" "}
+                  <span className="projectDetailStatsDot">&middot;</span>{" "}
+                  {project.category.name}
+                </>
+              )}
             </h2>
             <span className="projectDetailStatsRule" aria-hidden="true" />
           </div>
 
-          <p className="projectDetailStatsDescription">
-            A thoughtfully crafted green installation that brings calm, character, and
-            a natural sense of balance to modern spaces. Designed for lasting visual
-            impact with effortless maintenance.
-          </p>
+          {overview.description && (
+            <p className="projectDetailStatsDescription">{overview.description}</p>
+          )}
 
-          <div className="projectDetailStatsRow">
-            {TOP_STATS.map((stat) => (
-              <StatPill key={stat.label} {...stat} />
-            ))}
-          </div>
+          {primaryStats.length > 0 && (
+            <div className="projectDetailStatsRow">
+              {primaryStats.map((stat) => (
+                <StatPill
+                  key={stat.label}
+                  icon={getIconForLabel(stat.label)}
+                  label={stat.label}
+                  value={stat.value}
+                />
+              ))}
+            </div>
+          )}
 
-          <div className="projectDetailStatsRow projectDetailStatsRowSecondary">
-            {BOTTOM_STATS.map((stat) => (
-              <StatPill key={stat.label} {...stat} />
-            ))}
-          </div>
+          {secondaryStats.length > 0 && (
+            <div className="projectDetailStatsRow projectDetailStatsRowSecondary">
+              {secondaryStats.map((stat) => (
+                <StatPill
+                  key={stat.label}
+                  icon={getIconForLabel(stat.label)}
+                  label={stat.label}
+                  value={stat.value}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right-side decorative panel — the wavy left edge is already

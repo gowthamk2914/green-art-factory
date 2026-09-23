@@ -15,6 +15,7 @@ import OpportunitiesReducer from "./Opportunities/reducer";
 import ApplyFormReducer from "./ApplyForm/reducer";
 import ContactPageFormReducer from "./ContactPageForm/reducer";
 import CommonContactEnquiryFormReducer from "./CommonContactEnquiryForm/reducer";
+import ProjectDetailReducer from "./ProjectDetail/reducer";
 
 
 
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   ApplyForm: ApplyFormReducer,
   ContactPageForm: ContactPageFormReducer,
   CommonContactEnquiryForm: CommonContactEnquiryFormReducer,
+  ProjectDetail: ProjectDetailReducer,
 });
 
 export default rootReducer;
