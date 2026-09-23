@@ -441,10 +441,14 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
         return false;
       }
 
+      // Matches against `product_variants` — the field the API actually
+      // returns on each project (previously checked `project.products`,
+      // which doesn't exist on the project objects, so this filter was
+      // silently a no-op).
       if (
         selectedVariantSlugs.length &&
-        project.products &&
-        !(project.products ?? []).some((p) => selectedVariantSlugs.includes(p.slug))
+        project.product_variants &&
+        !(project.product_variants ?? []).some((p) => selectedVariantSlugs.includes(p.slug))
       ) {
         return false;
       }

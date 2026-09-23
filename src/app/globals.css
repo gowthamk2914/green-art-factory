@@ -6347,6 +6347,10 @@ a.gaf-footer-contact-text:hover {
   padding: 60px 0px;
 }
 
+.enq-error-text{
+  color: red;
+}
+
 .enq-grid {
   max-width: 1400px;
   margin: 0 auto;

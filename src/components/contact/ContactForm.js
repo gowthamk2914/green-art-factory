@@ -1,9 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { MessageCircle, ArrowRight, Send } from 'lucide-react';
 import Link from "next/link";
 
+import {
+  submitEnquiryRequest,
+  resetEnquiryStatus,
+} from '../../redux/ContactPageForm/actions';
+
+// Maps the API's field names back onto our local form state.
+// (Currently 1:1, kept as a map in case the backend renames anything.)
+const API_FIELD_TO_LOCAL = {
+  name: 'name',
+  email: 'email',
+  mobile: 'mobile',
+  project_details: 'details',
+};
 
 /**
  * ContactSection
@@ -14,6 +28,13 @@ import Link from "next/link";
  *   npm install lucide-react
  */
 export default function ContactSection() {
+  const dispatch = useDispatch();
+
+  // `Contact` must match the key used in your rootReducer
+  const { loading, success, message, fieldErrors } = useSelector(
+    (state) => state.ContactPageForm
+  );
+
   const [mounted, setMounted] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const [values, setValues] = useState({
@@ -22,25 +43,74 @@ export default function ContactSection() {
     mobile: '',
     details: '',
   });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Merge server-side validation errors into local field errors
+  useEffect(() => {
+    if (!fieldErrors || Object.keys(fieldErrors).length === 0) return;
+
+    const mapped = {};
+    Object.entries(fieldErrors).forEach(([apiField, messages]) => {
+      const localField = API_FIELD_TO_LOCAL[apiField] || apiField;
+      mapped[localField] = Array.isArray(messages) ? messages[0] : messages;
+    });
+
+    setErrors((prev) => ({ ...prev, ...mapped }));
+  }, [fieldErrors]);
+
+  // On a successful submit, clear the form and reset the "Sent!" state
+  // after a couple of seconds, same timing as the original mock.
+  useEffect(() => {
+    if (!success) return;
+
+    const timer = setTimeout(() => {
+      dispatch(resetEnquiryStatus());
+      setValues({ name: '', email: '', mobile: '', details: '' });
+    }, 2400);
+
+    return () => clearTimeout(timer);
+  }, [success, dispatch]);
+
+  // Reset submission state if the user navigates away mid-flow
+  useEffect(() => {
+    return () => {
+      dispatch(resetEnquiryStatus());
+    };
+  }, [dispatch]);
+
   const handleChange = (field) => (e) => {
     setValues((v) => ({ ...v, [field]: e.target.value }));
+    setErrors((err) => ({ ...err, [field]: undefined }));
+  };
+
+  const validate = () => {
+    const next = {};
+    if (!values.name.trim()) next.name = 'Name is required.';
+    if (!values.email.trim()) {
+      next.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+      next.email = 'Enter a valid email address.';
+    }
+    setErrors(next);
+    return Object.keys(next).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 2400);
-    }, 1200);
+    if (!validate()) return;
+
+    dispatch(
+      submitEnquiryRequest({
+        name: values.name,
+        email: values.email,
+        mobile: values.mobile || undefined,
+        project_details: values.details || undefined,
+      })
+    );
   };
 
   return (
@@ -128,6 +198,10 @@ export default function ContactSection() {
           </h2>
           <p className="mt-2 text-[15px] text-gray-500">Tell us about your botanical vision.</p>
 
+          {message && !success && Object.keys(fieldErrors || {}).length === 0 && (
+            <p className="mt-4 text-sm text-red-600" role="alert">{message}</p>
+          )}
+
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div className="grid grid-cols-2 sm:grid-cols-2 max-[640px]:grid-cols-1 gap-4">
               <FormField
@@ -137,6 +211,7 @@ export default function ContactSection() {
                 focused={focusedField === 'name'}
                 onFocus={() => setFocusedField('name')}
                 onBlur={() => setFocusedField(null)}
+                error={errors.name}
               />
               <FormField
                 type="email"
@@ -146,6 +221,7 @@ export default function ContactSection() {
                 focused={focusedField === 'email'}
                 onFocus={() => setFocusedField('email')}
                 onBlur={() => setFocusedField(null)}
+                error={errors.email}
               />
             </div>
 
@@ -157,38 +233,44 @@ export default function ContactSection() {
               focused={focusedField === 'mobile'}
               onFocus={() => setFocusedField('mobile')}
               onBlur={() => setFocusedField(null)}
+              error={errors.mobile}
             />
 
-            <textarea
-              placeholder="Project Details"
-              value={values.details}
-              onChange={handleChange('details')}
-              onFocus={() => setFocusedField('details')}
-              onBlur={() => setFocusedField(null)}
-              rows={4}
-              className={`w-full rounded-2xl border bg-transparent px-5 py-4 text-[15px] text-gray-700 placeholder:text-gray-400 outline-none transition-all duration-300 resize-none ${
-                focusedField === 'details'
-                  ? 'border-[#4B5320] shadow-[0_0_0_4px_rgba(75,83,32,0.08)]'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-            />
+            <div>
+              <textarea
+                placeholder="Project Details"
+                value={values.details}
+                onChange={handleChange('details')}
+                onFocus={() => setFocusedField('details')}
+                onBlur={() => setFocusedField(null)}
+                rows={4}
+                className={`w-full rounded-2xl border bg-transparent px-5 py-4 text-[15px] text-gray-700 placeholder:text-gray-400 outline-none transition-all duration-300 resize-none ${
+                  focusedField === 'details'
+                    ? 'border-[#4B5320] shadow-[0_0_0_4px_rgba(75,83,32,0.08)]'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              />
+              {errors.details && (
+                <p className="mt-1.5 text-xs text-red-600">{errors.details}</p>
+              )}
+            </div>
 
             <div className="flex justify-end pt-2">
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={loading}
                 className="group relative overflow-hidden flex items-center gap-2 rounded-full bg-[#4B5320] px-7 py-3.5 text-white font-medium shadow-lg shadow-[#4B5320]/25 transition-all duration-300 hover:shadow-xl hover:shadow-[#4B5320]/35 hover:scale-[1.03] active:scale-[0.97] disabled:opacity-70"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
                 <span className="relative">
-                  {submitted ? 'Sent!' : submitting ? 'Sending...' : 'Submit Enquiry'}
+                  {success ? 'Sent!' : loading ? 'Sending...' : 'Submit Enquiry'}
                 </span>
-                {submitted ? (
+                {success ? (
                   <Send className="relative w-4 h-4" />
                 ) : (
                   <ArrowRight
                     className={`relative w-4 h-4 transition-transform duration-300 ${
-                      submitting ? 'translate-x-1' : 'group-hover:translate-x-1'
+                      loading ? 'translate-x-1' : 'group-hover:translate-x-1'
                     }`}
                   />
                 )}
@@ -204,20 +286,25 @@ export default function ContactSection() {
   );
 }
 
-function FormField({ type = 'text', placeholder, value, onChange, focused, onFocus, onBlur }) {
+function FormField({ type = 'text', placeholder, value, onChange, focused, onFocus, onBlur, error }) {
   return (
-    <input
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      className={`w-full rounded-2xl border bg-transparent px-5 py-4 text-[15px] text-gray-700 placeholder:text-gray-400 outline-none transition-all duration-300 ${
-        focused
-          ? 'border-[#4B5320] shadow-[0_0_0_4px_rgba(75,83,32,0.08)]'
-          : 'border-gray-200 hover:border-gray-300'
-      }`}
-    />
+    <div>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        className={`w-full rounded-2xl border bg-transparent px-5 py-4 text-[15px] text-gray-700 placeholder:text-gray-400 outline-none transition-all duration-300 ${
+          error
+            ? 'border-red-400 shadow-[0_0_0_4px_rgba(220,38,38,0.06)]'
+            : focused
+            ? 'border-[#4B5320] shadow-[0_0_0_4px_rgba(75,83,32,0.08)]'
+            : 'border-gray-200 hover:border-gray-300'
+        }`}
+      />
+      {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+    </div>
   );
 }

@@ -1,13 +1,34 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Phone, Mail } from 'lucide-react';
 
+import {
+  submitProjectEnquiryRequest,
+  resetProjectEnquiryStatus,
+} from '../../redux/CommonContactEnquiryForm/actions';
 
 const IMAGE_SRC =
   '/images/common-contact-enquiry.jpg';
 
+// Maps the API's field names back onto our local form state
+const API_FIELD_TO_LOCAL = {
+  full_name: 'name',
+  whatsapp_number: 'whatsapp',
+  email: 'email',
+  project_location: 'location',
+  project_details: 'details',
+};
+
 export default function EnquirySection() {
+  const dispatch = useDispatch();
+
+  // `ProjectEnquiry` must match the key used in your rootReducer
+  const { loading, success, message, fieldErrors } = useSelector(
+    (state) => state.CommonContactEnquiryForm
+  );
+
   const [visible, setVisible] = useState(false);
   const [values, setValues] = useState({
     name: '',
@@ -16,9 +37,8 @@ export default function EnquirySection() {
     location: '',
     details: '',
   });
+  const [errors, setErrors] = useState({});
   const [focusedField, setFocusedField] = useState(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -39,18 +59,70 @@ export default function EnquirySection() {
     return () => observer.disconnect();
   }, []);
 
+  // Merge server-side validation errors into local field errors
+  useEffect(() => {
+    if (!fieldErrors || Object.keys(fieldErrors).length === 0) return;
+
+    const mapped = {};
+    Object.entries(fieldErrors).forEach(([apiField, messages]) => {
+      const localField = API_FIELD_TO_LOCAL[apiField] || apiField;
+      mapped[localField] = Array.isArray(messages) ? messages[0] : messages;
+    });
+
+    setErrors((prev) => ({ ...prev, ...mapped }));
+  }, [fieldErrors]);
+
+  // On success, clear the form and reset the "Sent!" state after a
+  // couple seconds — same timing as the original mock.
+  useEffect(() => {
+    if (!success) return;
+
+    const timer = setTimeout(() => {
+      dispatch(resetProjectEnquiryStatus());
+      setValues({ name: '', whatsapp: '', email: '', location: '', details: '' });
+    }, 2600);
+
+    return () => clearTimeout(timer);
+  }, [success, dispatch]);
+
+  // Reset submission state if the user navigates away mid-flow
+  useEffect(() => {
+    return () => {
+      dispatch(resetProjectEnquiryStatus());
+    };
+  }, [dispatch]);
+
   const handleChange = (field) => (e) => {
     setValues((v) => ({ ...v, [field]: e.target.value }));
+    setErrors((err) => ({ ...err, [field]: undefined }));
+  };
+
+  const validate = () => {
+    const next = {};
+    if (!values.name.trim()) next.name = 'Full name is required.';
+    if (!values.whatsapp.trim()) next.whatsapp = 'Whatsapp number is required.';
+    if (!values.email.trim()) {
+      next.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+      next.email = 'Enter a valid email address.';
+    }
+    setErrors(next);
+    return Object.keys(next).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 2600);
-    }, 1200);
+    if (!validate()) return;
+
+    dispatch(
+      submitProjectEnquiryRequest({
+        full_name: values.name,
+        whatsapp_number: values.whatsapp,
+        email: values.email,
+        project_location: values.location || undefined,
+        project_details: values.details || undefined,
+      })
+    );
   };
 
   return (
@@ -101,6 +173,10 @@ export default function EnquirySection() {
             Tell us about your space and vision. Our design consultants will respond within 24 hours.
           </p>
 
+          {message && !success && Object.keys(fieldErrors || {}).length === 0 && (
+            <p className="enq-error-text" role="alert">{message}</p>
+          )}
+
           <form onSubmit={handleSubmit} className="enq-form">
             <div className="enq-row">
               <Field
@@ -111,6 +187,7 @@ export default function EnquirySection() {
                 focused={focusedField === 'name'}
                 onFocus={() => setFocusedField('name')}
                 onBlur={() => setFocusedField(null)}
+                error={errors.name}
               />
               <Field
                 label="Whatsapp Number"
@@ -121,6 +198,7 @@ export default function EnquirySection() {
                 focused={focusedField === 'whatsapp'}
                 onFocus={() => setFocusedField('whatsapp')}
                 onBlur={() => setFocusedField(null)}
+                error={errors.whatsapp}
               />
             </div>
 
@@ -133,6 +211,7 @@ export default function EnquirySection() {
               focused={focusedField === 'email'}
               onFocus={() => setFocusedField('email')}
               onBlur={() => setFocusedField(null)}
+              error={errors.email}
             />
 
             <Field
@@ -143,6 +222,7 @@ export default function EnquirySection() {
               focused={focusedField === 'location'}
               onFocus={() => setFocusedField('location')}
               onBlur={() => setFocusedField(null)}
+              error={errors.location}
             />
 
             <div className="enq-field">
@@ -156,12 +236,13 @@ export default function EnquirySection() {
                 onBlur={() => setFocusedField(null)}
                 className={`enq-input enq-textarea ${focusedField === 'details' ? 'enq-input--focused' : ''}`}
               />
+              {errors.details && <span className="enq-error-text">{errors.details}</span>}
             </div>
 
-            <button type="submit" disabled={submitting} className="enq-submit">
+            <button type="submit" disabled={loading} className="enq-submit">
               <span className="enq-submit-shine" />
               <span className="enq-submit-text">
-                {submitted ? 'Sent! We\u2019ll be in touch' : submitting ? 'Sending...' : 'Submit'}
+                {success ? 'Sent! We\u2019ll be in touch' : loading ? 'Sending...' : 'Submit'}
               </span>
             </button>
 
@@ -174,7 +255,7 @@ export default function EnquirySection() {
   );
 }
 
-function Field({ label, type = 'text', placeholder, value, onChange, focused, onFocus, onBlur }) {
+function Field({ label, type = 'text', placeholder, value, onChange, focused, onFocus, onBlur, error }) {
   return (
     <div className="enq-field">
       <label className="enq-label">{label}</label>
@@ -185,8 +266,9 @@ function Field({ label, type = 'text', placeholder, value, onChange, focused, on
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}
-        className={`enq-input ${focused ? 'enq-input--focused' : ''}`}
+        className={`enq-input ${focused ? 'enq-input--focused' : ''} ${error ? 'enq-input--error' : ''}`}
       />
+      {error && <span className="enq-error-text">{error}</span>}
     </div>
   );
 }

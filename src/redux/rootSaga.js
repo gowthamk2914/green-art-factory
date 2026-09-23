@@ -13,6 +13,8 @@ import GallerySaga from "./Gallery/saga";
 import TeamMembersSaga from "./TeamMembers/saga"; 
 import OpportunitiesSaga from "./Opportunities/saga";     
 import ApplyFormSaga from "./ApplyForm/saga";
+import ContactPageFormSaga from "./ContactPageForm/saga";
+import CommonContactEnquiryFormSaga from "./CommonContactEnquiryForm/saga";
 
 
 export default function* rootSaga() {
@@ -30,5 +32,7 @@ export default function* rootSaga() {
     TeamMembersSaga(),
     OpportunitiesSaga(),
     ApplyFormSaga(),
+    ContactPageFormSaga(),
+    CommonContactEnquiryFormSaga(), 
   ]);
 }

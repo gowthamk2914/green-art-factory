@@ -13,6 +13,9 @@ import GalleryReducer from "./Gallery/reducer";
 import TeamMembersReducer from "./TeamMembers/reducer";
 import OpportunitiesReducer from "./Opportunities/reducer";
 import ApplyFormReducer from "./ApplyForm/reducer";
+import ContactPageFormReducer from "./ContactPageForm/reducer";
+import CommonContactEnquiryFormReducer from "./CommonContactEnquiryForm/reducer";
+
 
 
 const rootReducer = combineReducers({
@@ -29,6 +32,8 @@ const rootReducer = combineReducers({
   TeamMembers: TeamMembersReducer,
   Opportunities: OpportunitiesReducer,
   ApplyForm: ApplyFormReducer,
+  ContactPageForm: ContactPageFormReducer,
+  CommonContactEnquiryForm: CommonContactEnquiryFormReducer,
 });
 
 export default rootReducer;

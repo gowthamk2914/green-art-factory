@@ -35,10 +35,28 @@ const API_FIELD_TO_LOCAL = {
   phone: 'phone',
   position: 'position',
   portfolio: 'portfolio',
-  cover_letter: 'coverLetter',
+  message: 'coverLetter',
   resume: 'resume',
   consent: 'agreed',
 };
+
+// Backend requires a fully qualified URL (Laravel's `url` rule). If the
+// person typed "myportfolio.com" without a protocol, add one rather than
+// bouncing them with a 422.
+function normalizePortfolioUrl(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return trimmed;
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
+function isValidUrl(value) {
+  try {
+    new URL(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export default function ApplyForm() {
   const dispatch = useDispatch();
@@ -135,6 +153,9 @@ export default function ApplyForm() {
     }
     if (!values.phone.trim()) next.phone = 'Phone number is required.';
     if (!values.position.trim()) next.position = 'Let us know which position.';
+    if (values.portfolio.trim() && !isValidUrl(normalizePortfolioUrl(values.portfolio))) {
+      next.portfolio = 'Enter a valid URL, e.g. https://yourportfolio.com';
+    }
     if (!file) next.resume = 'Please attach your resume.';
     if (!agreed) next.agreed = 'Please agree to the privacy policy to continue.';
 
@@ -151,8 +172,10 @@ export default function ApplyForm() {
     formData.append('email', values.email);
     formData.append('phone', values.phone);
     formData.append('position', values.position);
-    if (values.portfolio) formData.append('portfolio', values.portfolio);
-    if (values.coverLetter) formData.append('cover_letter', values.coverLetter);
+    if (values.portfolio.trim()) {
+      formData.append('portfolio', normalizePortfolioUrl(values.portfolio));
+    }
+    if (values.coverLetter) formData.append('message', values.coverLetter);
     if (file) formData.append('resume', file);
     formData.append('consent', agreed ? '1' : '0');
 
