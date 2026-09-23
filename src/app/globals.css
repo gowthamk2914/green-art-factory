@@ -11330,7 +11330,6 @@ font.goog-text-highlight {
    Projects Listing — all class names prefixed with "projectsListing"
    to avoid collisions when dropped into a larger app.
    ========================================================================== */
-
 .projectsListingSection {
   background: #ffffff;
   padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
@@ -11741,13 +11740,18 @@ font.goog-text-highlight {
     grid-auto-rows: 220px;
   }
 
-  /* Cards set their column span inline (React style prop), which beats
-     a normal stylesheet rule — !important is required here to force
-     every card back to a single column and stop 2-col spans from
-     creating an unwanted implicit second track. Row spans (tall cards)
-     are left alone; they still look fine stacked in one column. */
-  .projectsListingCard {
+  /* Cards set their column/row span inline (React style prop) on
+     .projectsListingCardWrapper — that's the actual CSS Grid item
+     (the motion.div), not .projectsListingCard (the Link inside it).
+     A stylesheet rule normally beats an inline style only via
+     specificity tricks, so !important is required here to force every
+     card back to a single column/row and stop 2-col/2-row spans from
+     requesting an implicit second track the single-column grid doesn't
+     have — which is what was pushing some cards into a near-invisible
+     phantom column and making them appear to vanish below 560px. */
+  .projectsListingCardWrapper {
     grid-column: span 1 !important;
+    grid-row: span 1 !important;
   }
 
   .projectsListingSearch {
