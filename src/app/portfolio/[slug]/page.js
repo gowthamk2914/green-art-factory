@@ -16,7 +16,6 @@ import ProjectDetailRelatedProjects from "../../../components/projectDetail/Proj
 import CommonContactEnquiry from "../../../components/common/CommonContactEnquiry";
 
 
-
 export default function ProjectDetailPage() {
   const { slug } = useParams();
   const dispatch = useDispatch();
