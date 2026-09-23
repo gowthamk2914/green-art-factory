@@ -299,6 +299,19 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, filterOptions.products]);
 
+  // Pre-check the Project Type filter from the URL, e.g. the breadcrumb
+  // on a project detail page links to
+  // /portfolio?category=interior-projects.
+  useEffect(() => {
+    const categorySlugFromUrl = searchParams.get("category");
+    if (categorySlugFromUrl) {
+      setCategorySlugs((prev) =>
+        prev.includes(categorySlugFromUrl) ? prev : [...prev, categorySlugFromUrl]
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   function makeToggler(setter) {
     return (value) => {
       setter((prev) =>
