@@ -11963,10 +11963,10 @@ font.goog-text-highlight {
    stack to full-width single-column cells below tablet width.
    ========================================================================== */
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .galleryListRow {
     flex-direction: column;
-    height: auto;
+    /* height: auto; */
   }
 
   .galleryListRowWideFirst > .galleryListCell,
