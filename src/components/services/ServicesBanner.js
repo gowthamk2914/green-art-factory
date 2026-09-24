@@ -51,7 +51,7 @@ export default function ServicesBanner() {
           Elevate Everyday Spaces.
         </p>
 
-        <Link href="/products" className="servicesBannerCta">
+        <Link href="/products-list" className="servicesBannerCta">
           <span>Explore Products</span>
           <span className="servicesBannerCtaIcon" aria-hidden="true">
             <ArrowUpRight size={16} strokeWidth={2.2} />

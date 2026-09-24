@@ -220,7 +220,7 @@ useEffect(() => {
                   </div>
 
                   <Link
-                    href={`/projects/${item.slug}`}
+                    href={`/portfolio/${item.slug}`}
                     className="featured-card-link"
                     aria-label={`View ${item.title} project`}
                   />

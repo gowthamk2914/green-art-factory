@@ -44,6 +44,29 @@ function buildGalleryUrl(categorySlug, variantSlug) {
   return `/gallery/${categorySlug}/${variantSlug}`;
 }
 
+// Returns the grid template classes for the "remaining products" panel
+// based on how many remaining items there actually are (1-4), so the
+// panel always fills the available h-[420px] space with no blank cells.
+function getRightGridClass(count) {
+  switch (count) {
+    case 1:
+      return "grid grid-cols-1 grid-rows-1 gap-4 h-[420px]";
+    case 2:
+      return "grid grid-cols-2 grid-rows-1 gap-4 h-[420px]";
+    case 3:
+    case 4:
+    default:
+      return "grid grid-cols-2 grid-rows-2 gap-4 h-[420px]";
+  }
+}
+
+// For exactly 3 remaining items, the first one spans both rows (bento-style)
+// so all 3 fill the 2x2 area with no empty fourth cell. 1/2/4 need no span.
+function getItemSpanClass(count, index) {
+  if (count === 3 && index === 0) return "row-span-2";
+  return "";
+}
+
 const Products = () => {
   const dispatch = useDispatch();
   const containerRef = useRef(null);
@@ -58,49 +81,49 @@ const Products = () => {
     dispatch(getProductsPreviewRequest());
   }, [dispatch]);
 
-useEffect(() => {
-  if (
-    loading ||
-    !sortedProducts?.length ||
-    !containerRef.current
-  ) {
-    return;
-  }
+  useEffect(() => {
+    if (
+      loading ||
+      !sortedProducts?.length ||
+      !containerRef.current
+    ) {
+      return;
+    }
 
-  const ctx = gsap.context(() => {
-    const mm = gsap.matchMedia();
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
 
-    mm.add("(min-width: 1024px)", () => {
-      gsap.utils
-        .toArray(".product-stack-item")
-        .forEach((card) => {
-          gsap.fromTo(
-            card,
-            {
-              y: 120,
-              opacity: 0,
-            },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 80%",
-                toggleActions: "play none none none",
-                once: true,
+      mm.add("(min-width: 1024px)", () => {
+        gsap.utils
+          .toArray(".product-stack-item")
+          .forEach((card) => {
+            gsap.fromTo(
+              card,
+              {
+                y: 120,
+                opacity: 0,
               },
-            }
-          );
-        });
-    });
-  }, containerRef);
+              {
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                ease: "power3.out",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 80%",
+                  toggleActions: "play none none none",
+                  once: true,
+                },
+              }
+            );
+          });
+      });
+    }, containerRef);
 
-  return () => {
-    ctx.revert();
-  };
-}, [loading, sortedProducts?.length]);
+    return () => {
+      ctx.revert();
+    };
+  }, [loading, sortedProducts?.length]);
 
   if (error) {
     return (
@@ -127,7 +150,11 @@ useEffect(() => {
               ))
             : sortedProducts.map((category, slideIndex) => {
                 const featuredProduct = category.variants?.[0];
-                const remainingProducts = category.variants?.slice(1);
+                const remainingProducts = category.variants?.slice(1) || [];
+                const remainingCount = remainingProducts.length;
+                // When there's only one variant total, there's no "remaining"
+                // panel at all — the featured image stretches to fill the row.
+                const soloFeature = remainingCount === 0;
 
                 return (
                   <div
@@ -136,7 +163,13 @@ useEffect(() => {
                     style={{ top: "120px", zIndex: slideIndex + 1 }}
                   >
                     <div className="product-grid-control-wrapper">
-                      <div className="grid grid-cols-[2fr_1fr_1fr] gap-4 product-grid-wrapper animate-fadeUp">
+                      <div
+                        className={`grid gap-4 product-grid-wrapper animate-fadeUp ${
+                          soloFeature
+                            ? "grid-cols-1"
+                            : "grid-cols-[2fr_1fr_1fr]"
+                        }`}
+                      >
                         {featuredProduct && (
                           <div className="group relative h-[420px] overflow-hidden rounded-xl transition-all duration-500">
                             <Image
@@ -147,14 +180,14 @@ useEffect(() => {
                               className="object-cover transition-transform duration-700 group-hover:scale-110"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-all duration-500 group-hover:opacity-100"></div>
-                            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between rounded-xl bg-[#ffffffd8] px-5 py-3">
-                              <span className="text-[30px] font-medium featured-big-product-name">
+                            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between rounded-xl bg-white/80 backdrop-blur-md px-3 py-2 transition-all duration-500 group-hover:bg-white/90">
+                              <span className="text-sm font-medium featured-big-product-name">
                                 {featuredProduct.name}
                               </span>
                               <Link
                                 href={buildGalleryUrl(category.slug, featuredProduct.slug)}
                               >
-                                <button className="rounded-full bg-white px-5 py-2 text-sm transition-all duration-300 hover:bg-[#66711E] hover:text-white hover:shadow-2xl">
+                                <button className="rounded-full bg-white px-5 py-2 text-[11px] transition-all duration-300 hover:bg-[#66711E] hover:text-white hover:shadow-2xl">
                                   Explore
                                 </button>
                               </Link>
@@ -162,35 +195,44 @@ useEffect(() => {
                           </div>
                         )}
 
-                        <div className="col-span-2 grid grid-cols-2 gap-4 product-grid-wrapper-right">
-                          {remainingProducts?.map((product) => (
-                            <div
-                              key={product.id}
-                              className="group relative h-[202px] overflow-hidden rounded-xl transition-all duration-500"
-                            >
-                              <Image
-                                src={product.image}
-                                alt={product.name}
-                                fill
-                                priority={slideIndex === 0}
-                                className="object-cover transition-transform duration-700 group-hover:scale-110"
-                              />
-                              <div className="absolute inset-0 bg-black/10 transition-all duration-500 group-hover:bg-black/30"></div>
-                              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between rounded-xl bg-white/80 backdrop-blur-md px-3 py-2 transition-all duration-500 group-hover:bg-white/90">
-                                <span className="text-sm font-medium">
-                                  {product.name}
-                                </span>
-                                <Link
-                                  href={buildGalleryUrl(category.slug, product.slug)}
-                                >
-                                  <button className="rounded-full bg-white px-3 py-1 text-[11px] transition-all duration-300 hover:bg-[#66711E] hover:text-white">
-                                    Explore
-                                  </button>
-                                </Link>
+                        {!soloFeature && (
+                          <div
+                            className={`col-span-2 product-grid-wrapper-right ${getRightGridClass(
+                              remainingCount
+                            )}`}
+                          >
+                            {remainingProducts.map((product, idx) => (
+                              <div
+                                key={product.id}
+                                className={`group relative h-full overflow-hidden rounded-xl transition-all duration-500 ${getItemSpanClass(
+                                  remainingCount,
+                                  idx
+                                )}`}
+                              >
+                                <Image
+                                  src={product.image}
+                                  alt={product.name}
+                                  fill
+                                  priority={slideIndex === 0}
+                                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-black/10 transition-all duration-500 group-hover:bg-black/30"></div>
+                                <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between rounded-xl bg-white/80 backdrop-blur-md px-3 py-2 transition-all duration-500 group-hover:bg-white/90">
+                                  <span className="text-sm font-medium">
+                                    {product.name}
+                                  </span>
+                                  <Link
+                                    href={buildGalleryUrl(category.slug, product.slug)}
+                                  >
+                                    <button className="rounded-full bg-white px-3 py-1 text-[11px] transition-all duration-300 hover:bg-[#66711E] hover:text-white">
+                                      Explore
+                                    </button>
+                                  </Link>
+                                </div>
                               </div>
-                            </div>
-                          ))}
-                        </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
 
                       <div className="product-bottom-control bg-transparent">

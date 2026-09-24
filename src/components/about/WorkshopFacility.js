@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const HERO_IMAGE = "/images/workshop-hero.jpg";
 
@@ -112,9 +113,11 @@ export default function WorkshopFacility() {
           </p>
 
           <div className="gaf-workshop-card-actions">
+            <Link href="/contact">
             <button type="button" className="gaf-workshop-btn-outline">
               Contact Us
             </button>
+            </Link>
             <button type="button" className="gaf-workshop-btn-solid">
               Book a Studio Visit
             </button>

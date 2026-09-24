@@ -394,7 +394,7 @@ body.mobileMenuLockScroll {
 
 
 .product-grid-wrapper div div {
-  padding: 0 20px;
+  padding: 10px 20px;
 }
 
 .product-grid-wrapper-right div div {
@@ -5120,6 +5120,7 @@ a.gaf-footer-contact-text:hover {
     max-width: 100%;
     width: 100%;
     z-index: 20;
+    margin-top: 30px;
   }
 }
 
@@ -6710,6 +6711,12 @@ a.gaf-footer-contact-text:hover {
 
 .contact-us-page-form-section{
   height:620px;
+}
+
+@media(max-width:900px){
+  .contact-us-page-form-section{
+    height: auto;
+  }
 }
 
 .chs-anim {
