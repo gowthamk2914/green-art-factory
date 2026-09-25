@@ -386,12 +386,11 @@ body.mobileMenuLockScroll {
   gap: 5px;
 }
 
-@media(max-width: 992px) {
-.featured-big-product-name{
-  font-size: 17px;
+@media (max-width: 992px) {
+  .featured-big-product-name {
+    font-size: 17px;
+  }
 }
-}
-
 
 .product-grid-wrapper div div {
   padding: 10px 20px;
@@ -404,7 +403,7 @@ body.mobileMenuLockScroll {
 
 @media (max-width: 992px) {
   .product-grid-wrapper-right div div {
-      flex-wrap: wrap;
+    flex-wrap: wrap;
   }
 }
 
@@ -439,19 +438,84 @@ body.mobileMenuLockScroll {
   }
 }
 
+/* ============================================
+   Desktop (>=993px): sticky stack, cards pin as you
+   scroll past them. GSAP fade/slide-up runs here too.
+   ============================================ */
 .products-stack-container {
   position: relative;
 }
 
-.product-stack-item {
-  position: sticky;
-  top: 100px;
+@media (min-width: 993px) {
+  .product-stack-item {
+    position: sticky;
+    top: 100px;
+    margin-bottom: 120px;
+  }
+}
 
-  margin-bottom: 120px;
+/* ============================================
+   Mobile/Tablet (<=992px): disable sticky stacking so
+   cards flow normally and nothing overlaps/hides. The
+   GSAP fade/slide-up animation still runs here — it's
+   no longer gated by matchMedia in the JS, so it plays
+   the same at every width; this block only controls
+   positioning/height, never opacity or transform.
+   ============================================ */
+@media (max-width: 992px) {
+  .product-stack-item {
+    position: static;
+    top: auto;
+    margin-bottom: 40px;
+  }
 
-  /* transition:
-    transform 0.5s ease,
-    opacity 0.5s ease; */
+  /* Fixed 420px heights don't scale down with viewport width —
+     switch to aspect-ratio so the featured image and right panel
+     shrink proportionally instead of overflowing or getting clipped. */
+  .product-grid-wrapper > .group.relative.h-\[420px\] {
+    height: auto !important;
+    aspect-ratio: 16 / 10;
+  }
+
+  .product-grid-wrapper-right.h-\[420px\] {
+    height: auto !important;
+  }
+
+  .product-grid-wrapper-right > div {
+    height: auto !important;
+    aspect-ratio: 4 / 3;
+  }
+
+  .product-grid-wrapper-right > div.row-span-2 {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-grid-wrapper > .group.relative.h-\[420px\] {
+    aspect-ratio: 4 / 3;
+  }
+
+  .product-grid-wrapper-right > div {
+    aspect-ratio: 1 / 1;
+  }
+
+  .product-grid-wrapper-right > div.row-span-2 {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+.featured-product-name , .featured-big-product-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1; 
+    overflow: hidden;
+}
+
+@media (max-width:768px){
+  .featured-product-name , .featured-big-product-name{
+    font-size: 11px;
+  }
 }
 
 /* @media (max-width:768px){

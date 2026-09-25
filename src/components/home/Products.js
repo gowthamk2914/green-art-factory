@@ -91,33 +91,34 @@ const Products = () => {
     }
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-
-      mm.add("(min-width: 1024px)", () => {
-        gsap.utils
-          .toArray(".product-stack-item")
-          .forEach((card) => {
-            gsap.fromTo(
-              card,
-              {
-                y: 120,
-                opacity: 0,
+      // No matchMedia gate — the fade/slide-up entrance animation is
+      // independent of the sticky-stack pin effect, so it should run at
+      // every screen size. Sticky vs static positioning is handled purely
+      // in CSS (media query below 992px); ScrollTrigger works fine against
+      // statically-positioned elements too, so both features stay decoupled.
+      gsap.utils
+        .toArray(".product-stack-item")
+        .forEach((card) => {
+          gsap.fromTo(
+            card,
+            {
+              y: 120,
+              opacity: 0,
+            },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%",
+                toggleActions: "play none none none",
+                once: true,
               },
-              {
-                y: 0,
-                opacity: 1,
-                duration: 1,
-                ease: "power3.out",
-                scrollTrigger: {
-                  trigger: card,
-                  start: "top 80%",
-                  toggleActions: "play none none none",
-                  once: true,
-                },
-              }
-            );
-          });
-      });
+            }
+          );
+        });
     }, containerRef);
 
     return () => {
@@ -218,7 +219,7 @@ const Products = () => {
                                 />
                                 <div className="absolute inset-0 bg-black/10 transition-all duration-500 group-hover:bg-black/30"></div>
                                 <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between rounded-xl bg-white/80 backdrop-blur-md px-3 py-2 transition-all duration-500 group-hover:bg-white/90">
-                                  <span className="text-sm font-medium">
+                                  <span className="text-sm font-medium featured-product-name">
                                     {product.name}
                                   </span>
                                   <Link
