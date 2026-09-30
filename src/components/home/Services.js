@@ -10,6 +10,7 @@ import Link from "next/link";
 
 const categories = [
   {
+    slug: "maintenance",
     title: "01 — Plant Maintenance",
     items: [
       {
@@ -26,7 +27,8 @@ const categories = [
       },
     ],
   },
-  {
+  { 
+    slug: "rentals",
     title: "02 — Plant Rentals",
     items: [
       {
@@ -118,11 +120,13 @@ const [activeService, setActiveService] = useState(categories[0].items[0]);
 
                   <h4>{section.title}</h4>
 
-                  <button>
-
-                    <FiArrowUpRight />
-
-                  </button>
+                  <Link
+    href={`/services?service-type=${section.slug}`}
+    className="service-header-btn"
+    aria-label={`View ${section.title}`}
+  >
+    <FiArrowUpRight />
+  </Link>
 
                 </div>
 

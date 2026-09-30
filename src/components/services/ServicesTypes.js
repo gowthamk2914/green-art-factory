@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 /**
  * Content for both tabs. Swap the `image` paths for your own assets
@@ -64,17 +65,37 @@ const DATA = {
 };
 
 export default function ServicesTypes() {
-  const [active, setActive] = useState("maintenance");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const param = searchParams.get("service-type");
+  const isValid = TABS.some((t) => t.key === param);
+
+  const [active, setActive] = useState(isValid ? param : "maintenance");
   const [direction, setDirection] = useState("forward");
   const activeIndex = TABS.findIndex((t) => t.key === active);
   const lastIndex = useRef(activeIndex);
 
-  const handleTabClick = (key) => {
+  const changeTab = (key) => {
     if (key === active) return;
     const newIndex = TABS.findIndex((t) => t.key === key);
     setDirection(newIndex > lastIndex.current ? "forward" : "backward");
     lastIndex.current = newIndex;
     setActive(key);
+  };
+
+  // React to URL changes (e.g. arriving from the home page with a different type)
+  useEffect(() => {
+    if (isValid && param !== active) changeTab(param);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [param]);
+
+  const handleTabClick = (key) => {
+    if (key === active) return;
+    changeTab(key);
+    // keep the URL in sync so the link is shareable / refresh-safe
+    router.replace(`${pathname}?service-type=${key}`, { scroll: false });
   };
 
   return (
