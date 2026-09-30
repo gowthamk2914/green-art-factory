@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+
+
 import ServicesBanner from "../../components/services/ServicesBanner";
 import Process from "../../components/services/Process";
 import Gallery from "../../components/services/Gallery";
@@ -10,7 +13,9 @@ export default function Services() {
   return (
     <>
       <ServicesBanner />
+      <Suspense fallback={null}>
       <ServicesTypes />
+      </Suspense>
       <Process />
       <Gallery />
       <Faq />
