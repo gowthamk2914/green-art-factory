@@ -3341,6 +3341,27 @@ a.gaf-footer-contact-text:hover {
   }
 }
 
+/* ---------- image shuffle fade ---------- */
+
+.showcase-img-swap {
+  animation: showcase-img-fade 0.8s ease both;
+}
+
+@keyframes showcase-img-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase-img-swap {
+    animation: none !important;
+  }
+}
+
 .why-choose-us-section{
   padding: 40px 0;
   background: white;
