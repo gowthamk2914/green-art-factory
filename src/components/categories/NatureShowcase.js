@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getNatureShowcaseRequest } from "../../redux/NatureShowcase/actions";
 
 const SHUFFLE_INTERVAL = 7000; // 7 seconds
+const STORAGE_PREFIX = "showcase-last-hero-";
+const VISIBLE_SLOTS = 5; // 1 hero + 4 thumbnails
 
 /* Fisher–Yates shuffle (returns a new array) */
 function shuffleArray(arr) {
@@ -20,45 +22,77 @@ function shuffleArray(arr) {
   return copy;
 }
 
-/* Shuffle that guarantees a different order from the previous one */
-function shuffleDifferent(arr) {
+/* Shuffles and guarantees the first item is not `avoidFirst` */
+function shuffleWithNewFirst(arr, avoidFirst) {
   if (arr.length < 2) return arr;
-  let next = shuffleArray(arr);
-  let attempts = 0;
-  while (next.every((v, i) => v === arr[i]) && attempts < 5) {
-    next = shuffleArray(arr);
-    attempts++;
+
+  const next = shuffleArray(arr);
+
+  if (next[0] === avoidFirst) {
+    const swapWith = 1 + Math.floor(Math.random() * (next.length - 1));
+    [next[0], next[swapWith]] = [next[swapWith], next[0]];
   }
+
   return next;
 }
 
+function readLastHero(storageKey) {
+  try {
+    return window.localStorage.getItem(storageKey);
+  } catch {
+    return null;
+  }
+}
+
+function saveLastHero(storageKey, value) {
+  try {
+    window.localStorage.setItem(storageKey, value);
+  } catch {
+    /* storage unavailable – ignore */
+  }
+}
+
 /*
-  Returns images in a shuffled order.
-  - Initial render uses the original order (keeps SSR/hydration consistent)
-  - On mount (every page refresh) the order is shuffled
-  - Then re-shuffled every `intervalMs`
+  - Every page load: shuffles, first image always differs from last load.
+  - Every `intervalMs`: shuffles again, first image always changes.
+  - `ready` is false until the first shuffle, so the original order
+    never flashes and the first shuffle doesn't animate.
 */
-function useShuffledImages(images, intervalMs = SHUFFLE_INTERVAL) {
+function useShuffledImages(images, storageKey, intervalMs = SHUFFLE_INTERVAL) {
   const [ordered, setOrdered] = useState(images);
+  const [ready, setReady] = useState(false);
+  const prevHeroRef = useRef(undefined);
   const key = images.join("|");
 
   useEffect(() => {
-    // reshuffle on mount / when the source images change
-    setOrdered((prev) => shuffleDifferent(images.length ? images : prev));
+    if (images.length === 0) return;
 
+    if (prevHeroRef.current === undefined) {
+      prevHeroRef.current = readLastHero(storageKey);
+    }
+
+    setOrdered(shuffleWithNewFirst(images, prevHeroRef.current));
+    setReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, storageKey]);
+
+  useEffect(() => {
     if (images.length < 2) return;
 
     const id = setInterval(() => {
-      // skip while the tab is hidden
-      if (typeof document !== "undefined" && document.hidden) return;
-      setOrdered((prev) => shuffleDifferent(prev));
+      if (document.hidden) return;
+      setOrdered((prev) => shuffleWithNewFirst(prev, prev[0]));
     }, intervalMs);
 
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, intervalMs]);
 
-  return ordered;
+  useEffect(() => {
+    if (ready && ordered[0]) saveLastHero(storageKey, ordered[0]);
+  }, [ordered, ready, storageKey]);
+
+  return { ordered, ready };
 }
 
 export default function NatureShowcase() {
@@ -112,9 +146,12 @@ export default function NatureShowcase() {
             .map((product, index) => {
               const imageFirst = index % 2 === 0;
 
-              // all available images for this product
-              const variantImages =
-                product?.variants?.map((v) => v.image).filter(Boolean) || [];
+              // de-duplicated so each image has a unique, stable key
+              const variantImages = [
+                ...new Set(
+                  product?.variants?.map((v) => v.image).filter(Boolean) || []
+                ),
+              ];
 
               const images =
                 variantImages.length > 0
@@ -203,38 +240,40 @@ function ShowcaseRow({ item, imageFirst }) {
 }
 
 function ShowcaseMedia({ item }) {
-  const shuffled = useShuffledImages(item.images, SHUFFLE_INTERVAL);
-
-  const heroImage = shuffled[0];
-  const thumbnails = shuffled.slice(1, 5);
+  const { ordered, ready } = useShuffledImages(
+    item.images,
+    `${STORAGE_PREFIX}${item.id}`,
+    SHUFFLE_INTERVAL
+  );
 
   return (
     <div className="showcase-media">
-      <div className="showcase-media-hero">
-        <Image
-          key={heroImage}
-          src={heroImage}
-          alt={item.title}
-          fill
-          className="showcase-media-image showcase-img-swap"
-        />
-      </div>
+      <div className="showcase-stage">
+        {ready &&
+          // item.images keeps a STABLE order, so DOM nodes are never
+          // re-created; only each tile's slot changes -> CSS animates it
+          item.images.map((src, i) => {
+            const pos = ordered.indexOf(src);
+            const slot = pos > -1 && pos < VISIBLE_SLOTS ? pos : "hidden";
 
-      {thumbnails.length > 0 && (
-        <div className="showcase-thumbs">
-          {thumbnails.map((thumb, index) => (
-            <div className="showcase-thumb" key={index}>
-              <Image
-                key={`${thumb}-${index}`}
-                src={thumb}
-                alt={`${item.title}-${index + 1}`}
-                fill
-                className="showcase-thumb-image showcase-img-swap"
-              />
-            </div>
-          ))}
-        </div>
-      )}
+            return (
+              <div
+                key={src}
+                className="showcase-tile"
+                data-slot={slot}
+                style={{ "--slot": slot === "hidden" ? VISIBLE_SLOTS - 1 : slot }}
+              >
+                <Image
+                  src={src}
+                  alt={`${item.title}-${i + 1}`}
+                  fill
+                  sizes="(max-width: 860px) 100vw, 50vw"
+                  className="showcase-tile-image"
+                />
+              </div>
+            );
+          })}
+      </div>
     </div>
   );
 }
