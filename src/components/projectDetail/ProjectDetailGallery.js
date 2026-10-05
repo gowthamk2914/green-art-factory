@@ -1,40 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SHUFFLE_INTERVAL_MS = 7000;
-
-// Static placeholder set — swap these for real project-gallery images
-// later (same shape: { id, src, alt }).
-const GALLERY_IMAGES = [
-  {
-    id: "bark-texture",
-    src: "https://res.cloudinary.com/dzcfhoulx/image/upload/f_auto,q_auto/gaf/63/bark-1.jpg.jpg",
-    alt: "Close-up of natural bark texture",
-  },
-  {
-    id: "atrium-installation",
-    src: "https://res.cloudinary.com/dzcfhoulx/image/upload/f_auto,q_auto/gaf/114/green-plants-growing-in-pots-on-a-rooftop-with-city-skyline-in-the-background-photo.jpg.jpg",
-    alt: "Glass atrium installation",
-  },
-  {
-    id: "plant-corner",
-    src: "https://res.cloudinary.com/dzcfhoulx/image/upload/f_auto,q_auto/gaf/53/living-1.jpg.jpg",
-    alt: "Indoor plant corner",
-  },
-  {
-    id: "greenhouse-walkway",
-    src: "https://res.cloudinary.com/dzcfhoulx/image/upload/f_auto,q_auto/gaf/81/indoor-gallery-9.png.png",
-    alt: "Greenhouse walkway lined with plants",
-  },
-  {
-    id: "white-flowers",
-    src: "https://res.cloudinary.com/dzcfhoulx/image/upload/f_auto,q_auto/gaf/54/living-2.jpg.jpg",
-    alt: "Close-up of white flowering plant",
-  },
-];
+const TARGET_IMAGE_COUNT = 5;
 
 function shuffleArray(array) {
   const result = [...array];
@@ -42,6 +14,49 @@ function shuffleArray(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
+  return result;
+}
+
+// `project.collections` is a list of product/variant groups, each with
+// its OWN `images` array (counts vary a lot — the sample has 14 images
+// on one collection and 2 on another). Taking the first 5 images overall
+// would silently drop any collection that comes after a large one, so
+// instead we round-robin one image at a time across every collection's
+// queue until we hit the target count (or every queue runs dry) — this
+// guarantees every present collection gets represented in the gallery,
+// not just the first one.
+function buildGalleryImages(collections, targetCount = TARGET_IMAGE_COUNT) {
+  if (!Array.isArray(collections) || collections.length === 0) return [];
+
+  const queues = collections
+    .filter((collection) => (collection.images ?? []).length > 0)
+    .map((collection) => ({
+      collection,
+      remaining: [...collection.images],
+    }));
+
+  const result = [];
+  let madeProgress = true;
+
+  while (result.length < targetCount && madeProgress) {
+    madeProgress = false;
+
+    for (const queue of queues) {
+      if (result.length >= targetCount) break;
+      if (queue.remaining.length === 0) continue;
+
+      madeProgress = true;
+      const src = queue.remaining.shift();
+      const { collection } = queue;
+
+      result.push({
+        id: `${collection.slug}-${collection.variant_slug}-${result.length}`,
+        src,
+        alt: [collection.variant, collection.name].filter(Boolean).join(" \u2014 "),
+      });
+    }
+  }
+
   return result;
 }
 
@@ -77,21 +92,34 @@ function GalleryCell({ image, slotIndex }) {
 }
 
 export default function ProjectDetailGallery() {
-  const [displayImages, setDisplayImages] = useState(GALLERY_IMAGES);
-  const imagesRef = useRef(GALLERY_IMAGES);
+  // `ProjectDetail` must match the key used in your rootReducer.
+  // The [slug] page dispatches the fetch — this component only reads.
+  const project = useSelector((state) => state.ProjectDetail?.data);
 
-  // Shuffle once on mount (covers "on refresh") ...
+  const images = useMemo(
+    () => buildGalleryImages(project?.collections),
+    [project?.collections]
+  );
+
+  const [displayImages, setDisplayImages] = useState(images);
+  const imagesRef = useRef(images);
+
+  // Reset the displayed/base set whenever the underlying collections
+  // change — e.g. navigating from one project detail page to another.
   useEffect(() => {
-    setDisplayImages(shuffleArray(imagesRef.current));
-  }, []);
+    imagesRef.current = images;
+    setDisplayImages(shuffleArray(images));
+  }, [images]);
 
-  // ...and again every 7 seconds.
+  // Reshuffle order every 7 seconds.
   useEffect(() => {
     const intervalId = setInterval(() => {
       setDisplayImages((prev) => shuffleArray(prev));
     }, SHUFFLE_INTERVAL_MS);
     return () => clearInterval(intervalId);
   }, []);
+
+  if (images.length === 0) return null;
 
   return (
     <section className="projectDetailGallerySection" aria-label="Project gallery">
