@@ -13513,3 +13513,58 @@ font.goog-text-highlight {
     height: 320px;
   }
 }
+
+
+
+
+.projectDetailStatus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 60vh;
+  padding: 120px 20px 60px; /* top space clears a fixed header */
+  margin: 0;
+  text-align: center;
+  font-size: clamp(16px, 1.4vw, 20px);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.2px;
+  color: var(--text-color, #4a4a4a);
+}
+
+/* Loading spinner */
+.projectDetailStatus--loading::before {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--primary-color, #111);
+  border-radius: 50%;
+  animation: projectDetailSpin 0.8s linear infinite;
+}
+
+/* Error state */
+.projectDetailStatus--error {
+  color: #c0392b;
+  max-width: 560px;
+  margin-inline: auto;
+}
+
+@keyframes projectDetailSpin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 767px) {
+  .projectDetailStatus {
+    min-height: 50vh;
+    padding: 100px 16px 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projectDetailStatus--loading::before {
+    animation-duration: 2s;
+  }
+}
