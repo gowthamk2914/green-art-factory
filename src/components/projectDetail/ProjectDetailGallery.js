@@ -17,14 +17,6 @@ function shuffleArray(array) {
   return result;
 }
 
-// `project.collections` is a list of product/variant groups, each with
-// its OWN `images` array (counts vary a lot — the sample has 14 images
-// on one collection and 2 on another). Taking the first 5 images overall
-// would silently drop any collection that comes after a large one, so
-// instead we round-robin one image at a time across every collection's
-// queue until we hit the target count (or every queue runs dry) — this
-// guarantees every present collection gets represented in the gallery,
-// not just the first one.
 function buildGalleryImages(collections, targetCount = TARGET_IMAGE_COUNT) {
   if (!Array.isArray(collections) || collections.length === 0) return [];
 
@@ -60,9 +52,7 @@ function buildGalleryImages(collections, targetCount = TARGET_IMAGE_COUNT) {
   return result;
 }
 
-// Position now comes purely from CSS (via data-slot), not inline styles —
-// this is what lets each breakpoint's media query redefine where a slot
-// sits without an inline style overriding it.
+
 function GalleryCell({ image, slotIndex }) {
   return (
     <motion.div
@@ -92,8 +82,7 @@ function GalleryCell({ image, slotIndex }) {
 }
 
 export default function ProjectDetailGallery() {
-  // `ProjectDetail` must match the key used in your rootReducer.
-  // The [slug] page dispatches the fetch — this component only reads.
+  
   const project = useSelector((state) => state.ProjectDetail?.data);
 
   const images = useMemo(
@@ -104,14 +93,12 @@ export default function ProjectDetailGallery() {
   const [displayImages, setDisplayImages] = useState(images);
   const imagesRef = useRef(images);
 
-  // Reset the displayed/base set whenever the underlying collections
-  // change — e.g. navigating from one project detail page to another.
+ 
   useEffect(() => {
     imagesRef.current = images;
     setDisplayImages(shuffleArray(images));
   }, [images]);
 
-  // Reshuffle order every 7 seconds.
   useEffect(() => {
     const intervalId = setInterval(() => {
       setDisplayImages((prev) => shuffleArray(prev));
