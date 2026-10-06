@@ -25,6 +25,21 @@ function getCardSpan(index) {
   return GRID_PATTERN[index % GRID_PATTERN.length];
 }
 
+// Some projects (e.g. "Abu Dhabi International Tower" in the sample data)
+// have `cover_image: null` but still have images under their product
+// variants — in that case, use the first image we find on any variant
+// rather than falling all the way through to the generic placeholder.
+function getThumbnailImage(project) {
+  if (project.cover_image) return project.cover_image;
+
+  for (const variant of project.product_variants ?? []) {
+    const firstImage = variant.images?.[0];
+    if (firstImage) return firstImage;
+  }
+
+  return null;
+}
+
 // Fisher–Yates shuffle — unbiased, doesn't mutate the input array.
 function shuffleArray(array) {
   const result = [...array];
@@ -217,7 +232,7 @@ function ProjectCard({ project, index }) {
     >
       <Link href={project.cta_url} className="projectsListingCard">
         <Image
-          src={project.cover_image || FALLBACK_IMAGE}
+          src={getThumbnailImage(project) || FALLBACK_IMAGE}
           alt={project.title}
           fill
           sizes="(max-width: 560px) 100vw, (max-width: 860px) 50vw, 33vw"
