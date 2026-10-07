@@ -13,7 +13,7 @@ function* getFeaturedProjectsSaga() {
   try {
     const response = yield call(
       axios.get,
-      `${API_URL}/homepage/featured`
+      `${API_URL}/v1/pages/portfolio`
     );
 
     yield put(

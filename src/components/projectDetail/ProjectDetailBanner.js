@@ -48,11 +48,17 @@ export default function ProjectHero() {
     href: item.url,
   }));
 
+  // Some projects (e.g. "Portugal Bonsai Tree" in the sample data) have
+  // `hero_image: null` but still have a populated `gallery` array — use
+  // the first gallery image before falling all the way through to the
+  // generic placeholder.
+  const bannerImage = project.hero_image || project.gallery?.[0]?.url || FALLBACK_HERO_IMAGE;
+
   return (
     <section className="projectDetailHeroSection" aria-label="Project banner">
       <div className="projectDetailHeroMedia">
         <Image
-          src={project.hero_image || FALLBACK_HERO_IMAGE}
+          src={bannerImage}
           alt={project.title}
           fill
           priority
