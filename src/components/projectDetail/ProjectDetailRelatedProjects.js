@@ -40,7 +40,7 @@ export default function ProjectDetailRelatedProjects() {
     slug: item.slug,
     label: item.category?.name,
     title: item.title,
-    image: item.cover_image,
+    image: item.cover_image || item.gallery?.[0]?.url || null,
     href: item.cta_url,
   }));
 

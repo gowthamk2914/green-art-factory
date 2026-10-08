@@ -14,6 +14,10 @@ import { getProductsPreviewRequest } from "../../redux/Products/actions";
 
 gsap.registerPlugin(ScrollTrigger); // register once, at module scope
 
+// Max images per category card: 1 featured + 4 in the right-hand grid.
+// When more variants are added in the dashboard, only the latest 5 are shown.
+const MAX_IMAGES = 5;
+
 // Skeleton mirrors the real card heights/grid so the page height barely
 // shifts once real data + images arrive — this is what keeps ScrollTrigger
 // from having to correct a large layout jump.
@@ -42,6 +46,16 @@ const ProductSkeleton = () => (
 function buildGalleryUrl(categorySlug, variantSlug) {
   if (!categorySlug || !variantSlug) return "#";
   return `/gallery/${categorySlug}/${variantSlug}`;
+}
+
+// Returns the latest MAX_IMAGES variants of a category, newest first.
+// Assumes a higher id = more recently added. If your API exposes a timestamp,
+// sort by it instead: new Date(b.created_at) - new Date(a.created_at)
+function getLatestVariants(category) {
+  return (category.variants || [])
+    .slice() // copy first, redux state can be frozen/immutable
+    .sort((a, b) => b.id - a.id) // newest first
+    .slice(0, MAX_IMAGES);
 }
 
 // Returns the grid template classes for the "remaining products" panel
@@ -150,8 +164,10 @@ const Products = () => {
                 <ProductSkeleton key={`skeleton-${i}`} />
               ))
             : sortedProducts.map((category, slideIndex) => {
-                const featuredProduct = category.variants?.[0];
-                const remainingProducts = category.variants?.slice(1) || [];
+                // Only the latest 5 variants; newest becomes the featured image
+                const variants = getLatestVariants(category);
+                const featuredProduct = variants[0];
+                const remainingProducts = variants.slice(1);
                 const remainingCount = remainingProducts.length;
                 // When there's only one variant total, there's no "remaining"
                 // panel at all — the featured image stretches to fill the row.
