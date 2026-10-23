@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, forwardRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Document, Page, pdfjs } from "react-pdf";
 import HTMLFlipBook from "react-pageflip";
 import JSZip from "jszip";
@@ -19,6 +20,8 @@ import {
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
+import { getCataloguesRequest } from "../../redux/Catalogue/actions";
+
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const PAGE_ASPECT_RATIO = 1.414; // height / width
@@ -26,6 +29,9 @@ const PAGE_ASPECT_RATIO = 1.414; // height / width
 const MAX_PAGE_WIDTH = 220;
 const MAX_PAGE_WIDTH_FULLSCREEN = 900;
 
+// Static section copy — the API only returns the catalogue list itself
+// (no eyebrow/headline/intro/feature-tag content), so these stay as
+// component defaults/props, same as before.
 const DEFAULT_FEATURES = [
   { icon: FiLayers, label: "Comprehensive Guide", detail: "Full range, every finish" },
   { icon: FiRefreshCw, label: "Updated Quarterly", detail: "New releases as they ship" },
@@ -33,13 +39,44 @@ const DEFAULT_FEATURES = [
   { icon: FiDownload, label: "Print-Ready PDF", detail: "Same file, offline" },
 ];
 
-// One entry per catalogue. Replace pdfUrl / downloadFileName with the real files.
-const DEFAULT_CATALOGUES = [
-  { id: "cat-1", title: "Catalogue 1", pdfUrl: "/catalogue1.pdf", downloadFileName: "catalogue-1.pdf" },
-  { id: "cat-2", title: "Catalogue 2", pdfUrl: "/catalogue2.pdf", downloadFileName: "catalogue-2.pdf" },
-  { id: "cat-3", title: "Catalogue 3", pdfUrl: "/catalogue3.pdf", downloadFileName: "catalogue-3.pdf" },
-  { id: "cat-4", title: "Catalogue 4", pdfUrl: "/catalogue4.pdf", downloadFileName: "catalogue-4.pdf" },
-];
+// react-pdf fetches the PDF's bytes directly in the browser, which hits
+// CORS if the storage host doesn't send Access-Control-Allow-Origin for
+// our origin — exactly what's happening with mindmadeitech.com's
+// /storage/* files. Routing through our own API proxy makes the fetch
+// same-origin instead.
+function toProxiedUrl(pdfUrl) {
+  if (!pdfUrl) return pdfUrl;
+  return `/api/catalogue-proxy?url=${encodeURIComponent(pdfUrl)}`;
+}
+
+// Same proxy endpoint, but with download=1 + filename so the server
+// sends Content-Disposition: attachment — this is what actually forces
+// a save-as instead of the browser opening the PDF inline. The plain
+// toProxiedUrl() above (used for the flipbook's <Document file={...}>)
+// deliberately skips this: react-pdf fetches bytes itself via fetch(),
+// so this header wouldn't do anything there anyway.
+function toDownloadUrl(pdfUrl, filename) {
+  if (!pdfUrl) return pdfUrl;
+  const params = new URLSearchParams({
+    url: pdfUrl,
+    download: "1",
+    filename,
+  });
+  return `/api/catalogue-proxy?${params.toString()}`;
+}
+
+// Turns "Catalogue 1" into "catalogue-1.pdf" for the download attribute —
+// the API gives us a real `pdf_url` to fetch, but `pdf_path` is a
+// generated storage filename (e.g. "01M4FQST1C488GA8YDH3HWPNA0.pdf"),
+// not something you'd want as a downloaded file's name.
+function slugifyFileName(title, fallback) {
+  const base = (title || fallback || "catalogue")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  return `${base || "catalogue"}.pdf`;
+}
 
 const CataloguePage = forwardRef(({ pageNumber, width }, ref) => (
   <div className="catalogue-page" ref={ref}>
@@ -151,7 +188,7 @@ const pageHeight = pageWidth * PAGE_ASPECT_RATIO;
       <div className="catalogue-block-header">
         <h3 className="catalogue-block-title">{catalogue.title}</h3>
         <a
-          href={catalogue.pdfUrl}
+          href={catalogue.downloadUrl}
           download={catalogue.downloadFileName}
           className="catalogue-download-btn catalogue-download-btn--single"
         >
@@ -241,13 +278,40 @@ const pageHeight = pageWidth * PAGE_ASPECT_RATIO;
 }
 
 export default function AnimatedCatalogue({
-  catalogues = DEFAULT_CATALOGUES,
   eyebrow = "The Full Catalogue",
   headline = "Every product, spec, and finish — in one flip-through book.",
   intro = "Browse the full line the way it was meant to be read: page by page, corner to corner. Or grab the zip and keep every catalogue on the shelf.",
   features = DEFAULT_FEATURES,
   zipFileName = "catalogues.zip",
 }) {
+  const dispatch = useDispatch();
+
+  // `Catalogues` must match the key used in your rootReducer
+  const { data, loading, error } = useSelector((state) => state.Catalogues);
+
+  useEffect(() => {
+    dispatch(getCataloguesRequest());
+  }, [dispatch]);
+
+  
+  // Map the API's snake_case fields onto what CatalogueViewer expects,
+  // sorted by `sort_order` (the API doesn't guarantee array order).
+  const catalogues = useMemo(() => {
+    return [...(data ?? [])]
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map((item) => {
+        const downloadFileName = slugifyFileName(item.title, `catalogue-${item.id}`);
+        return {
+          id: item.id,
+          title: item.title,
+          pdfUrl: toProxiedUrl(item.pdf_url),
+          downloadUrl: toDownloadUrl(item.pdf_url, downloadFileName),
+          downloadFileName,
+          coverImageUrl: item.cover_image_url,
+        };
+      });
+  }, [data]);
+
   const [zipStatus, setZipStatus] = useState("idle"); // idle | zipping | error
 
   const handleDownloadAllZip = async () => {
@@ -290,7 +354,7 @@ export default function AnimatedCatalogue({
             type="button"
             onClick={handleDownloadAllZip}
             className="catalogue-download-btn catalogue-download-btn--all"
-            disabled={zipStatus === "zipping"}
+            disabled={zipStatus === "zipping" || catalogues.length === 0}
           >
             {zipStatus === "zipping" ? (
               <FiLoader className="catalogue-spin" />
@@ -328,6 +392,20 @@ export default function AnimatedCatalogue({
       <div className="catalogue-viewer-header">
         <span className="catalogue-eyebrow catalogue-eyebrow--muted">Or read them here</span>
       </div>
+
+      {loading && catalogues.length === 0 && (
+        <p className="catalogue-status">Loading catalogues…</p>
+      )}
+
+      {error && catalogues.length === 0 && !loading && (
+        <p className="catalogue-status catalogue-status--error">
+          Couldn&apos;t load the catalogues. {error}
+        </p>
+      )}
+
+      {!loading && !error && catalogues.length === 0 && (
+        <p className="catalogue-status">No catalogues available yet.</p>
+      )}
 
       <div className="catalogue-blocks">
         {catalogues.map((cat) => (

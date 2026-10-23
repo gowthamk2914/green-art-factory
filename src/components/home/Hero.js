@@ -76,7 +76,7 @@ speed={2000}
             <div className="container flex items-center justify-between">
               
               {/* Left Content */}
-              <div className="w-[57%] pt-16">
+              <div className="w-[57%]">
                 <h1 className="hero-banner-text text-[64px] font-bold leading-[1.15] tracking-[-1px] text-black">
                   {slide.title}
                 </h1>
@@ -86,7 +86,7 @@ speed={2000}
                 </p>
 
                 
-                <Link href="/products">
+                <Link href="/products-list">
                 <button className="mt-10 flex items-center gap-5 rounded-full bg-[#66711E] py-2 pl-8 pr-2 text-white transition-all duration-300 hover:scale-105">
                   <span className="explore-btn-text text-[15px] font-medium">
                     Explore Products
@@ -98,7 +98,7 @@ speed={2000}
                 </button>
                 </Link>
 
-                <p className="banner-discount-text mt-28 text-[20px] text-black">
+                {/* <p className="banner-discount-text mt-28 text-[20px] text-black">
                   Checkout our new offers and discounts{" "}
                   <a
                     href="#"
@@ -106,7 +106,7 @@ speed={2000}
                   >
                     here
                   </a>
-                </p>
+                </p> */}
               </div>
 
               {/* Right Image */}
