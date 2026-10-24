@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -52,13 +52,19 @@ function buildGalleryImages(collections, targetCount = TARGET_IMAGE_COUNT) {
   return result;
 }
 
+// Image-size hints so Next.js doesn't download oversized files for small cells.
+function getSizes(count) {
+  if (count === 1) return "(max-width: 1600px) 100vw, 1600px";
+  if (count === 2) return "(max-width: 560px) 100vw, 50vw";
+  if (count === 3) return "(max-width: 560px) 100vw, (max-width: 860px) 50vw, 55vw";
+  return "(max-width: 560px) 100vw, (max-width: 860px) 50vw, 33vw";
+}
 
-function GalleryCell({ image, slotIndex }) {
+function GalleryCell({ image, slotIndex, sizes }) {
   return (
     <motion.div
       layout
       layoutId={image.id}
-      key={image.id}
       data-slot={slotIndex}
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -74,7 +80,7 @@ function GalleryCell({ image, slotIndex }) {
         src={image.src}
         alt={image.alt}
         fill
-        sizes="(max-width: 560px) 100vw, (max-width: 860px) 50vw, 33vw"
+        sizes={sizes}
         className="projectDetailGalleryImage"
       />
     </motion.div>
@@ -82,7 +88,6 @@ function GalleryCell({ image, slotIndex }) {
 }
 
 export default function ProjectDetailGallery() {
-  
   const project = useSelector((state) => state.ProjectDetail?.data);
 
   const images = useMemo(
@@ -91,31 +96,40 @@ export default function ProjectDetailGallery() {
   );
 
   const [displayImages, setDisplayImages] = useState(images);
-  const imagesRef = useRef(images);
 
- 
   useEffect(() => {
-    imagesRef.current = images;
     setDisplayImages(shuffleArray(images));
   }, [images]);
 
+  // Shuffling only makes sense with 2+ images
   useEffect(() => {
+    if (images.length < 2) return;
+
     const intervalId = setInterval(() => {
       setDisplayImages((prev) => shuffleArray(prev));
     }, SHUFFLE_INTERVAL_MS);
+
     return () => clearInterval(intervalId);
-  }, []);
+  }, [images.length]);
 
   if (images.length === 0) return null;
+
+  const count = images.length;
+  const sizes = getSizes(count);
 
   return (
     <section className="projectDetailGallerySection" aria-label="Project gallery">
       <h2 className="projectDetailGalleryTitle">Project Gallery</h2>
 
-      <div className="projectDetailGalleryGrid">
+      <div className="projectDetailGalleryGrid" data-count={count}>
         <AnimatePresence mode="popLayout">
           {displayImages.map((image, index) => (
-            <GalleryCell key={image.id} image={image} slotIndex={index} />
+            <GalleryCell
+              key={image.id}
+              image={image}
+              slotIndex={index}
+              sizes={sizes}
+            />
           ))}
         </AnimatePresence>
       </div>

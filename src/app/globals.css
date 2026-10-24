@@ -12837,7 +12837,7 @@ font.goog-text-highlight {
 .projectDetailStatsMediaImage {
   object-fit: contain;
   object-position: left center;
-  height: auto;
+  height: auto !important;
 }
 
 /* ==========================================================================
@@ -12893,6 +12893,11 @@ font.goog-text-highlight {
 }
 
 
+
+
+
+
+
 .projectDetailGallerySection {
   background: #ffffff;
   padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
@@ -12917,65 +12922,179 @@ font.goog-text-highlight {
   object-fit: cover;
 }
 
-/* ==========================================================================
-   Desktop — 3 columns x 2 rows, 5 slots. Center column spans both rows.
-   All 5 data-slot cells are placed explicitly so none are left to grid
-   auto-placement (which is what caused images to "disappear" behind
-   each other before).
-   ========================================================================== */
-
 .projectDetailGalleryGrid {
   max-width: 1600px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1.3fr 1fr;
-  grid-template-rows: repeat(2, 1fr);
   gap: 1rem;
-  height: clamp(520px, 62vw, 780px);
 }
 
-.projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1; }
-.projectDetailGalleryCell[data-slot="1"] { grid-column: 2; grid-row: 1 / span 2; }
-.projectDetailGalleryCell[data-slot="2"] { grid-column: 3; grid-row: 1; }
-.projectDetailGalleryCell[data-slot="3"] { grid-column: 1; grid-row: 2; }
-.projectDetailGalleryCell[data-slot="4"] { grid-column: 3; grid-row: 2; }
+/* ==========================================================================
+   DESKTOP
+   ========================================================================== */
+
+/* 1 image: one wide banner */
+.projectDetailGalleryGrid[data-count="1"] {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  height: clamp(320px, 46vw, 640px);
+}
+.projectDetailGalleryGrid[data-count="1"] .projectDetailGalleryCell[data-slot="0"] {
+  grid-column: 1; grid-row: 1;
+}
+
+/* 2 images: side by side, left slightly wider */
+.projectDetailGalleryGrid[data-count="2"] {
+  grid-template-columns: 1.35fr 1fr;
+  grid-template-rows: 1fr;
+  height: clamp(320px, 42vw, 600px);
+}
+.projectDetailGalleryGrid[data-count="2"] .projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1; }
+.projectDetailGalleryGrid[data-count="2"] .projectDetailGalleryCell[data-slot="1"] { grid-column: 2; grid-row: 1; }
+
+/* 3 images: one tall on the left, two stacked on the right */
+.projectDetailGalleryGrid[data-count="3"] {
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows: repeat(2, 1fr);
+  height: clamp(420px, 50vw, 680px);
+}
+.projectDetailGalleryGrid[data-count="3"] .projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1 / span 2; }
+.projectDetailGalleryGrid[data-count="3"] .projectDetailGalleryCell[data-slot="1"] { grid-column: 2; grid-row: 1; }
+.projectDetailGalleryGrid[data-count="3"] .projectDetailGalleryCell[data-slot="2"] { grid-column: 2; grid-row: 2; }
+
+/* 4 images: tall left, two on top, one wide on the bottom */
+.projectDetailGalleryGrid[data-count="4"] {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  height: clamp(480px, 56vw, 720px);
+}
+.projectDetailGalleryGrid[data-count="4"] .projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1 / span 2; }
+.projectDetailGalleryGrid[data-count="4"] .projectDetailGalleryCell[data-slot="1"] { grid-column: 2; grid-row: 1; }
+.projectDetailGalleryGrid[data-count="4"] .projectDetailGalleryCell[data-slot="2"] { grid-column: 3; grid-row: 1; }
+.projectDetailGalleryGrid[data-count="4"] .projectDetailGalleryCell[data-slot="3"] { grid-column: 2 / span 2; grid-row: 2; }
+
+/* 5 images: tall center column, two on each side */
+.projectDetailGalleryGrid[data-count="5"] {
+  grid-template-columns: 1fr 1.3fr 1fr;
+  grid-template-rows: repeat(2, 1fr);
+  height: clamp(520px, 62vw, 780px);
+}
+.projectDetailGalleryGrid[data-count="5"] .projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1; }
+.projectDetailGalleryGrid[data-count="5"] .projectDetailGalleryCell[data-slot="1"] { grid-column: 2; grid-row: 1 / span 2; }
+.projectDetailGalleryGrid[data-count="5"] .projectDetailGalleryCell[data-slot="2"] { grid-column: 3; grid-row: 1; }
+.projectDetailGalleryGrid[data-count="5"] .projectDetailGalleryCell[data-slot="3"] { grid-column: 1; grid-row: 2; }
+.projectDetailGalleryGrid[data-count="5"] .projectDetailGalleryCell[data-slot="4"] { grid-column: 3; grid-row: 2; }
 
 /* ==========================================================================
-   Tablet — 2 columns x 3 rows, 6 cells total. All 5 images are placed
-   explicitly so every cell is filled with no gaps and nothing hidden;
-   one column keeps a tall spanning cell for visual variety.
+   TABLET (max 860px)
    ========================================================================== */
 
 @media (max-width: 860px) {
-  .projectDetailGalleryGrid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 220px);
+  .projectDetailGalleryGrid[data-count] {
     height: auto;
   }
 
-  .projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1; }
-  .projectDetailGalleryCell[data-slot="1"] { grid-column: 2; grid-row: 1 / span 2; }
-  .projectDetailGalleryCell[data-slot="2"] { grid-column: 1; grid-row: 2; }
-  .projectDetailGalleryCell[data-slot="3"] { grid-column: 1; grid-row: 3; }
-  .projectDetailGalleryCell[data-slot="4"] { grid-column: 2; grid-row: 3; }
+  /* 1: single banner */
+  .projectDetailGalleryGrid[data-count="1"] {
+    grid-template-rows: 340px;
+  }
+
+  /* 2: side by side, equal */
+  .projectDetailGalleryGrid[data-count="2"] {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 300px;
+  }
+
+  /* 3: one wide on top, two below */
+  .projectDetailGalleryGrid[data-count="3"] {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 220px);
+  }
+  .projectDetailGalleryGrid[data-count="3"] .projectDetailGalleryCell[data-slot="0"] { grid-column: 1 / span 2; grid-row: 1; }
+  .projectDetailGalleryGrid[data-count="3"] .projectDetailGalleryCell[data-slot="1"] { grid-column: 1; grid-row: 2; }
+  .projectDetailGalleryGrid[data-count="3"] .projectDetailGalleryCell[data-slot="2"] { grid-column: 2; grid-row: 2; }
+
+  /* 4: clean 2 x 2 */
+  .projectDetailGalleryGrid[data-count="4"] {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 220px);
+  }
+  .projectDetailGalleryGrid[data-count="4"] .projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1; }
+  .projectDetailGalleryGrid[data-count="4"] .projectDetailGalleryCell[data-slot="1"] { grid-column: 2; grid-row: 1; }
+  .projectDetailGalleryGrid[data-count="4"] .projectDetailGalleryCell[data-slot="2"] { grid-column: 1; grid-row: 2; }
+  .projectDetailGalleryGrid[data-count="4"] .projectDetailGalleryCell[data-slot="3"] { grid-column: 2; grid-row: 2; }
+
+  /* 5: tall cell on the right */
+  .projectDetailGalleryGrid[data-count="5"] {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 220px);
+  }
+  .projectDetailGalleryGrid[data-count="5"] .projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1; }
+  .projectDetailGalleryGrid[data-count="5"] .projectDetailGalleryCell[data-slot="1"] { grid-column: 2; grid-row: 1 / span 2; }
+  .projectDetailGalleryGrid[data-count="5"] .projectDetailGalleryCell[data-slot="2"] { grid-column: 1; grid-row: 2; }
+  .projectDetailGalleryGrid[data-count="5"] .projectDetailGalleryCell[data-slot="3"] { grid-column: 1; grid-row: 3; }
+  .projectDetailGalleryGrid[data-count="5"] .projectDetailGalleryCell[data-slot="4"] { grid-column: 2; grid-row: 3; }
 }
 
 /* ==========================================================================
-   Mobile — single column, every image stacked in its own full-width row.
-   All 5 slots stay visible; none are dropped.
+   MOBILE (max 560px) — one column, every image in its own full-width row.
+   Same specificity as the rules above and placed after them, so it wins.
    ========================================================================== */
 
 @media (max-width: 560px) {
-  .projectDetailGalleryGrid {
+  .projectDetailGalleryGrid[data-count] {
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(5, 240px);
+    grid-template-rows: none;
+    grid-auto-rows: 240px;
   }
 
-  .projectDetailGalleryCell[data-slot="0"] { grid-column: 1; grid-row: 1; }
-  .projectDetailGalleryCell[data-slot="1"] { grid-column: 1; grid-row: 2; }
-  .projectDetailGalleryCell[data-slot="2"] { grid-column: 1; grid-row: 3; }
-  .projectDetailGalleryCell[data-slot="3"] { grid-column: 1; grid-row: 4; }
-  .projectDetailGalleryCell[data-slot="4"] { grid-column: 1; grid-row: 5; }
+  .projectDetailGalleryGrid[data-count] .projectDetailGalleryCell[data-slot] {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+
+/* Hover: slight zoom + diagonal shine sweep */
+.projectDetailGalleryImage {
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.projectDetailGalleryCell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+}
+
+@media (hover: hover) {
+  .projectDetailGalleryCell:hover .projectDetailGalleryImage {
+    transform: scale(1.08);
+  }
+
+  .projectDetailGalleryCell:hover::after {
+    transform: translateX(120%);
+    transition: transform 0.9s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projectDetailGalleryImage,
+  .projectDetailGalleryCell::after {
+    transition: none;
+  }
+  .projectDetailGalleryCell:hover .projectDetailGalleryImage {
+    transform: none;
+  }
 }
 
 

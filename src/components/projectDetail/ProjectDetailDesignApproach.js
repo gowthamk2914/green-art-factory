@@ -4,25 +4,30 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import Image from "next/image";
 
-// The API's `design_approach.description` can be plain text or an HTML
-// string (other content fields in this API, like `content.execution`,
-// come through as HTML with <p>/<ul> tags — this field may too). We
-// render HTML as-is and treat plain text as a single paragraph, rather
-// than guessing at paragraph breaks that aren't actually there.
 function isHtml(value) {
   return typeof value === "string" && /<[a-z][\s\S]*>/i.test(value);
 }
 
+// True only if the value has real visible content. The dashboard's editor
+// saves "empty" fields as things like "<p></p>" or "<p>&nbsp;</p>", which
+// are truthy strings but show nothing. Media tags count as content.
+function hasMeaningfulContent(value) {
+  if (typeof value !== "string") return false;
+  if (/<(img|iframe|video)\b/i.test(value)) return true;
+
+  const text = value
+    .replace(/<[^>]*>/g, "") // strip tags
+    .replace(/&nbsp;|&#160;/gi, " ") // non-breaking spaces
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return text.length > 0;
+}
+
 export default function ProjectDetailDesignApproach() {
-  // `ProjectDetail` must match the key used in your rootReducer.
-  // The [slug] page dispatches the fetch — this component only reads.
   const project = useSelector((state) => state.ProjectDetail?.data);
 
-  // `imageFailed` flips to true if the <Image> actually fails to load
-  // (broken URL, 404, network error) — not just when `image` is an
-  // empty string/null/undefined. Both conditions together are the ONE
-  // source of truth for whether the media column renders at all: no
-  // CSS is involved in this decision anymore.
+  // Flips to true if the <Image> actually fails to load (404, bad URL, etc.)
   const [imageFailed, setImageFailed] = useState(false);
 
   if (!project) return null;
@@ -30,12 +35,11 @@ export default function ProjectDetailDesignApproach() {
   const designApproach = project.design_approach ?? {};
   const { title, description, image } = designApproach;
 
-  const hasImage = Boolean(image) && !imageFailed;
-  const hasDescription = Boolean(description);
+  const hasDescription = hasMeaningfulContent(description);
+  const hasImage =
+    typeof image === "string" && image.trim() !== "" && !imageFailed;
 
-  // Nothing meaningful to show for this project — the admin hasn't
-  // filled in a description or an image yet, so skip the section
-  // entirely rather than rendering a heading with nothing under it.
+  // Hide the whole section only when BOTH are empty
   if (!hasDescription && !hasImage) return null;
 
   return (
