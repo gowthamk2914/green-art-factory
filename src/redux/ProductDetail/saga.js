@@ -20,11 +20,9 @@ function* getProductDetailSaga(action) {
 
     const url = `${API_URL}/v1/products/${slug}`;
 
-    console.log("Fetching product detail:", url);
 
     const response = yield call(axios.get, url);
 
-    console.log("Product detail API response:", response.data);
 
     const product = response.data?.data ?? response.data;
 

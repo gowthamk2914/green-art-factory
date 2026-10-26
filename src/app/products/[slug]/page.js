@@ -13,6 +13,10 @@ import {
   getProductDetailRequest,
 } from "../../../redux/ProductDetail/actions";
 
+import {
+  getProductDetailRelatedProductsRequest,
+} from "../../../redux/ProductDetailRelatedProducts/actions";
+
 export default function ProductDetail() {
   const params = useParams();
   const dispatch = useDispatch();
@@ -25,13 +29,25 @@ export default function ProductDetail() {
     error,
   } = useSelector((state) => state.ProductDetail);
 
+  const {
+    data: relatedProductsData,
+  } = useSelector(
+    (state) => state.ProductDetailRelatedProducts
+  );
+
   useEffect(() => {
     if (slug) {
-      console.log("Product slug:", slug);
-
       dispatch(getProductDetailRequest(slug));
     }
   }, [dispatch, slug]);
+
+  useEffect(() => {
+    if (product?.related?.length) {
+      dispatch(
+        getProductDetailRelatedProductsRequest(product.related)
+      );
+    }
+  }, [dispatch, product?.id, product?.related]);
 
   if (loading) {
     return (
@@ -53,8 +69,6 @@ export default function ProductDetail() {
     return null;
   }
 
-  console.log("Product API data:", product);
-
   return (
     <>
       <ProductShowcase
@@ -67,8 +81,8 @@ export default function ProductDetail() {
 
       <RelatedProducts
         items={product.related || []}
+        relatedProductsData={relatedProductsData}
       />
     </>
   );
 }
-

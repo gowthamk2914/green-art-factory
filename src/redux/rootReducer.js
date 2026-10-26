@@ -8,6 +8,7 @@ import BlogPreviewReducer from "./BlogPreview/reducer";
 import NatureShowcaseReducer from "./NatureShowcase/reducer";
 import BlogDetailReducer from "./BlogDetail/reducer";
 import ProductDetailReducer from "./ProductDetail/reducer"; 
+import ProductDetailRelatedProductsReducer from "./ProductDetailRelatedProducts/reducer";
 import PortfolioReducer from "./Portfolio/reducer";
 import GalleryReducer from "./Gallery/reducer";
 import TeamMembersReducer from "./TeamMembers/reducer";
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   NatureShowcase: NatureShowcaseReducer,
   BlogDetail: BlogDetailReducer,
   ProductDetail: ProductDetailReducer, 
+  ProductDetailRelatedProducts: ProductDetailRelatedProductsReducer,
   Portfolio: PortfolioReducer, 
   Gallery: GalleryReducer,
   TeamMembers: TeamMembersReducer,

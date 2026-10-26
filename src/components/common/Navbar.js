@@ -257,7 +257,6 @@ const Navbar = () => {
         onClose={() => setIsFilterOpen(false)}
         onApply={(filters) => {
           // Wire this up to your portfolio query / router push / API call
-          console.log("Applied filters:", filters);
         }}
       />
 

@@ -7,7 +7,21 @@ import { useEffect, useRef, useState } from "react";
 
 const FALLBACK_IMAGE = "/images/product-detail-common-img.png";
 
-function RelatedCard({ item }) {
+function RelatedCard({ item, relatedProductsData }) {
+  const relatedProduct = relatedProductsData?.[item?.slug];
+
+  const firstVariantImage =
+    relatedProduct?.variants?.[0]?.images?.[0];
+
+  const productImage =
+    (typeof firstVariantImage === "string" &&
+    firstVariantImage.trim()
+      ? firstVariantImage
+      : null) ||
+    item?.cover_image ||
+    FALLBACK_IMAGE;
+
+
   return (
     <Link
       href={item?.cta_url || "#"}
@@ -15,7 +29,7 @@ function RelatedCard({ item }) {
     >
       <div className="relatedProductsImageFrame">
         <Image
-          src={item?.cover_image || FALLBACK_IMAGE}
+          src={productImage}
           alt={item?.name || "Related product"}
           fill
           sizes="(max-width: 640px) 70vw, 280px"
@@ -38,17 +52,15 @@ function RelatedCard({ item }) {
   );
 }
 
-export default function RelatedProducts({ items = [] }) {
+export default function RelatedProducts({
+  items = [],
+  relatedProductsData = {},
+}) {
   const scrollerRef = useRef(null);
   const animationRef = useRef(null);
 
   const [isOverflowing, setIsOverflowing] = useState(false);
 
-  if (!items?.length) {
-    return null;
-  }
-
-  // Check whether products actually overflow the screen
   useEffect(() => {
     const checkOverflow = () => {
       const element = scrollerRef.current;
@@ -67,9 +79,8 @@ export default function RelatedProducts({ items = [] }) {
     return () => {
       window.removeEventListener("resize", checkOverflow);
     };
-  }, [items]);
+  }, [items, relatedProductsData]);
 
-  // Continuous automatic sliding
   useEffect(() => {
     const element = scrollerRef.current;
 
@@ -78,18 +89,14 @@ export default function RelatedProducts({ items = [] }) {
     }
 
     let lastTime = performance.now();
-
-    // Pixels per second
     const speed = 35;
 
     const animate = (currentTime) => {
       const delta = currentTime - lastTime;
-
       lastTime = currentTime;
 
       element.scrollLeft += (speed * delta) / 1000;
 
-      // Restart from beginning when reaching the end
       if (
         element.scrollLeft + element.clientWidth >=
         element.scrollWidth - 1
@@ -110,6 +117,10 @@ export default function RelatedProducts({ items = [] }) {
       }
     };
   }, [isOverflowing]);
+
+  if (!items?.length) {
+    return null;
+  }
 
   return (
     <section
@@ -132,6 +143,7 @@ export default function RelatedProducts({ items = [] }) {
             <RelatedCard
               key={item?.id ?? item?.slug ?? index}
               item={item}
+              relatedProductsData={relatedProductsData}
             />
           ))}
         </div>
@@ -139,4 +151,3 @@ export default function RelatedProducts({ items = [] }) {
     </section>
   );
 }
-

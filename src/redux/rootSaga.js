@@ -8,10 +8,12 @@ import BlogPreviewSaga from "./BlogPreview/saga";
 import NatureShowcaseSaga from "./NatureShowcase/saga";
 import BlogDetailSaga from "./BlogDetail/saga";
 import ProductDetailSaga from "./ProductDetail/saga";
+import ProductDetailRelatedProductsSaga from "./ProductDetailRelatedProducts/saga";
 import PortfolioSaga from "./Portfolio/saga";
 import GallerySaga from "./Gallery/saga";
 import TeamMembersSaga from "./TeamMembers/saga"; 
 import OpportunitiesSaga from "./Opportunities/saga";     
+
 import ApplyFormSaga from "./ApplyForm/saga";
 import ContactPageFormSaga from "./ContactPageForm/saga";
 import CommonContactEnquiryFormSaga from "./CommonContactEnquiryForm/saga";
@@ -29,6 +31,7 @@ export default function* rootSaga() {
     NatureShowcaseSaga(),
     BlogDetailSaga(),
     ProductDetailSaga(),
+    ProductDetailRelatedProductsSaga(),
     PortfolioSaga(),
     GallerySaga(), 
     TeamMembersSaga(),
