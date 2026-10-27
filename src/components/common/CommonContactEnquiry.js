@@ -145,17 +145,17 @@ export default function EnquirySection() {
             <div className="enq-divider" />
 
             <div className="enq-contact-list">
-              <a href="tel:+911234567890" className="enq-contact-row">
+              <a href="tel:+971569588315" className="enq-contact-row">
                 <span className="enq-contact-icon">
                   <Phone size={15} />
                 </span>
-                +91 1234567890
+                (+971) 56 9588 315
               </a>
-              <a href="mailto:hello@greenartfactory.com" className="enq-contact-row">
+              <a href="mailto:info@greenartfactory.com" className="enq-contact-row">
                 <span className="enq-contact-icon">
                   <Mail size={15} />
                 </span>
-                hello@greenartfactory.com
+                info@greenartfactory.com
               </a>
             </div>
           </div>

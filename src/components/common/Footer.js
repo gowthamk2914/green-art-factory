@@ -6,8 +6,10 @@ const LOGO_IMAGE = "/images/gaf-footer-logo.png";
 const NAV_LINKS = [
   { label: "About us", href: "/about" },
   { label: "Portfolio", href: "/portfolio" },
-  { label: "Services", href: "/services" },
   { label: "Products", href: "/products-list" },
+  { label: "Services", href: "/services" },
+  { label: "Blogs", href: "/blogs" },
+  { label: "Careers", href: "/careers" },
   { label: "Contact us", href: "/contact" },
 ];
 
@@ -33,9 +35,9 @@ const CONTACT_INFO = [
 ];
 
 const SOCIAL_LINKS = [
-  { id: "facebook", icon: "facebook", href: "https://facebook.com" },
-  { id: "x", icon: "x", href: "https://x.com" },
-  { id: "instagram", icon: "instagram", href: "https://instagram.com" },
+  { id: "facebook", icon: "facebook", href: "https://www.facebook.com/people/Green-Art-Factory-UAE/61591535935180/" },
+  { id: "x", icon: "x", href: "https://x.com/Greenmosswall" },
+  { id: "instagram", icon: "instagram", href: "https://www.instagram.com/greenartfactoryuae/" },
   { id: "whatsapp", icon: "whatsapp", href: "https://wa.me/971569588315" },
 ];
 

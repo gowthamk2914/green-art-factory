@@ -4,43 +4,49 @@
 const DEFAULT_VIDEOS = [
   {
     id: "video-1",
-    videoId: "vfh6bi7jkDk",
-    title: "Valentine’s Day Special – Limited Time Offer! ",
-    description: "Choose from our stunning red rose bouquets – classic, elegant, and guaranteed to make hearts flutter!",
+    videoId: "j8PRFKxgWDY",
+    title: "Preserved Moss Wall Installation",
+    description:
+      "Watch how a bespoke preserved moss wall comes together, from first layout to the final finishing touches.",
   },
   {
     id: "video-2",
-    videoId: "dLCNL6UOHgw",
-    title: "Customised Flower Bouquets Just for You!",
-    description: "Our expertise lies in creating unique, personalised flower bouquets tailored to your desires. Whether it’s for a special occasion or a heartfelt gift, we design each bouquet to match your vision perfectly.",
+    videoId: "rzmQpTqmZTU",
+    title: "Transform Your Space With Green Walls",
+    description:
+      "See how a blank wall becomes a lush, maintenance-free feature that brings nature into the interior.",
   },
   {
     id: "video-3",
-    videoId: "Tkadi2qgJ50",
-    title: "Grand Opening Ceremony Flower Decor! ",
-    description: "Make your event unforgettable with our exquisite flower decor arrangements, crafted to bring elegance and charm to your special day. ",
+    videoId: "hA2J_ANjOHU",
+    title: "Custom Moss Logos & Brand Walls",
+    description:
+      "Your brand, shaped in natural moss. A look at how custom logo installations are designed and crafted.",
   },
   {
     id: "video-4",
-    videoId: "k-Uzrmrp8E4",
-    title: "Future looks so green! ",
-    description: "We at Green Art Factory (GAF) are delighted to be a part of the Dubai International Academy Winter Souk, an event that brings together creativity, community, and sustainability.",
+    videoId: "xYrj4UhqQvM",
+    title: "Behind the Scenes at Green Art Factory",
+    description:
+      "A glimpse into our workshop and the craftsmanship that goes into every moss and greenery project.",
   },
   {
     id: "video-5",
-    videoId: "RHFO6IqkPrQ",
-    title: "Tolerance Day Festival GAF Plants Stall",
-    description: "We were thrilled to be part of the Tolerance Day Festival at Collegiate International School, showcasing our stunning collection at the GAF Plants Stall. Celebrating diversity and unity through nature, our display featured a variety of greenery solutions, from lush indoor plants to artistic arrangements, inspiring sustainable and inclusive spaces.",
+    videoId: "_Y4vZ1OMbUg",
+    title: "Moss Art Panels & Frames",
+    description:
+      "Textured, handcrafted moss artworks that add warmth and character to offices, hotels and homes.",
   },
   {
     id: "video-6",
-    videoId: "v7_MoCsVjNM",
-    title: "Indoor Plants!",
-    description: "Breathe life into your home or office with our vibrant indoor plants. 🌱 From lush greens to elegant designs, create a fresh and calming atmosphere effortlessly! ",
+    videoId: "5yrt1XcUb1k",
+    title: "Our Latest Project Walkthrough",
+    description:
+      "Take a tour of a recently completed installation and see the finished space in detail.",
   },
 ];
 
-const CHANNEL_URL = "https://youtube.com/@greenartfactory";
+const CHANNEL_URL = "https://www.youtube.com/@greenmosswall";
 
 function VideoCard({ video, priority }) {
   return (

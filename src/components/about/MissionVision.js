@@ -9,7 +9,7 @@ const ROWS = [
     id: "mission",
     heading: "Our Mission",
     paragraph:
-      "Our mission is to empower businesses with innovative digital solutions that drive sustainable growth and long-term success. We combine creativity, technology, and strategic thinking to build impactful products and experiences. By understanding every client's unique goals, we deliver solutions that are reliable, scalable, and future-ready. We are committed to maintaining the highest standards of quality, transparency, and collaboration in every project. Through continuous innovation and customer-focused excellence, we strive to create lasting value for businesses worldwide.",
+      "Our mission is to deliver exceptional craftsmanship and innovative designs that redefine green installations. We aim to promote the benefits of biophilic design, enhancing wellbeing, productivity, and aesthetic appeal in every space we create. Committed to sustainability, we provide long-lasting, eco-conscious solutions that are tailored to each client’s unique vision. Above all, we strive to maintain the highest standards of quality and service, guiding every project seamlessly from concept to completion and beyond.",
     image: "/images/mission-img.png",
     reverse: false,
   },
@@ -17,7 +17,7 @@ const ROWS = [
     id: "vision",
     heading: "Our Vision",
     paragraph:
-      "Our vision is to become a trusted global leader in digital innovation, transforming the way businesses grow and connect in a technology-driven world. We envision a future where creativity and technology work seamlessly together to solve complex challenges. By embracing innovation and continuous improvement, we aim to deliver solutions that inspire progress and create meaningful impact. We strive to build lasting partnerships founded on trust, excellence, and shared success. Our goal is to shape a smarter, more connected future for businesses and communities alike.",
+      "Green Art Factory is more than just a vision—it’s a movement that celebrates the harmony between nature, design, and innovation. Every project we undertake reflects our passion for creating spaces that breathe life, inspire creativity, and promote sustainability. And at the heart of this movement are our people. Each team member plays a vital role in shaping environments that connect humans with nature in meaningful ways.",
     image: "/images/vision-img.png",
     reverse: true,
   },

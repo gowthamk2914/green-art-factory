@@ -346,7 +346,7 @@ export default function ApplyForm() {
               />
               <span>
                 I agree to the processing of my personal data for recruitment purposes in
-                accordance with Green Art Factory&apos;s Privacy Policy.
+                accordance with Green Art Factory&apos;s <a href="/terms-and-privacy" target="_blank" rel="noopener noreferrer" className="terms-and-privacy-checkbox-text">Terms and Privacy</a>.
               </span>
             </label>
             {errors.agreed && <span className="apl-error-text">{errors.agreed}</span>}

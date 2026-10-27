@@ -187,14 +187,14 @@ export default function BlogsInsights() {
           into everyday life.
         </p>
         
-        <Link href="/blogs">
+        {/* <Link href="/blogs">
         <button type="button" className="gaf-blogs-cta-btn">
           Explore Our Story
           <span className="gaf-blogs-cta-icon">
             <ArrowIcon />
           </span>
         </button>
-        </Link>
+        </Link> */}
 
         <div className="gaf-blogs-filter-row">
           <label className="gaf-blogs-search-pill">

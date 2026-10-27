@@ -261,32 +261,32 @@ const Navbar = () => {
       />
 
       {/* Floating Social Sidebar */}
-
-      <div className="fixed right-0 top-[140px] z-50 overflow-hidden rounded-l-[35px] bg-[#5E671F] py-4">
+<div className="fixed right-0 top-[140px] z-50 overflow-hidden rounded-l-[35px] py-4">
+      {/* <div className="fixed right-0 top-[140px] z-50 overflow-hidden rounded-l-[35px] bg-[#5E671F] py-4"> */}
         <div className="flex flex-col items-center gap-3 px-3 floating-social-bar-wrapper">
           <a
-            href="#"
+            href="https://www.instagram.com/greenartfactoryuae/"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E1306C] text-white"
           >
             <FaInstagram size={18} />
           </a>
 
           <a
-            href="#"
+            href="https://wa.me/971569588315"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#25D366] text-white"
           >
             <FaWhatsapp size={18} />
           </a>
 
           <a
-            href="#"
+            href="https://www.facebook.com/people/Green-Art-Factory-UAE/61591535935180/"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1877F2] text-white"
           >
             <FaFacebookF size={18} />
           </a>
 
           <a
-            href="#"
+            href="https://x.com/Greenmosswall"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2A2A2A] text-white"
           >
             <FaXTwitter size={16} />

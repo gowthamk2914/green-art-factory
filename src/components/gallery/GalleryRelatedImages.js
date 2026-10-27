@@ -1,53 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-/**
- * Static placeholder data for now. Field names are kept generic
- * (slug, collection, name, image, href) so this can later be swapped for
- * data fetched from an API — the slider logic below works for any array
- * length and re-measures itself whenever the list changes.
- */
-
-const DEFAULT_IMAGES = [
-  {
-    slug: "artificial-trees",
-    collection: "Collection",
-    name: "Artificial Trees",
-    image: "/images/projects1.jpg",
-    href: "/gallery/artificial-trees",
-  },
-  {
-    slug: "vertical-gardens",
-    collection: "Collection",
-    name: "Vertical Gardens",
-    image: "/images/projects2.jpg",
-    href: "/gallery/vertical-gardens",
-  },
-  {
-    slug: "green-ceilings",
-    collection: "Collection",
-    name: "Green Ceilings",
-    image: "/images/projects3.jpg",
-    href: "/gallery/green-ceilings",
-  },
-  {
-    slug: "artificial-hedges",
-    collection: "Collection",
-    name: "Artificial Hedges",
-    image: "/images/projects4.jpg",
-    href: "/gallery/artificial-hedges",
-  },
-  {
-    slug: "preserved-plants",
-    collection: "Collection",
-    name: "Preserved Plants",
-    image: "/images/projects5.jpg",
-    href: "/gallery/preserved-plants",
-  },
-];
 
 const FALLBACK_IMAGE = "/images/product-detail-common-img.png";
 
@@ -72,8 +27,9 @@ function RelatedImageCard({ item }) {
   );
 }
 
-export default function RelatedImages({
-  items = DEFAULT_IMAGES,
+export default function GalleryRelatedImages({
+  product,
+  currentVariantSlug,
   title = "Related Images",
 }) {
   const trackRef = useRef(null);
@@ -81,6 +37,43 @@ export default function RelatedImages({
 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+
+  // ============================================================
+  // Build the cards from the loaded product's variants.
+  // Every other variant of the same product is shown; the one the
+  // user is currently viewing is left out. Starts right after the
+  // current variant and wraps around.
+  // ============================================================
+  const items = useMemo(() => {
+    const variants = product?.variants;
+    if (!Array.isArray(variants) || variants.length === 0) return [];
+
+    const currentIndex = variants.findIndex(
+      (v) => v.slug === currentVariantSlug
+    );
+
+    const ordered =
+      currentIndex === -1
+        ? variants
+        : [
+            ...variants.slice(currentIndex + 1),
+            ...variants.slice(0, currentIndex),
+          ];
+
+    return ordered.map((v) => ({
+      slug: v.slug,
+      collection: product.name,
+      name: v.name,
+      image: v.image || v.images?.[0] || null,
+      href: v.gallery_url || `/gallery/${product.slug}/${v.slug}`,
+    }));
+  }, [product, currentVariantSlug]);
+
+  // Reset scroll position when the user moves to another variant
+  useEffect(() => {
+    const track = trackRef.current;
+    if (track) track.scrollTo({ left: 0 });
+  }, [currentVariantSlug]);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -90,9 +83,7 @@ export default function RelatedImages({
       const { scrollLeft, scrollWidth, clientWidth } = track;
 
       setCanScrollLeft(scrollLeft > 4);
-      setCanScrollRight(
-        scrollLeft + clientWidth < scrollWidth - 4
-      );
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 4);
     }
 
     updateScrollState();
@@ -121,8 +112,7 @@ export default function RelatedImages({
       clearInterval(autoplayRef.current);
 
       autoplayRef.current = setInterval(() => {
-        const maxScroll =
-          track.scrollWidth - track.clientWidth;
+        const maxScroll = track.scrollWidth - track.clientWidth;
 
         // If reached the end, go back to beginning
         if (track.scrollLeft >= maxScroll - 5) {
@@ -132,17 +122,12 @@ export default function RelatedImages({
           });
         } else {
           // Move approximately one card
-          const card = track.querySelector(
-            ".relatedImagesCard"
-          );
+          const card = track.querySelector(".relatedImagesCard");
 
           if (!card) return;
 
           const cardWidth = card.offsetWidth;
-
-          const gap = parseFloat(
-            getComputedStyle(track).gap || "0"
-          );
+          const gap = parseFloat(getComputedStyle(track).gap || "0");
 
           track.scrollBy({
             left: cardWidth + gap,
@@ -187,10 +172,7 @@ export default function RelatedImages({
     if (!card) return;
 
     const cardWidth = card.offsetWidth;
-
-    const gap = parseFloat(
-      getComputedStyle(track).gap || "0"
-    );
+    const gap = parseFloat(getComputedStyle(track).gap || "0");
 
     track.scrollBy({
       left: (cardWidth + gap) * direction,
@@ -198,18 +180,15 @@ export default function RelatedImages({
     });
   }
 
+  // Nothing to show (e.g. product has only one variant)
+  if (items.length === 0) return null;
+
   return (
-    <section
-      className="relatedImagesSection"
-      aria-label={title}
-    >
+    <section className="relatedImagesSection" aria-label={title}>
       <div className="relatedImagesInner">
-        <h2 className="relatedImagesTitle">
-          {title}
-        </h2>
+        <h2 className="relatedImagesTitle">{title}</h2>
 
         <div className="relatedImagesSlider">
-
           {canScrollLeft && (
             <button
               type="button"
@@ -235,15 +214,9 @@ export default function RelatedImages({
             </button>
           )}
 
-          <div
-            className="relatedImagesTrack"
-            ref={trackRef}
-          >
+          <div className="relatedImagesTrack" ref={trackRef}>
             {items.map((item) => (
-              <RelatedImageCard
-                key={item.slug}
-                item={item}
-              />
+              <RelatedImageCard key={item.slug} item={item} />
             ))}
           </div>
 
@@ -271,7 +244,6 @@ export default function RelatedImages({
               </svg>
             </button>
           )}
-
         </div>
       </div>
     </section>

@@ -14,6 +14,12 @@ body {
   overflow-x: hidden;
 }
 
+html,
+body {
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
 .container {
   width: 90%;
   max-width: 1400px;
@@ -321,6 +327,13 @@ body.mobileMenuLockScroll {
 
 .hero-swiper .swiper-pagination {
   bottom: 30px !important;
+}
+
+@media(min-width:992px){
+.hero-swiper .swiper-pagination-bullet{
+  width: 24px;
+  height: 24px;
+}
 }
 
 .hero-swiper .swiper-pagination-bullet {
@@ -3469,6 +3482,10 @@ a.gaf-footer-contact-text:hover {
   gap: 40px;
   align-items: start;
   animation: gaf-about-fade-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.gaf-about-card {
+  scroll-margin-top: 100px; /* set this to your header height + a little space */
 }
 
 /* ---------- media column ---------- */
@@ -12489,6 +12506,7 @@ font.goog-text-highlight {
   line-height: 1.35;
   margin: 0 0 0.4rem;
   color: #111111;
+  display:none;
 }
 
 .latestVideosCardDescription {
@@ -12501,6 +12519,7 @@ font.goog-text-highlight {
   overflow: hidden;
   -webkit-line-clamp: 2;
   line-clamp: 2;
+  display:none;
 }
 
 /* ==========================================================================
@@ -13685,5 +13704,623 @@ font.goog-text-highlight {
 @media (prefers-reduced-motion: reduce) {
   .projectDetailStatus--loading::before {
     animation-duration: 2s;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================================
+   Form popup (toast) — green = sent, red = not sent
+   ============================================================ */
+.formToast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 380px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  color: #fff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: formToastIn 0.35s ease-out;
+}
+
+.formToastSuccess {
+  background: linear-gradient(90deg, #2fd675, #1dae5c);
+  box-shadow: 0 20px 40px rgba(29, 174, 92, 0.3);
+}
+
+.formToastError {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  box-shadow: 0 20px 40px rgba(220, 38, 38, 0.3);
+}
+
+.formToastIcon {
+  display: flex;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.formToastBody {
+  flex: 1;
+}
+
+.formToastTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.formToastText {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.formToastClose {
+  flex-shrink: 0;
+  display: flex;
+  padding: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.formToastClose:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes formToastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Mobile: stretch across the screen */
+@media (max-width: 480px) {
+  .formToast {
+    left: 16px;
+    right: 16px;
+    max-width: none;
+  }
+}
+
+
+
+
+/* ============================================================
+   Terms & Privacy page
+   ============================================================ */
+.gaf-legal-section {
+  background: #f7f6f1;
+  padding: 40px 24px 90px;
+}
+
+.gaf-legal-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* ---------- Header ---------- */
+.gaf-legal-header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 32px;
+}
+
+.gaf-legal-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #66711e;
+}
+
+.gaf-legal-title {
+  margin: 8px 0 0;
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #4b5320;
+}
+
+.gaf-legal-intro {
+  margin: 14px 0 0;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: #6b6b60;
+}
+
+.gaf-legal-updated {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: #8d8d80;
+}
+
+/* ---------- Switch buttons ---------- */
+.gaf-legal-switch {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.gaf-legal-switch-btn {
+  padding: 12px 26px;
+  border: 1px solid #d9d9c9;
+  border-radius: 999px;
+  background: #fff;
+  color: #4b5320;
+  font-size: 14.5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.gaf-legal-switch-btn:hover {
+  border-color: #66711e;
+}
+
+.gaf-legal-switch-btn--active {
+  background: #4b5320;
+  border-color: #4b5320;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(75, 83, 32, 0.25);
+}
+
+/* ---------- Layout ---------- */
+.gaf-legal-layout {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* ---------- Sidebar ---------- */
+.gaf-legal-sidebar {
+  position: sticky;
+  top: 100px; /* set to your header height + a little space */
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+  padding: 24px 20px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
+}
+
+.gaf-legal-sidebar-heading {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #66711e;
+}
+
+.gaf-legal-sidebar-heading:not(:first-child) {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #ecece0;
+}
+
+.gaf-legal-sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gaf-legal-sidebar-link {
+  display: block;
+  padding: 7px 12px;
+  border-left: 2px solid transparent;
+  border-radius: 0 10px 10px 0;
+  font-size: 13.5px;
+  color: #6b6b60;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.gaf-legal-sidebar-link:hover {
+  color: #4b5320;
+  background: #f4f4ea;
+}
+
+.gaf-legal-sidebar-link--active {
+  border-left-color: #66711e;
+  background: #f1f2e4;
+  color: #4b5320;
+  font-weight: 600;
+}
+
+/* ---------- Content cards ---------- */
+.gaf-legal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
+
+.gaf-legal-card {
+  padding: 44px;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.07);
+  scroll-margin-top: 100px;
+}
+
+.gaf-legal-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #eff0df;
+  color: #66711e;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gaf-legal-heading {
+  margin: 14px 0 28px;
+  font-size: clamp(28px, 3.4vw, 38px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #4b5320;
+}
+
+.gaf-legal-accent {
+  color: #66711e;
+}
+
+/* ---------- Individual blocks ---------- */
+.gaf-legal-block {
+  padding: 22px 0;
+  border-top: 1px solid #efefe4;
+  scroll-margin-top: 100px;
+}
+
+.gaf-legal-block-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 0 10px;
+  font-size: 19px;
+  font-weight: 600;
+  color: #3e4a22;
+}
+
+.gaf-legal-block-no {
+  font-size: 13px;
+  font-weight: 600;
+  color: #66711e;
+}
+
+.gaf-legal-text {
+  margin: 0 0 10px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #5f5f55;
+}
+
+.gaf-legal-text:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- Contact strip ---------- */
+.gaf-legal-contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 32px 36px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #5b6b2f, #3e4a22);
+  color: #fff;
+  box-shadow: 0 24px 50px rgba(62, 74, 34, 0.3);
+}
+
+.gaf-legal-contact-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.gaf-legal-contact-text {
+  margin: 8px 0 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.gaf-legal-contact-text a {
+  color: #b9e6a0;
+  text-decoration: none;
+}
+
+.gaf-legal-contact-text a:hover {
+  text-decoration: underline;
+}
+
+.gaf-legal-contact-btn {
+  flex-shrink: 0;
+  padding: 13px 28px;
+  border-radius: 999px;
+  background: #fff;
+  color: #4b5320;
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.gaf-legal-contact-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .gaf-legal-layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* Side menu is hidden on tablet/mobile; the two switch buttons remain */
+  .gaf-legal-sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .gaf-legal-section {
+    padding: 24px 16px 60px;
+  }
+
+  .gaf-legal-card {
+    padding: 28px 22px;
+    border-radius: 22px;
+  }
+
+  .gaf-legal-contact {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 26px 24px;
+  }
+}
+
+.terms-and-privacy-checkbox-text{
+  font-weight: 600;
+  text-decoration: underline;
+  font-size:15px;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================================
+   404 page
+   ============================================================ */
+.gaf-404-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: 80px 24px;
+  background: #f7f6f1;
+  overflow: hidden;
+}
+
+.gaf-404-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.gaf-404-glow--one {
+  top: -90px;
+  left: -90px;
+  width: 380px;
+  height: 380px;
+  background: rgba(138, 154, 91, 0.2);
+}
+
+.gaf-404-glow--two {
+  right: 0;
+  bottom: 0;
+  width: 440px;
+  height: 440px;
+  background: rgba(75, 83, 32, 0.12);
+}
+
+.gaf-404-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  padding: 56px 44px;
+  border-radius: 28px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.08);
+}
+
+.gaf-404-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #eff0df;
+  color: #66711e;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.gaf-404-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 18px 0 4px;
+  font-size: clamp(88px, 18vw, 140px);
+  font-weight: 300;
+  line-height: 1;
+  color: #4b5320;
+}
+
+.gaf-404-leaf {
+  display: inline-flex;
+  color: #66711e;
+  animation: gaf404Sway 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes gaf404Sway {
+  0%, 100% { transform: rotate(-6deg); }
+  50%      { transform: rotate(6deg); }
+}
+
+.gaf-404-title {
+  margin: 8px 0 0;
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #4b5320;
+}
+
+.gaf-404-accent {
+  color: #66711e;
+}
+
+.gaf-404-text {
+  max-width: 460px;
+  margin: 14px auto 0;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: #6b6b60;
+}
+
+/* "Did you mean...?" suggestion */
+.gaf-404-suggest {
+  display: inline-block;
+  margin: 18px 0 0;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #f1f2e4;
+  font-size: 14px;
+  color: #4b5320;
+}
+
+.gaf-404-suggest-link {
+  font-weight: 600;
+  color: #66711e;
+  text-decoration: underline;
+}
+
+.gaf-404-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.gaf-404-btn {
+  padding: 13px 28px;
+  border-radius: 999px;
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.gaf-404-btn:hover {
+  transform: translateY(-2px);
+}
+
+.gaf-404-btn--primary {
+  background: #4b5320;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(75, 83, 32, 0.25);
+}
+
+.gaf-404-btn--primary:hover {
+  box-shadow: 0 14px 28px rgba(75, 83, 32, 0.35);
+}
+
+.gaf-404-btn--ghost {
+  border: 1px solid #d9d9c9;
+  background: #fff;
+  color: #4b5320;
+}
+
+.gaf-404-btn--ghost:hover {
+  border-color: #66711e;
+}
+
+.gaf-404-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid #efefe4;
+  font-size: 13.5px;
+  color: #8d8d80;
+}
+
+.gaf-404-links a {
+  color: #66711e;
+  text-decoration: none;
+}
+
+.gaf-404-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .gaf-404-section {
+    padding: 48px 16px;
+  }
+
+  .gaf-404-card {
+    padding: 40px 24px;
+    border-radius: 22px;
   }
 }

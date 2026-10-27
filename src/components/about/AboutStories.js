@@ -127,19 +127,33 @@ function AboutVideo({ tab }) {
 
 export default function AboutStories() {
   const [activeId, setActiveId] = useState("origins");
+  const cardRef = useRef(null);
   const activeTab = TABS.find((t) => t.id === activeId) ?? TABS[0];
+
+  // Smoothly bring the start of the content card to the top of the screen
+  const scrollToCard = () => {
+    requestAnimationFrame(() => {
+      cardRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  };
 
   /* Drives the tab switch through the View Transitions API when the
      browser supports it, so the image/video/badge/heading crossfade
      and morph instead of hard-cutting. Falls back to a plain state
-     update (which still gets the CSS fade-in below) everywhere else. */
+     update everywhere else. After the switch, the page scrolls to the
+     start of the new section. */
   const handleTabClick = (id) => {
     if (id === activeId) return;
 
     if (typeof document !== "undefined" && document.startViewTransition) {
-      document.startViewTransition(() => setActiveId(id));
+      const transition = document.startViewTransition(() => setActiveId(id));
+      transition.finished.finally(scrollToCard);
     } else {
       setActiveId(id);
+      scrollToCard();
     }
   };
 
@@ -147,19 +161,19 @@ export default function AboutStories() {
     <section className="gaf-about-section">
       <h1 className="gaf-about-title">About Us</h1>
 
-<div className="breadcrumb">
-  <Link href="/" className="breadcrumb-item">
-    Home
-  </Link>
+      <div className="breadcrumb">
+        <Link href="/" className="breadcrumb-item">
+          Home
+        </Link>
 
-  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+        <i className="bi bi-chevron-right breadcrumb-arrow"></i>
 
-  <Link href="/about" className="breadcrumb-item active">
-    About Us
-  </Link>
-</div>
+        <Link href="/about" className="breadcrumb-item active">
+          About Us
+        </Link>
+      </div>
 
-      <div className="gaf-about-card">
+      <div className="gaf-about-card" ref={cardRef}>
         <div className="gaf-about-media" key={`${activeTab.id}-media`}>
           <div className="gaf-about-image-wrap">
             <Image

@@ -1,8 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useId } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { MessageCircle, ArrowRight, Send } from 'lucide-react';
+import {
+  MessageCircle,
+  ArrowRight,
+  Send,
+  CheckCircle2,
+  XCircle,
+  X,
+} from 'lucide-react';
 import Link from "next/link";
 
 import {
@@ -11,7 +18,6 @@ import {
 } from '../../redux/ContactPageForm/actions';
 
 // Maps the API's field names back onto our local form state.
-// (Currently 1:1, kept as a map in case the backend renames anything.)
 const API_FIELD_TO_LOCAL = {
   name: 'name',
   email: 'email',
@@ -19,18 +25,9 @@ const API_FIELD_TO_LOCAL = {
   project_details: 'details',
 };
 
-/**
- * ContactSection
- * A botanical-themed contact form paired with a WhatsApp "instant consultation" card.
- * Drop this component anywhere in a Next.js app (app/ or pages/ router both work).
- *
- * Requires: tailwindcss, lucide-react
- *   npm install lucide-react
- */
 export default function ContactSection() {
   const dispatch = useDispatch();
 
-  // `Contact` must match the key used in your rootReducer
   const { loading, success, message, fieldErrors } = useSelector(
     (state) => state.ContactPageForm
   );
@@ -44,6 +41,11 @@ export default function ContactSection() {
     details: '',
   });
   const [errors, setErrors] = useState({});
+
+  // Popup state: { type: 'success' | 'error', text: string } or null
+  const [toast, setToast] = useState(null);
+  // true only after the user has pressed Submit (prevents stale popups)
+  const submittedRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
@@ -62,8 +64,7 @@ export default function ContactSection() {
     setErrors((prev) => ({ ...prev, ...mapped }));
   }, [fieldErrors]);
 
-  // On a successful submit, clear the form and reset the "Sent!" state
-  // after a couple of seconds, same timing as the original mock.
+  // On success, clear the form and reset the "Sent!" state
   useEffect(() => {
     if (!success) return;
 
@@ -81,6 +82,32 @@ export default function ContactSection() {
       dispatch(resetEnquiryStatus());
     };
   }, [dispatch]);
+
+  // Show a popup once the request finishes (success or failure)
+  useEffect(() => {
+    if (!submittedRef.current || loading) return;
+
+    if (success) {
+      setToast({
+        type: 'success',
+        text: 'Your enquiry has been sent successfully. We will contact you soon.',
+      });
+      submittedRef.current = false;
+    } else if (message) {
+      setToast({
+        type: 'error',
+        text: message || 'Something went wrong. Please try again.',
+      });
+      submittedRef.current = false;
+    }
+  }, [loading, success, message]);
+
+  // Auto-hide the popup after 5 seconds
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 5000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   const handleChange = (field) => (e) => {
     setValues((v) => ({ ...v, [field]: e.target.value }));
@@ -101,7 +128,16 @@ export default function ContactSection() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validate()) return;
+
+    if (!validate()) {
+      setToast({
+        type: 'error',
+        text: 'Please fill in the required fields correctly.',
+      });
+      return;
+    }
+
+    submittedRef.current = true;
 
     dispatch(
       submitEnquiryRequest({
@@ -114,197 +150,281 @@ export default function ContactSection() {
   };
 
   return (
-
     <>
-
-                  <div className="breadcrumb container">
-  <Link href="/" className="breadcrumb-item">
-    Home
-  </Link>
-
-  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
-
-  <Link href="/contact" className="breadcrumb-item active">
-    Contact Us
-  </Link>
-</div>
-
-
-    <section className="relative w-full contact-us-page-form-section flex items-center justify-center bg-[#F7F6F1] px-6 py-20 overflow-hidden">
-      
-
-      
-      {/* ambient botanical glow */}
-      <div className="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#8A9A5B]/10 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 right-0 w-[28rem] h-[28rem] rounded-full bg-[#4B5320]/10 blur-3xl" />
-
-      <div className="relative w-full max-w-5xl">
-        {/* WhatsApp card (sits behind, overlapping the right edge of the form card) */}
+      {/* Popup (green = sent, red = not sent) */}
+      {toast && (
         <div
-          className={`absolute instant-consultation-card top-16 z-0 w-full max-w-[420px] transition-all duration-700 ease-out ${
-            mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          role="alert"
+          className={`formToast ${
+            toast.type === 'success' ? 'formToastSuccess' : 'formToastError'
           }`}
-          style={{ transitionDelay: '150ms' }}
         >
-          <div className="relative rounded-[28px] bg-gradient-to-br from-[#5B6B2F] to-[#3E4A22] p-8 shadow-2xl shadow-[#3E4A22]/30 overflow-hidden">
-            {/* subtle sheen */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent" />
+          <span className="formToastIcon" aria-hidden="true">
+            {toast.type === 'success' ? (
+              <CheckCircle2 size={20} />
+            ) : (
+              <XCircle size={20} />
+            )}
+          </span>
 
-            {/* icon */}
-            <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-[#25D366] to-[#128C7E] flex items-center justify-center shadow-lg shadow-black/20 animate-float">
-              <MessageCircle className="w-7 h-7 text-white" fill="white" strokeWidth={0} />
-            </div>
-
-            <h3 className="relative mt-6 text-2xl font-semibold text-white tracking-tight">
-              Instant Consultation
-            </h3>
-            <p className="relative mt-3 text-[15px] leading-relaxed text-white/70">
-              Connect instantly with our horticultural experts. Share photos, discuss
-              concepts, and get professional advice — all on WhatsApp.
+          <div className="formToastBody">
+            <p className="formToastTitle">
+              {toast.type === 'success' ? 'Message Sent' : 'Not Sent'}
             </p>
-
-            <div className="relative mt-6 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-white/[0.07] border border-white/10 px-4 py-3 transition-colors hover:bg-white/[0.1]">
-                <div className="text-xl font-bold text-[#6EE7A0]">~2min</div>
-                <div className="text-xs text-white/55 mt-0.5">Avg. Response</div>
-              </div>
-              <div className="rounded-2xl bg-white/[0.07] border border-white/10 px-4 py-3 transition-colors hover:bg-white/[0.1]">
-                <div className="text-xl font-bold text-[#6EE7A0]">24/7</div>
-                <div className="text-xs text-white/55 mt-0.5">Available</div>
-              </div>
-            </div>
-
-            <a
-              href="https://wa.me/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative mt-6 w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#2FD675] to-[#1DAE5C] px-6 py-3.5 text-white font-semibold shadow-lg shadow-[#1DAE5C]/30 transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <span className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <MessageCircle className="relative w-4 h-4" fill="white" strokeWidth={0} />
-              <span className="relative">Chat on WhatsApp</span>
-            </a>
+            <p className="formToastText">{toast.text}</p>
           </div>
+
+          <button
+            type="button"
+            className="formToastClose"
+            onClick={() => setToast(null)}
+            aria-label="Close"
+          >
+            <X size={16} />
+          </button>
         </div>
+      )}
 
-        {/* Contact form card (in front, offset top-left) */}
-        <div
-          className={`contact-form-card relative z-10 w-full max-w-[700px] rounded-[28px] bg-white p-10 shadow-2xl shadow-black/[0.08] transition-all duration-700 ease-out ${
-            mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
-          }`}
-        >
-          <h2 className="text-4xl font-normal text-[#4B5320] tracking-tight">
-            Contact Form
-          </h2>
-          <p className="mt-2 text-[15px] text-gray-500">Tell us about your botanical vision.</p>
+      <div className="breadcrumb container">
+        <Link href="/" className="breadcrumb-item">
+          Home
+        </Link>
 
-          {message && !success && Object.keys(fieldErrors || {}).length === 0 && (
-            <p className="mt-4 text-sm text-red-600" role="alert">{message}</p>
-          )}
+        <i className="bi bi-chevron-right breadcrumb-arrow" aria-hidden="true"></i>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-            <div className="grid grid-cols-2 sm:grid-cols-2 max-[640px]:grid-cols-1 gap-4">
-              <FormField
-                placeholder="Your Name"
-                value={values.name}
-                onChange={handleChange('name')}
-                focused={focusedField === 'name'}
-                onFocus={() => setFocusedField('name')}
-                onBlur={() => setFocusedField(null)}
-                error={errors.name}
-              />
-              <FormField
-                type="email"
-                placeholder="Email Address"
-                value={values.email}
-                onChange={handleChange('email')}
-                focused={focusedField === 'email'}
-                onFocus={() => setFocusedField('email')}
-                onBlur={() => setFocusedField(null)}
-                error={errors.email}
-              />
-            </div>
-
-            <FormField
-              type="tel"
-              placeholder="Mobile Number"
-              value={values.mobile}
-              onChange={handleChange('mobile')}
-              focused={focusedField === 'mobile'}
-              onFocus={() => setFocusedField('mobile')}
-              onBlur={() => setFocusedField(null)}
-              error={errors.mobile}
-            />
-
-            <div>
-              <textarea
-                placeholder="Project Details"
-                value={values.details}
-                onChange={handleChange('details')}
-                onFocus={() => setFocusedField('details')}
-                onBlur={() => setFocusedField(null)}
-                rows={4}
-                className={`w-full rounded-2xl border bg-transparent px-5 py-4 text-[15px] text-gray-700 placeholder:text-gray-400 outline-none transition-all duration-300 resize-none ${
-                  focusedField === 'details'
-                    ? 'border-[#4B5320] shadow-[0_0_0_4px_rgba(75,83,32,0.08)]'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              />
-              {errors.details && (
-                <p className="mt-1.5 text-xs text-red-600">{errors.details}</p>
-              )}
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <button
-                type="submit"
-                disabled={loading}
-                className="group relative overflow-hidden flex items-center gap-2 rounded-full bg-[#4B5320] px-7 py-3.5 text-white font-medium shadow-lg shadow-[#4B5320]/25 transition-all duration-300 hover:shadow-xl hover:shadow-[#4B5320]/35 hover:scale-[1.03] active:scale-[0.97] disabled:opacity-70"
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-                <span className="relative">
-                  {success ? 'Sent!' : loading ? 'Sending...' : 'Submit Enquiry'}
-                </span>
-                {success ? (
-                  <Send className="relative w-4 h-4" />
-                ) : (
-                  <ArrowRight
-                    className={`relative w-4 h-4 transition-transform duration-300 ${
-                      loading ? 'translate-x-1' : 'group-hover:translate-x-1'
-                    }`}
-                  />
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
+        <Link href="/contact" className="breadcrumb-item active">
+          Contact Us
+        </Link>
       </div>
 
-    </section>
+      <section className="relative w-full contact-us-page-form-section flex items-center justify-center bg-[#F7F6F1] px-6 py-20 overflow-hidden">
+        {/* ambient botanical glow */}
+        <div className="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#8A9A5B]/10 blur-3xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute bottom-0 right-0 w-[28rem] h-[28rem] rounded-full bg-[#4B5320]/10 blur-3xl" aria-hidden="true" />
 
+        <div className="relative w-full max-w-5xl">
+          {/* WhatsApp card */}
+          <div
+            className={`absolute instant-consultation-card top-16 z-0 w-full max-w-[420px] transition-all duration-700 ease-out ${
+              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '150ms' }}
+          >
+            <div className="relative rounded-[28px] bg-gradient-to-br from-[#5B6B2F] to-[#3E4A22] p-8 shadow-2xl shadow-[#3E4A22]/30 overflow-hidden">
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent" />
+
+              <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-[#25D366] to-[#128C7E] flex items-center justify-center shadow-lg shadow-black/20 animate-float">
+                <MessageCircle className="w-7 h-7 text-white" fill="white" strokeWidth={0} aria-hidden="true" />
+              </div>
+
+              <h3 className="relative mt-6 text-2xl font-semibold text-white tracking-tight">
+                Instant Consultation
+              </h3>
+              <p className="relative mt-3 text-[15px] leading-relaxed text-white/70">
+                Connect instantly with our horticultural experts. Share photos, discuss
+                concepts, and get professional advice — all on WhatsApp.
+              </p>
+
+              <div className="relative mt-6 grid grid-cols-2 gap-3">
+                <div className="rounded-2xl bg-white/[0.07] border border-white/10 px-4 py-3 transition-colors hover:bg-white/[0.1]">
+                  <div className="text-xl font-bold text-[#6EE7A0]">~2min</div>
+                  <div className="text-xs text-white/55 mt-0.5">Avg. Response</div>
+                </div>
+                <div className="rounded-2xl bg-white/[0.07] border border-white/10 px-4 py-3 transition-colors hover:bg-white/[0.1]">
+                  <div className="text-xl font-bold text-[#6EE7A0]">24/7</div>
+                  <div className="text-xs text-white/55 mt-0.5">Available</div>
+                </div>
+              </div>
+
+              <a
+                href="https://wa.me/971569588315"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative mt-6 w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#2FD675] to-[#1DAE5C] px-6 py-3.5 text-white font-semibold shadow-lg shadow-[#1DAE5C]/30 transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <MessageCircle className="relative w-4 h-4" fill="white" strokeWidth={0} aria-hidden="true" />
+                <span className="relative">Chat on WhatsApp</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Contact form card */}
+          <div
+            className={`contact-form-card relative z-10 w-full max-w-[700px] rounded-[28px] bg-white p-10 shadow-2xl shadow-black/[0.08] transition-all duration-700 ease-out ${
+              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
+            }`}
+          >
+            <h2 className="text-4xl font-normal text-[#4B5320] tracking-tight">
+              Contact Form
+            </h2>
+            <p className="mt-2 text-[15px] text-gray-500">
+              Tell us about your botanical vision. Fields marked with * are required.
+            </p>
+
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8 space-y-5"
+              aria-label="Contact form"
+              aria-busy={loading}
+            >
+              <div className="grid grid-cols-2 sm:grid-cols-2 max-[640px]:grid-cols-1 gap-4">
+                <FormField
+                  name="name"
+                  label="Your name"
+                  placeholder="Your Name *"
+                  autoComplete="name"
+                  required
+                  value={values.name}
+                  onChange={handleChange('name')}
+                  focused={focusedField === 'name'}
+                  onFocus={() => setFocusedField('name')}
+                  onBlur={() => setFocusedField(null)}
+                  error={errors.name}
+                />
+                <FormField
+                  name="email"
+                  type="email"
+                  label="Email address"
+                  placeholder="Email Address *"
+                  autoComplete="email"
+                  required
+                  value={values.email}
+                  onChange={handleChange('email')}
+                  focused={focusedField === 'email'}
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField(null)}
+                  error={errors.email}
+                />
+              </div>
+
+              <FormField
+                name="mobile"
+                type="tel"
+                inputMode="tel"
+                label="Mobile number"
+                placeholder="Mobile Number"
+                autoComplete="tel"
+                value={values.mobile}
+                onChange={handleChange('mobile')}
+                focused={focusedField === 'mobile'}
+                onFocus={() => setFocusedField('mobile')}
+                onBlur={() => setFocusedField(null)}
+                error={errors.mobile}
+              />
+
+              <FormField
+                as="textarea"
+                name="project_details"
+                label="Project details"
+                placeholder="Project Details"
+                autoComplete="off"
+                rows={4}
+                value={values.details}
+                onChange={handleChange('details')}
+                focused={focusedField === 'details'}
+                onFocus={() => setFocusedField('details')}
+                onBlur={() => setFocusedField(null)}
+                error={errors.details}
+              />
+
+              <div className="flex justify-end pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="group relative overflow-hidden flex items-center gap-2 rounded-full bg-[#4B5320] px-7 py-3.5 text-white font-medium shadow-lg shadow-[#4B5320]/25 transition-all duration-300 hover:shadow-xl hover:shadow-[#4B5320]/35 hover:scale-[1.03] active:scale-[0.97] disabled:opacity-70"
+                >
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
+                  <span className="relative">
+                    {success ? 'Sent!' : loading ? 'Sending...' : 'Submit Enquiry'}
+                  </span>
+                  {success ? (
+                    <Send className="relative w-4 h-4" aria-hidden="true" />
+                  ) : (
+                    <ArrowRight
+                      aria-hidden="true"
+                      className={`relative w-4 h-4 transition-transform duration-300 ${
+                        loading ? 'translate-x-1' : 'group-hover:translate-x-1'
+                      }`}
+                    />
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
 
-function FormField({ type = 'text', placeholder, value, onChange, focused, onFocus, onBlur, error }) {
+/**
+ * Accessible field: real <label> (visually hidden so the design is
+ * unchanged), name + id for autofill, native `required`, and the error
+ * message linked with aria-describedby / aria-invalid.
+ */
+function FormField({
+  as = 'input',
+  name,
+  label,
+  type = 'text',
+  placeholder,
+  value,
+  onChange,
+  focused,
+  onFocus,
+  onBlur,
+  error,
+  required = false,
+  autoComplete,
+  inputMode,
+  rows,
+}) {
+  const uid = useId();
+  const id = `${name}-${uid}`;
+  const errorId = `${id}-error`;
+
+  const Tag = as;
+
+  const stateClasses = error
+    ? 'border-red-400 shadow-[0_0_0_4px_rgba(220,38,38,0.06)]'
+    : focused
+    ? 'border-[#4B5320] shadow-[0_0_0_4px_rgba(75,83,32,0.08)]'
+    : 'border-gray-200 hover:border-gray-300';
+
   return (
     <div>
-      <input
-        type={type}
+      <label htmlFor={id} className="sr-only">
+        {label}
+        {required ? ' (required)' : ''}
+      </label>
+
+      <Tag
+        id={id}
+        name={name}
+        type={as === 'input' ? type : undefined}
+        inputMode={inputMode}
+        rows={as === 'textarea' ? rows : undefined}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}
+        required={required}
+        aria-required={required || undefined}
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={error ? errorId : undefined}
+        autoComplete={autoComplete}
         className={`w-full rounded-2xl border bg-transparent px-5 py-4 text-[15px] text-gray-700 placeholder:text-gray-400 outline-none transition-all duration-300 ${
-          error
-            ? 'border-red-400 shadow-[0_0_0_4px_rgba(220,38,38,0.06)]'
-            : focused
-            ? 'border-[#4B5320] shadow-[0_0_0_4px_rgba(75,83,32,0.08)]'
-            : 'border-gray-200 hover:border-gray-300'
-        }`}
+          as === 'textarea' ? 'resize-none' : ''
+        } ${stateClasses}`}
       />
-      {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+
+      {error && (
+        <p id={errorId} role="alert" className="mt-1.5 text-xs text-red-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

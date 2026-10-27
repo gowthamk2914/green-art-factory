@@ -50,8 +50,8 @@ export default function CareersHeroSection() {
 
   <i className="bi bi-chevron-right breadcrumb-arrow"></i>
 
-  <Link href="/services" className="breadcrumb-item active">
-    Services
+  <Link href="/careers" className="breadcrumb-item active">
+      Careers
   </Link>
 </div>
 

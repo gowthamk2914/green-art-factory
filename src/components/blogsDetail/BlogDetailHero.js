@@ -90,7 +90,7 @@ export default function BlogDetailHero({ slug: slugProp }) {
   <i className="bi bi-chevron-right breadcrumb-arrow"></i>
 
   <Link href="#" className="breadcrumb-item active">
-    Blog Detail
+    {data.title}
   </Link>
 </div>
 
