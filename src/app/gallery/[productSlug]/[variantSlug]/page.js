@@ -69,7 +69,12 @@ export default function GalleryPage() {
   return (
     <>
       <GalleryHero title={variant?.name} description={variant?.description} />
-      <GalleryList images={galleryImages} title={variant?.name} />
+      <GalleryList
+        images={galleryImages}
+        title={variant?.name}
+        productName={product?.name}
+        productSlug={productSlug}
+      />
       <GalleryRelatedImages
         product={product}
         currentVariantSlug={variant?.slug}

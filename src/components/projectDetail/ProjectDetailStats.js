@@ -58,7 +58,7 @@ export default function ProjectDetailStats() {
       <div className="projectDetailStatsCard">
         <Image
           src={BOTTOM_LEFT_IMAGE}
-          alt=""
+          alt="bottom left decorative image"
           width={260}
           height={90}
           className="projectDetailStatsBlobBottom"
@@ -115,7 +115,7 @@ export default function ProjectDetailStats() {
         <div className="projectDetailStatsMedia">
           <Image
             src={TOP_RIGHT_IMAGE}
-            alt=""
+            alt="top right decorative image"
             fill
             sizes="(max-width: 900px) 0px, 320px"
             className="projectDetailStatsMediaImage"

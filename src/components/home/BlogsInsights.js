@@ -60,20 +60,30 @@ function LeafIcon() {
 }
 
 // Formats an ISO 8601 date string (e.g. "2026-05-29T16:44:47.000000Z")
-// into "05/29/2026". Falls back to the raw string if parsing fails.
+// into "29/05/2026" (dd/mm/yyyy). Falls back to the raw string if parsing fails.
 function formatDate(isoString) {
   if (!isoString) return "";
   const date = new Date(isoString);
   if (Number.isNaN(date.getTime())) return isoString;
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
   const dd = String(date.getDate()).padStart(2, "0");
-  return `${mm}/${dd}/${date.getFullYear()}`;
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  return `${dd}/${mm}/${date.getFullYear()}`;
 }
 
-// "Indoor-plants" -> "INDOOR PLANTS"
-function formatTag(category) {
-  if (!category) return "";
-  return category.replace(/-/g, " ").toUpperCase();
+// Timestamp helper for sorting (invalid/missing dates go last)
+function getTime(value) {
+  const t = new Date(value).getTime();
+  return Number.isNaN(t) ? 0 : t;
+}
+
+// "Indoor-plants" / "Plant Care" -> "INDOOR PLANTS" / "PLANT CARE"
+function toUpperLabel(value = "") {
+  return String(value).replace(/[-_]+/g, " ").trim().toUpperCase();
+}
+
+// Used only for matching, so "Indoor-plants" and "Indoor Plants" are equal
+function normalize(value = "") {
+  return String(value).replace(/[-_]+/g, " ").trim().toLowerCase();
 }
 
 function PostCard({ post }) {
@@ -85,7 +95,9 @@ function PostCard({ post }) {
         </div>
 
         <div className="gaf-blogs-post-body">
-          {post.category && <span className="gaf-blogs-post-tag">{formatTag(post.category)}</span>}
+          {post.category && (
+            <span className="gaf-blogs-post-tag">{toUpperLabel(post.category)}</span>
+          )}
           <h3 className="gaf-blogs-post-title">{post.title}</h3>
           <p className="gaf-blogs-post-desc">{post.excerpt}</p>
 
@@ -100,6 +112,7 @@ function PostCard({ post }) {
                 <span className="gaf-blogs-author-text">
                   <span className="gaf-blogs-author-name">{post.author}</span>
                   {post.authorHandle && <span className="gaf-blogs-author-handle">{post.authorHandle}</span>}
+                  <span className="article-card-author-handle">Blog Author</span>
                 </span>
               </div>
             ) : (
@@ -135,13 +148,15 @@ export default function BlogsInsights() {
   const [search, setSearch] = useState("");
 
   // "All" is a local pseudo-category, not part of the API response.
+  // `label` is for display (uppercase); `name` is the raw API name used for matching.
   const filters = useMemo(
     () => [
-      { id: "all", slug: "all", label: "All", count: null },
+      { id: "all", slug: "all", label: "ALL", name: "all", count: null },
       ...(categories || []).map((cat) => ({
         id: cat.id,
         slug: cat.slug,
-        label: cat.name,
+        label: toUpperLabel(cat.name),
+        name: cat.name,
         href: `/blog/${cat.slug}`,
         count: null,
       })),
@@ -149,9 +164,13 @@ export default function BlogsInsights() {
     [categories]
   );
 
-  // Newest first: bigger id = posted more recently.
+  // Newest first by blog_date (id is the tie-breaker for same-date posts).
   const sortedPosts = useMemo(
-    () => [...posts].sort((a, b) => b.id - a.id),
+    () =>
+      [...posts].sort((a, b) => {
+        const diff = getTime(b.blog_date) - getTime(a.blog_date);
+        return diff !== 0 ? diff : (b.id || 0) - (a.id || 0);
+      }),
     [posts]
   );
 
@@ -163,7 +182,7 @@ export default function BlogsInsights() {
       const matchesCategory =
         activeFilter === "all" ||
         !activeCategory ||
-        post.category?.toLowerCase() === activeCategory.label?.toLowerCase();
+        normalize(post.category) === normalize(activeCategory.name);
 
       const matchesSearch =
         !q ||
@@ -186,7 +205,7 @@ export default function BlogsInsights() {
           natural aesthetics, and inspiring spaces designed to bring balance
           into everyday life.
         </p>
-        
+
         {/* <Link href="/blogs">
         <button type="button" className="gaf-blogs-cta-btn">
           Explore Our Story
@@ -257,7 +276,9 @@ export default function BlogsInsights() {
 
                     <div className="gaf-blogs-featured-body">
                       {featuredPost.category && (
-                        <span className="gaf-blogs-featured-tag">{formatTag(featuredPost.category)}</span>
+                        <span className="gaf-blogs-featured-tag">
+                          {toUpperLabel(featuredPost.category)}
+                        </span>
                       )}
                       <h3 className="gaf-blogs-featured-title">{featuredPost.title}</h3>
                       <p className="gaf-blogs-featured-desc">{featuredPost.excerpt}</p>
@@ -276,6 +297,8 @@ export default function BlogsInsights() {
                               </span>
                             )}
                             <span className="gaf-blogs-author-name">{featuredPost.author}</span>
+                            
+                            <span className="article-card-author-handle">Blog Author</span>
                           </>
                         )}
                         <span className="gaf-blogs-post-date">{formatDate(featuredPost.blog_date)}</span>
@@ -284,14 +307,14 @@ export default function BlogsInsights() {
                   </article>
                 </Link>
               )}
-              
+
               <Link href="/blogs" className="gaf-blogs-explore-btn-wrapper">
-              <button type="button" className="gaf-blogs-explore-btn">
-                Explore New Articles
-                <span className="gaf-blogs-explore-icon">
-                  <ArrowIcon />
-                </span>
-              </button>
+                <button type="button" className="gaf-blogs-explore-btn">
+                  Explore New Articles
+                  <span className="gaf-blogs-explore-icon">
+                    <ArrowIcon />
+                  </span>
+                </button>
               </Link>
             </div>
           </div>

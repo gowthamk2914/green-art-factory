@@ -118,6 +118,26 @@ export default function Opportunities() {
     }, 260);
   };
 
+  // Pre-fill "Position Applying For" in the form below, then scroll to it.
+  // Jobs with their own external apply_url keep opening that link instead.
+  const handleApplyClick = (job) => (e) => {
+    if (job.applyUrl) return;
+
+    e.preventDefault();
+
+    window.dispatchEvent(
+      new CustomEvent('gaf:select-position', {
+        detail: { title: job.title, slug: job.slug },
+      })
+    );
+
+    const form = document.getElementById('apply');
+    if (form) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      form.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <section id="open-positions" className="ops-section">
       <div
@@ -175,7 +195,7 @@ export default function Opportunities() {
               >
                 <img
                   src={CORNER_IMAGE_SRC}
-                  alt=""
+                  alt="corner image"
                   aria-hidden="true"
                   className="ops-corner-image"
                 />
@@ -186,28 +206,30 @@ export default function Opportunities() {
 
                   <div className="ops-meta">
                     <span className="ops-meta-item">
-                      <MapPin size={14} />
+                      <MapPin size={14} aria-hidden="true" />
                       {job.location}
                     </span>
                     <span className="ops-meta-item">
-                      <Clock size={14} />
+                      <Clock size={14} aria-hidden="true" />
                       {job.type}
                     </span>
                   </div>
 
                   <p className="ops-description">{job.description}</p>
 
-                  {/* Uses the API's own apply_url when the job has one;
-                      otherwise falls back to the shared #apply section
-                      on the page, same as before. */}
+                  {/* External apply_url still opens in a new tab. Otherwise the
+                      click selects this role in the form and scrolls to it. The
+                      ?position= link is the fallback for new tabs / copied links. */}
                   <a
-                    href={job.applyUrl || '#apply'}
+                    href={job.applyUrl || `?position=${encodeURIComponent(job.slug)}#apply`}
+                    onClick={handleApplyClick(job)}
                     target={job.applyUrl ? '_blank' : undefined}
                     rel={job.applyUrl ? 'noopener noreferrer' : undefined}
                     className="ops-apply"
+                    aria-label={`Apply now for ${job.title}`}
                   >
                     Apply Now
-                    <ArrowRight size={16} className="ops-apply-arrow" />
+                    <ArrowRight size={16} className="ops-apply-arrow" aria-hidden="true" />
                   </a>
                 </div>
               </div>

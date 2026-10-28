@@ -84,19 +84,23 @@ const TABS = [
 
 function PlayIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M8 5v14l11-7-11-7Z" fill="#1a1a12" />
     </svg>
   );
 }
 
+/* The custom play button only appears before the first play. After
+   that the native controls handle play, pause, mute, seek and
+   fullscreen, so seeking never fights with our own state. */
 function AboutVideo({ tab }) {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const videoRef = useRef(null);
 
-  const handlePlay = () => {
-    setIsPlaying(true);
-    videoRef.current?.play();
+  const handleFirstPlay = () => {
+    const playPromise = videoRef.current?.play();
+    // Ignore the harmless "interrupted" rejection if the user acts quickly
+    if (playPromise?.catch) playPromise.catch(() => {});
   };
 
   return (
@@ -106,15 +110,18 @@ function AboutVideo({ tab }) {
         ref={videoRef}
         src={tab.video}
         // poster={tab.videoPoster}
-        controls={isPlaying}
-        onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
+        controls
+        playsInline
+        preload="metadata"
+        onPlay={() => setHasStarted(true)}
         className="gaf-about-video"
-      />
-      {!isPlaying && (
+      >
+        Your browser does not support the video tag.
+      </video>
+      {!hasStarted && (
         <button
           type="button"
-          onClick={handlePlay}
+          onClick={handleFirstPlay}
           aria-label={`Play ${tab.label} video`}
           className="gaf-about-play-btn"
         >

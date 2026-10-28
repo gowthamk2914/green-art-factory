@@ -13,29 +13,35 @@ const GALLERY = [
     id: 3,
     isVideo: true,
     video: "/videos/workshop-video-1.mp4",
+    label: "Workshop video 1",
   },
   {
     id: 4,
     isVideo: true,
     video: "/videos/workshop-video-2.mp4",
+    label: "Workshop video 2",
   },
 ];
 
 function PlayIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M8 5v14l11-7-11-7Z" fill="#1a1a12" />
     </svg>
   );
 }
 
+/* The custom play button only appears before the first play. After
+   that the native controls handle play, pause, mute, seek and
+   fullscreen, so seeking never fights with our own state. */
 function GalleryVideo({ item }) {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const videoRef = useRef(null);
 
-  const handlePlay = () => {
-    setIsPlaying(true);
-    videoRef.current?.play();
+  const handleFirstPlay = () => {
+    const playPromise = videoRef.current?.play();
+    // Ignore the harmless "interrupted" rejection if the user acts quickly
+    if (playPromise?.catch) playPromise.catch(() => {});
   };
 
   return (
@@ -44,16 +50,20 @@ function GalleryVideo({ item }) {
         ref={videoRef}
         src={item.video}
         // poster={item.image}
-        controls={isPlaying}
-        onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
+        controls
+        playsInline
+        preload="metadata"
+        aria-label={item.label}
+        onPlay={() => setHasStarted(true)}
         className="gaf-workshop-gallery-video"
-      />
-      {!isPlaying && (
+      >
+        Your browser does not support the video tag.
+      </video>
+      {!hasStarted && (
         <button
           type="button"
-          onClick={handlePlay}
-          aria-label="Play video"
+          onClick={handleFirstPlay}
+          aria-label={`Play ${item.label}`}
           className="gaf-workshop-play-btn"
         >
           <PlayIcon />
@@ -114,9 +124,9 @@ export default function WorkshopFacility() {
 
           <div className="gaf-workshop-card-actions">
             <Link href="/contact">
-            <button type="button" className="gaf-workshop-btn-outline">
-              Contact Us
-            </button>
+              <button type="button" className="gaf-workshop-btn-outline">
+                Contact Us
+              </button>
             </Link>
             <button type="button" className="gaf-workshop-btn-solid">
               Book a Studio Visit

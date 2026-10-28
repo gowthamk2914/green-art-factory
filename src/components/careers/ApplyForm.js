@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { UploadCloud, ArrowUpRight, X, CheckCircle2 } from 'lucide-react';
 
@@ -18,6 +18,9 @@ const HIRING_STEPS = [
 
 const MAX_FILE_SIZE_MB = 10;
 const ACCEPTED_FILE_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+// Always offered at the end of the "Position Applying For" dropdown
+const GENERAL_APPLICATION = 'General Application';
 
 const initialValues = {
   fullName: '',
@@ -39,6 +42,48 @@ const API_FIELD_TO_LOCAL = {
   resume: 'resume',
   consent: 'agreed',
 };
+
+/* ------------------------------------------------------------
+   Shared validation (same rules on Contact, Services and Careers)
+   ------------------------------------------------------------ */
+const NAME_PATTERN = /^[\p{L}\p{M}][\p{L}\p{M}\s'’.\-]*$/u;
+const EMAIL_PATTERN =
+  /^[A-Za-z0-9._%+\-]+@(?:[A-Za-z0-9](?:[A-Za-z0-9\-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/;
+const PHONE_PATTERN = /^\+?[\d\s().\-]+$/;
+
+function validateName(value, { required = true, label = 'Name' } = {}) {
+  const v = (value || '').trim();
+  if (!v) return required ? `${label} is required.` : null;
+  if (!NAME_PATTERN.test(v)) {
+    return `${label} can only contain letters, spaces, apostrophes, hyphens and full stops.`;
+  }
+  const letters = v.match(/\p{L}/gu) || [];
+  if (letters.length < 2) return `${label} must have at least 2 letters.`;
+  if (v.length > 60) return `${label} must be 60 characters or fewer.`;
+  return null;
+}
+
+function validateEmail(value, { required = true } = {}) {
+  const v = (value || '').trim();
+  if (!v) return required ? 'Email is required.' : null;
+  if (v.length > 254 || v.includes('..') || !EMAIL_PATTERN.test(v)) {
+    return 'Enter a valid email address, e.g. name@example.com.';
+  }
+  return null;
+}
+
+function validatePhone(value, { required = true, label = 'Phone number' } = {}) {
+  const v = (value || '').trim();
+  if (!v) return required ? `${label} is required.` : null;
+  if (!PHONE_PATTERN.test(v)) {
+    return `${label} can only contain digits, spaces and + ( ) - characters.`;
+  }
+  const digits = v.replace(/\D/g, '');
+  if (digits.length < 7 || digits.length > 15) {
+    return `Enter a valid ${label.toLowerCase()} (7–15 digits).`;
+  }
+  return null;
+}
 
 // Backend requires a fully qualified URL (Laravel's `url` rule). If the
 // person typed "myportfolio.com" without a protocol, add one rather than
@@ -66,12 +111,36 @@ export default function ApplyForm() {
     (state) => state.ApplyForm
   );
 
+  // Same job list the Opportunities section loaded
+  const jobsData = useSelector((state) => state.Opportunities?.data);
+
   const [values, setValues] = useState(initialValues);
   const [file, setFile] = useState(null);
   const [agreed, setAgreed] = useState(false);
   const [errors, setErrors] = useState({});
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+  const formRef = useRef(null);
+
+  // Dropdown options = the open roles from the API + "General Application"
+  const positionOptions = useMemo(() => {
+    const titles = (jobsData || [])
+      .filter((job) => job.status)
+      .map((job) => job.title);
+
+    const list = Array.from(new Set(titles));
+
+    // Keep a pre-filled role selectable even if the list hasn't loaded yet
+    if (
+      values.position &&
+      !list.includes(values.position) &&
+      values.position !== GENERAL_APPLICATION
+    ) {
+      list.unshift(values.position);
+    }
+
+    return [...list, GENERAL_APPLICATION];
+  }, [jobsData, values.position]);
 
   // Merge server-side field errors (from a failed submit) into the
   // same `errors` object the client-side validation uses, so both
@@ -95,9 +164,54 @@ export default function ApplyForm() {
     };
   }, [dispatch]);
 
+  // Receive the role chosen in the Opportunities cards
+  useEffect(() => {
+    const handleSelect = (e) => {
+      const title = e.detail?.title;
+      if (!title) return;
+
+      setValues((v) => ({ ...v, position: title }));
+      setErrors((err) => ({ ...err, position: undefined }));
+
+      // After the scroll, move focus to the field so it's announced
+      window.setTimeout(() => {
+        document.getElementById('apl-position')?.focus({ preventScroll: true });
+      }, 600);
+    };
+
+    window.addEventListener('gaf:select-position', handleSelect);
+    return () => window.removeEventListener('gaf:select-position', handleSelect);
+  }, []);
+
+  // Pre-fill from the URL (?position=job-slug) once the jobs have loaded
+  useEffect(() => {
+    if (!jobsData || values.position) return;
+
+    const slug = new URLSearchParams(window.location.search).get('position');
+    if (!slug) return;
+
+    const match = jobsData.find((job) => job.status && job.slug === slug);
+    if (match) setValues((v) => ({ ...v, position: match.title }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobsData]);
+
   const handleChange = (field) => (e) => {
     setValues((v) => ({ ...v, [field]: e.target.value }));
     setErrors((err) => ({ ...err, [field]: undefined }));
+  };
+
+  // Rules for the three shared fields (all required on this form)
+  const getFieldError = (field) => {
+    if (field === 'fullName') return validateName(values.fullName, { label: 'Full name' });
+    if (field === 'email') return validateEmail(values.email);
+    if (field === 'phone') return validatePhone(values.phone, { label: 'Phone number' });
+    return null;
+  };
+
+  // Check a single field when the user leaves it
+  const handleFieldBlur = (field) => () => {
+    const message = getFieldError(field);
+    setErrors((err) => ({ ...err, [field]: message || undefined }));
   };
 
   const validateFile = (candidate) => {
@@ -145,14 +259,13 @@ export default function ApplyForm() {
 
   const validate = () => {
     const next = {};
-    if (!values.fullName.trim()) next.fullName = 'Full name is required.';
-    if (!values.email.trim()) {
-      next.email = 'Email is required.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-      next.email = 'Enter a valid email address.';
-    }
-    if (!values.phone.trim()) next.phone = 'Phone number is required.';
-    if (!values.position.trim()) next.position = 'Let us know which position.';
+
+    ['fullName', 'email', 'phone'].forEach((field) => {
+      const message = getFieldError(field);
+      if (message) next[field] = message;
+    });
+
+    if (!values.position.trim()) next.position = 'Please select a position.';
     if (values.portfolio.trim() && !isValidUrl(normalizePortfolioUrl(values.portfolio))) {
       next.portfolio = 'Enter a valid URL, e.g. https://yourportfolio.com';
     }
@@ -165,12 +278,19 @@ export default function ApplyForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validate()) return;
+
+    if (!validate()) {
+      // Move focus to the first invalid field once errors have rendered
+      requestAnimationFrame(() => {
+        formRef.current?.querySelector('[aria-invalid="true"]')?.focus();
+      });
+      return;
+    }
 
     const formData = new FormData();
-    formData.append('full_name', values.fullName);
-    formData.append('email', values.email);
-    formData.append('phone', values.phone);
+    formData.append('full_name', values.fullName.trim());
+    formData.append('email', values.email.trim());
+    formData.append('phone', values.phone.trim());
     formData.append('position', values.position);
     if (values.portfolio.trim()) {
       formData.append('portfolio', normalizePortfolioUrl(values.portfolio));
@@ -230,53 +350,93 @@ export default function ApplyForm() {
           </p>
         </div>
 
-        {/* RIGHT: form */}
-        <form className="apl-form" onSubmit={handleSubmit} noValidate>
+        {/* RIGHT: form (noValidate: our own red inline messages
+            replace the browser's native tooltips) */}
+        <form ref={formRef} className="apl-form" onSubmit={handleSubmit} noValidate>
           {message && !success && Object.keys(fieldErrors || {}).length === 0 && (
             <p className="apl-error-text" role="alert">{message}</p>
           )}
 
           <div className="apl-row">
             <Field
+              name="full_name"
               label="Full Name"
               placeholder="Your full name"
+              autoComplete="name"
+              maxLength={60}
               value={values.fullName}
               onChange={handleChange('fullName')}
+              onBlur={handleFieldBlur('fullName')}
               error={errors.fullName}
             />
             <Field
+              name="email"
               label="Email Address"
               type="email"
               placeholder="your@email.com"
+              autoComplete="email"
+              maxLength={254}
               value={values.email}
               onChange={handleChange('email')}
+              onBlur={handleFieldBlur('email')}
               error={errors.email}
             />
           </div>
 
           <div className="apl-row">
             <Field
+              name="phone"
               label="Phone Number"
               type="tel"
+              inputMode="tel"
               placeholder="+1 (000) 000 0000"
+              autoComplete="tel"
+              maxLength={20}
               value={values.phone}
               onChange={handleChange('phone')}
+              onBlur={handleFieldBlur('phone')}
               error={errors.phone}
             />
-            <Field
-              label="Position Applying For"
-              placeholder="e.g. Senior Landscape Architect"
-              value={values.position}
-              onChange={handleChange('position')}
-              error={errors.position}
-            />
+
+            {/* Position: dropdown built from the open roles, pre-filled
+                when the visitor clicks "Apply Now" on a job card */}
+            <div className="apl-field">
+              <label className="apl-label" htmlFor="apl-position">
+                Position Applying For
+              </label>
+              <select
+                id="apl-position"
+                name="position"
+                value={values.position}
+                onChange={handleChange('position')}
+                aria-required="true"
+                aria-invalid={errors.position ? 'true' : undefined}
+                aria-describedby={errors.position ? 'apl-position-error' : undefined}
+                className={`apl-input apl-select ${errors.position ? 'apl-input--error' : ''}`}
+              >
+                <option value="">Select a position</option>
+                {positionOptions.map((title) => (
+                  <option key={title} value={title}>
+                    {title}
+                  </option>
+                ))}
+              </select>
+              {errors.position && (
+                <span id="apl-position-error" role="alert" className="apl-error-text">
+                  {errors.position}
+                </span>
+              )}
+            </div>
           </div>
 
           <Field
+            name="portfolio"
             label="Portfolio / Website"
             placeholder="https://yourportfolio.com"
+            autoComplete="url"
             value={values.portfolio}
             onChange={handleChange('portfolio')}
+            error={errors.portfolio}
           />
 
           <div className="apl-field">
@@ -319,19 +479,22 @@ export default function ApplyForm() {
                 </>
               )}
             </div>
-            {errors.resume && <span className="apl-error-text">{errors.resume}</span>}
+            {errors.resume && (
+              <span role="alert" className="apl-error-text">{errors.resume}</span>
+            )}
           </div>
 
-          <div className="apl-field">
-            <label className="apl-label">Cover Letter / Message</label>
-            <textarea
-              rows={5}
-              placeholder="Tell us about yourself, what draws you to Green Art Factory, and what you'd love to contribute."
-              value={values.coverLetter}
-              onChange={handleChange('coverLetter')}
-              className="apl-textarea"
-            />
-          </div>
+          <Field
+            as="textarea"
+            name="message"
+            label="Cover Letter / Message"
+            rows={5}
+            placeholder="Tell us about yourself, what draws you to Green Art Factory, and what you'd love to contribute."
+            autoComplete="off"
+            value={values.coverLetter}
+            onChange={handleChange('coverLetter')}
+            error={errors.coverLetter}
+          />
 
           <div className="apl-footer">
             <label className="apl-checkbox-row">
@@ -342,6 +505,7 @@ export default function ApplyForm() {
                   setAgreed(e.target.checked);
                   setErrors((err) => ({ ...err, agreed: undefined }));
                 }}
+                aria-invalid={errors.agreed ? 'true' : undefined}
                 className="apl-checkbox"
               />
               <span>
@@ -349,7 +513,9 @@ export default function ApplyForm() {
                 accordance with Green Art Factory&apos;s <a href="/terms-and-privacy" target="_blank" rel="noopener noreferrer" className="terms-and-privacy-checkbox-text">Terms and Privacy</a>.
               </span>
             </label>
-            {errors.agreed && <span className="apl-error-text">{errors.agreed}</span>}
+            {errors.agreed && (
+              <span role="alert" className="apl-error-text">{errors.agreed}</span>
+            )}
 
             <div className="apl-submit-row">
               <button type="submit" className="apl-submit" disabled={loading}>
@@ -368,18 +534,52 @@ export default function ApplyForm() {
   );
 }
 
-function Field({ label, type = 'text', placeholder, value, onChange, error }) {
+function Field({
+  as = 'input',
+  name,
+  label,
+  type = 'text',
+  placeholder,
+  value,
+  onChange,
+  onBlur,
+  error,
+  autoComplete,
+  inputMode,
+  maxLength,
+  rows,
+}) {
+  const uid = useId();
+  const id = `apl-${name}-${uid}`;
+  const errorId = `${id}-error`;
+  const Tag = as;
+
   return (
     <div className="apl-field">
-      <label className="apl-label">{label}</label>
-      <input
-        type={type}
+      <label className="apl-label" htmlFor={id}>{label}</label>
+      <Tag
+        id={id}
+        name={name}
+        type={as === 'input' ? type : undefined}
+        inputMode={inputMode}
+        maxLength={maxLength}
+        rows={as === 'textarea' ? rows : undefined}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`apl-input ${error ? 'apl-input--error' : ''}`}
+        onBlur={onBlur}
+        autoComplete={autoComplete}
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={error ? errorId : undefined}
+        className={`${as === 'textarea' ? 'apl-textarea' : 'apl-input'} ${
+          error ? 'apl-input--error' : ''
+        }`}
       />
-      {error && <span className="apl-error-text">{error}</span>}
+      {error && (
+        <span id={errorId} role="alert" className="apl-error-text">
+          {error}
+        </span>
+      )}
     </div>
   );
 }

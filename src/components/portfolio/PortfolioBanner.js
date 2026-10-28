@@ -35,7 +35,7 @@ export default function PortfolioBanner({
       <div className="portfolio-banner-bg">
         <Image
           src={backgroundImage}
-          alt=""
+          alt="portfolio banner background"
           fill
           priority
           className="portfolio-banner-bg-img"

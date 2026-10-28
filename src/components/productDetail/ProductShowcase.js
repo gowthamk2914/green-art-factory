@@ -1,10 +1,19 @@
-
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const FALLBACK_IMAGE = "/images/product-detail-common-img.png";
+
+// "moss-creations" -> "Moss Creations" (used only if no name is passed in)
+function slugToTitle(slug = "") {
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
 
 function buildCtas(item, reversed) {
   const gallery = item?.gallery_url
@@ -133,16 +142,42 @@ function ProductRow({ item, reversed }) {
   );
 }
 
-export default function ProductShowcase({ variants = [] }) {
+export default function ProductShowcase({ variants = [], productName }) {
+  const pathname = usePathname() || "";
+
   if (!variants?.length) {
     return null;
   }
+
+  // "/products/moss-creations" -> "moss-creations"
+  const segments = pathname.split("/").filter(Boolean);
+  const productIndex = segments.indexOf("products");
+  const slug = productIndex !== -1 ? segments[productIndex + 1] : segments[segments.length - 1];
+  const name = productName || slugToTitle(slug);
 
   return (
     <section
       className="productDetailSection"
       aria-label="Product range"
     >
+      {/* Breadcrumb: Home > Product */}
+      <nav className="productDetailBreadcrumb" aria-label="Breadcrumb">
+        <div className="breadcrumb">
+          <Link href="/" className="breadcrumb-item">
+            Home
+          </Link>
+
+          {name && (
+            <>
+              <i className="bi bi-chevron-right breadcrumb-arrow" aria-hidden="true"></i>
+              <span className="breadcrumb-item active" aria-current="page">
+                {name}
+              </span>
+            </>
+          )}
+        </div>
+      </nav>
+
       <div className="productDetailInner">
         {variants.map((item, index) => (
           <ProductRow
@@ -155,4 +190,3 @@ export default function ProductShowcase({ variants = [] }) {
     </section>
   );
 }
-

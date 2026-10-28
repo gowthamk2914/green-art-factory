@@ -29,10 +29,27 @@ function iconForCategory(slug) {
   return CATEGORY_ICONS[slug] || IoLeafOutline;
 }
 
-// "Indoor-plants" -> "INDOOR PLANTS" (matches the card badge styling)
-function formatBadge(category) {
-  if (!category) return "";
-  return category.replace(/-/g, " ").toUpperCase();
+// "Indoor-plants" / "PLANT CARE" / "plant_care" -> "Indoor Plants" / "Plant Care"
+// (used for the section heading)
+function toTitleCase(value = "") {
+  return String(value)
+    .replace(/[-_]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
+}
+
+// "Indoor-plants" / "Plant Care" -> "INDOOR PLANTS" / "PLANT CARE"
+// (used for chips and card badges)
+function toUpperLabel(value = "") {
+  return String(value).replace(/[-_]+/g, " ").trim().toUpperCase();
+}
+
+// Used only for matching, so "Indoor-plants" and "Indoor Plants" are equal
+function normalize(value = "") {
+  return String(value).replace(/[-_]+/g, " ").trim().toLowerCase();
 }
 
 export default function BlogList() {
@@ -85,12 +102,23 @@ export default function BlogList() {
   }, []);
 
   // "All Blogs" is a local pseudo-category, not part of the API response.
+  // `label` = title case (heading), `chipLabel` = uppercase (chips),
+  // `raw` = API name used for matching.
   const pillCategories = useMemo(
     () => [
-      { id: "all", label: "All Blogs", icon: IoGridOutline, count: null },
+      {
+        id: "all",
+        label: "All Blogs",
+        chipLabel: "ALL BLOGS",
+        raw: "all",
+        icon: IoGridOutline,
+        count: null,
+      },
       ...categories.map((cat) => ({
         id: cat.slug,
-        label: cat.name,
+        label: toTitleCase(cat.name),
+        chipLabel: toUpperLabel(cat.name),
+        raw: cat.name,
         icon: iconForCategory(cat.slug),
         count: null,
       })),
@@ -99,13 +127,12 @@ export default function BlogList() {
   );
 
   // Map API posts into the card shape this component renders.
-  // `categoryRaw` is kept (in addition to the display-formatted `badge`)
-  // so the active pill can filter cards by exact category match.
+  // `categoryRaw` is kept so the active pill can filter by category match.
   const cards = useMemo(
     () =>
       posts.map((post) => ({
         id: post.id,
-        badge: formatBadge(post.category),
+        badge: toUpperLabel(post.category),
         categoryRaw: post.category || "",
         title: post.title,
         description: post.excerpt,
@@ -115,22 +142,23 @@ export default function BlogList() {
     [posts]
   );
 
-  const activeLabel =
-    pillCategories.find((cat) => cat.id === activeCategory)?.label ?? "All Blogs";
+  const activePill =
+    pillCategories.find((cat) => cat.id === activeCategory) ?? pillCategories[0];
+  const activeLabel = activePill.label;
 
   const filteredCards = cards.filter((card) => {
     const matchesCategory =
       activeCategory === "all" ||
-      card.categoryRaw.toLowerCase() === activeLabel.toLowerCase();
+      normalize(card.categoryRaw) === normalize(activePill.raw);
 
     if (!matchesCategory) return false;
 
     if (!query.trim()) return true;
     const q = query.trim().toLowerCase();
     return (
-      card.title.toLowerCase().includes(q) ||
-      card.description.toLowerCase().includes(q) ||
-      card.badge.toLowerCase().includes(q)
+      card.title?.toLowerCase().includes(q) ||
+      card.description?.toLowerCase().includes(q) ||
+      card.badge?.toLowerCase().includes(q)
     );
   });
 
@@ -141,13 +169,8 @@ export default function BlogList() {
 
   // Duplicate the card set so the marquee track (2x width) can loop
   // seamlessly at -50% translateX with no visible seam or pause.
-  //
-  // With very few filtered cards (e.g. 2 for a niche category), simply
-  // duplicating once isn't enough content to fill the visible track width
-  // — that's what was showing as blank space before the loop caught up.
-  // Instead, first pad the filtered set by cycling through it (p1, p2,
-  // p1, p2, p1, p2...) until there's a safe minimum amount of content,
-  // THEN duplicate that padded set for the seamless loop.
+  // With very few filtered cards, pad the set by cycling through it
+  // first, THEN duplicate that padded set for the seamless loop.
   const MIN_LOOP_CARDS = 8;
   const paddedCards =
     filteredCards.length === 0
@@ -194,7 +217,7 @@ export default function BlogList() {
                   className={`browse-pill ${isActive ? "browse-pill-active" : ""}`}
                 >
                   <Icon />
-                  <span>{cat.label}</span>
+                  <span>{cat.chipLabel}</span>
                   {cat.count !== null && (
                     <span className="browse-pill-count">{cat.count}</span>
                   )}

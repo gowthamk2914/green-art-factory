@@ -46,9 +46,7 @@ export default function ServicesBanner() {
         </h1>
 
         <p className="servicesBannerDescription">
-          From Plant Maintenance To Rentals And Temporary Landscapes, We
-          Create And Care For Green Environments That Inspire, Refresh, And
-          Elevate Everyday Spaces.
+          From plant maintenance to rentals and temporary landscapes, we create and care for green environments that inspire, refresh, and elevate everyday spaces.
         </p>
 
         <Link href="/products-list" className="servicesBannerCta">

@@ -11,7 +11,7 @@ export default function GalleryHero({
       <div className="galleryHeroBg">
         <Image
           src={backgroundImage}
-          alt=""
+          alt="gallery hero background"
           fill
           priority
           sizes="100vw"

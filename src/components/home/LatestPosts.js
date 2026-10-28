@@ -136,7 +136,7 @@ export default function LatestPosts() {
     <section className="gaf-posts-outer" style={{ backgroundImage: `url(${BG_IMAGE})` }}>
       <div className="gaf-posts-container">
         <aside className="gaf-posts-sidebar">
-          <Image src={LEAF_IMAGE} alt="" width={280} height={280} className="gaf-posts-leaf-img" />
+          <Image src={LEAF_IMAGE} alt="leaf image" width={280} height={280} className="gaf-posts-leaf-img" />
 
           <div className="gaf-posts-sidebar-content">
             <h2 className="gaf-posts-heading">Latest Posts</h2>

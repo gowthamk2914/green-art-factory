@@ -9,6 +9,14 @@ import { FaLinkedinIn, FaInstagram, FaFacebookF } from "react-icons/fa";
 
 import { getBlogDetailRequest } from "../../redux/BlogDetail/actions";
 
+
+// "Indoor-plants" / "Plant Care" -> "INDOOR PLANTS" / "PLANT CARE"
+function toUpperLabel(value = "") {
+  return String(value).replace(/[-_]+/g, " ").trim().toUpperCase();
+}
+
+
+
 export default function BlogDetailBody({ slug: slugProp, shareUrl }) {
   const dispatch = useDispatch();
   const params = useParams();
@@ -145,7 +153,7 @@ export default function BlogDetailBody({ slug: slugProp, shareUrl }) {
               <div className="blog-body-tags">
                 {tags.map((tag, i) => (
                   <span key={`${tag}-${i}`} className="blog-body-tag">
-                    {tag}
+                    {toUpperLabel(tag)}
                   </span>
                 ))}
               </div>

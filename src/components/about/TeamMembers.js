@@ -29,7 +29,7 @@ function TeamCard({ member, index }) {
   return (
     <div className={`gaf-team-card gaf-team-card--${wave.direction}`}>
       <div className="gaf-team-photo-wrap">
-        <img src={wave.src} alt="" aria-hidden="true" className="gaf-team-wave-bg" />
+        <img src={wave.src} alt="team member wave" aria-hidden="true" className="gaf-team-wave-bg" />
 
         <div
           className="gaf-team-photo-mask"

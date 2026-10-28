@@ -65,6 +65,16 @@ button{
    Tailwind-driven markup elsewhere in Navbar.js.
    ========================================================================== */
 
+
+/* Active page in the mobile menu */
+.mobileMenuLink.mobileMenuLinkActive {
+  color: #5e671f;
+  font-weight: 600;
+  background: #f1f2e4;
+  border-left: 3px solid #5e671f;
+}
+
+
 /* Locks background scroll while the panel is open */
 body.mobileMenuLockScroll {
   overflow: hidden;
@@ -303,37 +313,85 @@ body.mobileMenuLockScroll {
   }
 }
 
+/* ============================================================
+   Hero banner
+   ============================================================ */
+.hero-slide {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(520px, 46vw, 680px);
+  background: #f7f5ec;
+  overflow: hidden;
+}
 
-.hero-banner-text{
-  font-size: 38px;
+/* ---------- Photo: stretched across the full hero ---------- */
+.hero-slide-media {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-slide-image {
+  object-fit: cover;
+}
+
+/* ---------- Single gradient: solid cream -> clear by ~65% ----------
+   To push the photo further left or right, change the two
+   percentages that mark where the cream ends and the photo is clear. */
+.hero-slide-fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    #f7f5ec 0%,
+    #f7f5ec 35%,
+    rgba(247, 245, 236, 0.9) 43%,
+    rgba(247, 245, 236, 0.65) 51%,
+    rgba(247, 245, 236, 0.35) 59%,
+    rgba(247, 245, 236, 0.12) 65%,
+    rgba(247, 245, 236, 0) 71%
+  );
+}
+
+/* ---------- Text (left side) ---------- */
+.hero-slide-container {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-slide-content {
+  max-width: 52%;
+  padding: 60px 0 80px;
+}
+
+.hero-banner-text {
+  margin: 0 0 25px;
+  font-size: clamp(32px, 3.7vw, 54px);
   font-weight: 700;
-  line-height: 55px;
-  margin-bottom: 25px;
+  line-height: 1.18;
+  letter-spacing: -0.5px;
+  color: #000;
 }
 
-
-.hero-banner-subtext{
-  margin-bottom: 25px;
+.hero-banner-subtext {
+  margin: 0 0 25px;
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.7;
+  color: #333;
 }
 
-
-.banner-discount-text{
+.banner-discount-text {
   padding: 100px 0;
 }
 
-.floating-social-bar-wrapper{
+.floating-social-bar-wrapper {
   padding: 8px;
 }
 
+/* ---------- Pagination ---------- */
 .hero-swiper .swiper-pagination {
   bottom: 30px !important;
-}
-
-@media(min-width:992px){
-.hero-swiper .swiper-pagination-bullet{
-  width: 24px;
-  height: 24px;
-}
 }
 
 .hero-swiper .swiper-pagination-bullet {
@@ -341,12 +399,63 @@ body.mobileMenuLockScroll {
   height: 8px;
   background: #a4a483;
   opacity: 1;
+  /* soft ring so the dots stay visible over the photo */
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
 }
 
 .hero-swiper .swiper-pagination-bullet-active {
   background: #5f6720 !important;
 }
 
+@media (min-width: 992px) {
+  .hero-swiper .swiper-pagination-bullet {
+    width: 17px !important;
+    height: 17px !important;
+  }
+}
+
+/* ---------- Tablet & mobile: photo on top, text below ---------- */
+@media (max-width: 991px) {
+  .hero-slide {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  .hero-slide-media {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: clamp(240px, 60vw, 380px);
+  }
+
+  /* fade the bottom of the photo into the text area instead */
+  .hero-slide-fade {
+    inset: 0 0 auto 0;
+    height: clamp(240px, 60vw, 380px);
+    background: linear-gradient(
+      180deg,
+      rgba(247, 245, 236, 0) 45%,
+      rgba(247, 245, 236, 0.75) 80%,
+      #f7f5ec 100%
+    );
+  }
+
+  .hero-slide-content {
+    max-width: 100%;
+    padding: 8px 0 76px;
+    text-align: center;
+  }
+
+  .hero-slide-content button {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-banner-text {
+    font-size: clamp(26px, 6.4vw, 36px);
+  }
+}
 
 
 .products-section {
@@ -2490,6 +2599,7 @@ justify-content:center;
   border-radius: 999px;
   padding: 5px 14px;
   margin-bottom: 16px;
+  text-transform: uppercase;
 }
 
 .gaf-blogs-post-title {
@@ -7928,6 +8038,22 @@ a.gaf-footer-contact-text:hover {
   color: #6b6f5a;
 }
 
+/* Scroll so the form isn't hidden under the sticky header */
+#apply {
+  scroll-margin-top: 100px; /* header height + a little space */
+}
+
+/* Dropdown styled to match .apl-input */
+.apl-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 44px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2366711e' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
 
 .livingwall-wrap {
   position: relative;
@@ -11175,9 +11301,8 @@ font.goog-text-highlight {
 
 
 /* ==========================================================================
-   Related Products 
+   Related Products
    ========================================================================== */
-
 
 .relatedProductsSection {
   background: #ffffff;
@@ -11205,37 +11330,122 @@ font.goog-text-highlight {
 
 
 /* ============================================================
+   Slider wrapper (holds arrows + edge fades)
+   ============================================================ */
+
+.relatedProductsSlider {
+  position: relative;
+}
+
+/* Soft white fades on the edges that still have more cards,
+   so a half-visible card reads as "there is more" */
+.relatedProductsSlider::before,
+.relatedProductsSlider::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0.75rem;
+  width: clamp(36px, 6vw, 80px);
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.relatedProductsSlider::before {
+  left: 0;
+  background: linear-gradient(90deg, #ffffff 15%, rgba(255, 255, 255, 0));
+}
+
+.relatedProductsSlider::after {
+  right: 0;
+  background: linear-gradient(270deg, #ffffff 15%, rgba(255, 255, 255, 0));
+}
+
+.relatedProductsSlider--canLeft::before,
+.relatedProductsSlider--canRight::after {
+  opacity: 1;
+}
+
+
+/* ============================================================
    Horizontal Scroller
    ============================================================ */
 
 .relatedProductsScroller {
+  position: relative;
   display: flex;
-
+  flex-wrap: nowrap;
   gap: clamp(1rem, 2vw, 1.5rem);
 
-  /*
-   * Allows horizontal scrolling only when
-   * the cards overflow the available width.
-   */
   overflow-x: auto;
-
   padding: 0 clamp(1.25rem, 5vw, 3rem) 0.75rem;
 
+  /* Cards settle neatly at the left edge after a swipe or arrow click */
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: clamp(1.25rem, 5vw, 3rem);
+
   -webkit-overflow-scrolling: touch;
-
-  /*
-   * Hide scrollbar.
-   */
   scrollbar-width: none;
-
-  /*
-   * Keep all cards in one row.
-   */
-  flex-wrap: nowrap;
 }
 
 .relatedProductsScroller::-webkit-scrollbar {
   display: none;
+}
+
+/* Clear keyboard focus ring (the row can be scrolled with arrow keys) */
+.relatedProductsScroller:focus-visible {
+  outline: 2px solid #4c6b2f;
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+
+/* ============================================================
+   Arrows
+   ============================================================ */
+
+.relatedProductsArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(calc(-50% - 0.375rem));
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+  padding: 0;
+
+  border: 1px solid rgba(76, 107, 47, 0.25);
+  border-radius: 50%;
+  background: #ffffff;
+  color: #4c6b2f;
+  cursor: pointer;
+
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.relatedProductsArrow:hover {
+  background: #4c6b2f;
+  color: #ffffff;
+  transform: translateY(calc(-50% - 0.375rem)) scale(1.06);
+}
+
+.relatedProductsArrow:focus-visible {
+  outline: 2px solid #4c6b2f;
+  outline-offset: 3px;
+}
+
+.relatedProductsArrowLeft {
+  left: clamp(0.5rem, 2vw, 1.25rem);
+}
+
+.relatedProductsArrowRight {
+  right: clamp(0.5rem, 2vw, 1.25rem);
 }
 
 
@@ -11245,35 +11455,24 @@ font.goog-text-highlight {
 
 .relatedProductsCard {
   flex: 0 0 auto;
-
   width: clamp(220px, 22vw, 300px);
-
   scroll-snap-align: start;
-
   display: block;
-
   text-decoration: none;
-
   color: inherit;
 }
 
 .relatedProductsImageFrame {
   position: relative;
-
   width: 100%;
-
   aspect-ratio: 3 / 4;
-
   border-radius: 18px;
-
   overflow: hidden;
-
   background: #e5e5dc;
 }
 
 .relatedProductsImage {
   object-fit: cover;
-
   transition: transform 0.3s ease;
 }
 
@@ -11283,54 +11482,123 @@ font.goog-text-highlight {
 
 .relatedProductsOverlay {
   position: absolute;
-
   inset: 0;
-
   background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0) 55%,
     rgba(0, 0, 0, 0.65) 100%
   );
-
   pointer-events: none;
 }
 
 .relatedProductsCaption {
   position: absolute;
-
   left: 1.1rem;
   right: 1.1rem;
   bottom: 1rem;
-
   z-index: 2;
 }
 
 .relatedProductsLabel {
   display: block;
-
   font-size: 0.65rem;
-
   font-weight: 600;
-
   letter-spacing: 0.12em;
-
   text-transform: uppercase;
-
   color: rgba(255, 255, 255, 0.75);
-
   margin-bottom: 0.35rem;
 }
 
 .relatedProductsName {
   font-weight: 700;
-
   font-size: 1.15rem;
-
   line-height: 1.25;
-
   margin: 0;
-
   color: #ffffff;
+}
+
+
+/* ============================================================
+   Dots + pause
+   ============================================================ */
+
+.relatedProductsControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 0.75rem;
+  padding: 0 clamp(1.25rem, 5vw, 3rem);
+}
+
+.relatedProductsDots {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 24px tap target; the visible dot is drawn by ::after */
+.relatedProductsDot {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.relatedProductsDot::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #c9ceb6;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.relatedProductsDot:hover::after {
+  background: #8a9a5b;
+}
+
+.relatedProductsDotActive::after {
+  width: 22px;
+  background: #4c6b2f;
+}
+
+.relatedProductsDot:focus-visible {
+  outline: 2px solid #4c6b2f;
+  outline-offset: 1px;
+  border-radius: 6px;
+}
+
+.relatedProductsPause {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid rgba(76, 107, 47, 0.3);
+  border-radius: 50%;
+  background: #ffffff;
+  color: #4c6b2f;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.relatedProductsPause:hover {
+  background: #4c6b2f;
+  color: #ffffff;
+}
+
+.relatedProductsPause:focus-visible {
+  outline: 2px solid #4c6b2f;
+  outline-offset: 2px;
 }
 
 
@@ -11342,6 +11610,11 @@ font.goog-text-highlight {
   .relatedProductsCard {
     width: 68vw;
   }
+
+  .relatedProductsArrow {
+    width: 38px;
+    height: 38px;
+  }
 }
 
 
@@ -11350,7 +11623,11 @@ font.goog-text-highlight {
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .relatedProductsImage {
+  .relatedProductsImage,
+  .relatedProductsArrow,
+  .relatedProductsDot::after,
+  .relatedProductsSlider::before,
+  .relatedProductsSlider::after {
     transition: none;
   }
 }
@@ -14322,5 +14599,96 @@ font.goog-text-highlight {
   .gaf-404-card {
     padding: 40px 24px;
     border-radius: 22px;
+  }
+}
+
+
+
+
+
+
+
+
+/* ============================================================
+   Inline form errors (Services + Careers match the Contact form)
+   ============================================================ */
+.enq-error-text,
+.apl-error-text {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  font-weight: 500;
+  color: #dc2626;
+  animation: formErrorIn 0.2s ease-out;
+}
+
+/* Red field border + soft ring */
+.enq-input.enq-input--error,
+.enq-input[aria-invalid="true"],
+.apl-input.apl-input--error,
+.apl-textarea.apl-input--error,
+.apl-input[aria-invalid="true"],
+.apl-textarea[aria-invalid="true"] {
+  border-color: #f87171;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.06);
+}
+
+.enq-input.enq-input--error:focus,
+.apl-input.apl-input--error:focus,
+.apl-textarea.apl-input--error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
+}
+
+/* Unchecked-consent error sits close to its checkbox */
+.apl-footer > .apl-error-text {
+  margin-top: 4px;
+}
+
+@keyframes formErrorIn {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enq-error-text,
+  .apl-error-text {
+    animation: none;
+  }
+}
+
+
+
+
+
+
+/* ============================================================
+   Breadcrumbs: gallery list + product showcase
+   ============================================================ */
+.galleryListBreadcrumb,
+.productDetailBreadcrumb {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 24px 8px;
+}
+
+/* the last item is plain text (current page), not a link */
+.galleryListBreadcrumb .breadcrumb-item.active,
+.productDetailBreadcrumb .breadcrumb-item.active {
+  cursor: default;
+}
+
+@media (max-width: 640px) {
+  .galleryListBreadcrumb,
+  .productDetailBreadcrumb {
+    padding: 16px 16px 4px;
   }
 }

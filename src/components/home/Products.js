@@ -256,7 +256,7 @@ const Products = () => {
                         <div className="flex justify-center">
                           <Link href={category.cta_url}>
                             <button className="products-view-all-btn group flex items-center gap-4 rounded-full bg-[#66711E] px-8 py-3 text-white transition-all duration-500 hover:scale-105 hover:shadow-[0_15px_40px_rgba(0,0,0,0.25)]">
-                              View All {category.name} Products
+                              {category.name}
                               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black transition-all duration-500 group-hover:rotate-45">
                                 <FiArrowUpRight />
                               </span>

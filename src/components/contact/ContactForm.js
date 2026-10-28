@@ -25,6 +25,48 @@ const API_FIELD_TO_LOCAL = {
   project_details: 'details',
 };
 
+/* ------------------------------------------------------------
+   Shared validation (same rules on Contact, Services and Careers)
+   ------------------------------------------------------------ */
+const NAME_PATTERN = /^[\p{L}\p{M}][\p{L}\p{M}\s'’.\-]*$/u;
+const EMAIL_PATTERN =
+  /^[A-Za-z0-9._%+\-]+@(?:[A-Za-z0-9](?:[A-Za-z0-9\-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/;
+const PHONE_PATTERN = /^\+?[\d\s().\-]+$/;
+
+function validateName(value, { required = true, label = 'Name' } = {}) {
+  const v = (value || '').trim();
+  if (!v) return required ? `${label} is required.` : null;
+  if (!NAME_PATTERN.test(v)) {
+    return `${label} can only contain letters, spaces, apostrophes, hyphens and full stops.`;
+  }
+  const letters = v.match(/\p{L}/gu) || [];
+  if (letters.length < 2) return `${label} must have at least 2 letters.`;
+  if (v.length > 60) return `${label} must be 60 characters or fewer.`;
+  return null;
+}
+
+function validateEmail(value, { required = true } = {}) {
+  const v = (value || '').trim();
+  if (!v) return required ? 'Email is required.' : null;
+  if (v.length > 254 || v.includes('..') || !EMAIL_PATTERN.test(v)) {
+    return 'Enter a valid email address, e.g. name@example.com.';
+  }
+  return null;
+}
+
+function validatePhone(value, { required = true, label = 'Phone number' } = {}) {
+  const v = (value || '').trim();
+  if (!v) return required ? `${label} is required.` : null;
+  if (!PHONE_PATTERN.test(v)) {
+    return `${label} can only contain digits, spaces and + ( ) - characters.`;
+  }
+  const digits = v.replace(/\D/g, '');
+  if (digits.length < 7 || digits.length > 15) {
+    return `Enter a valid ${label.toLowerCase()} (7–15 digits).`;
+  }
+  return null;
+}
+
 export default function ContactSection() {
   const dispatch = useDispatch();
 
@@ -46,6 +88,7 @@ export default function ContactSection() {
   const [toast, setToast] = useState(null);
   // true only after the user has pressed Submit (prevents stale popups)
   const submittedRef = useRef(false);
+  const formRef = useRef(null);
 
   useEffect(() => {
     setMounted(true);
@@ -114,14 +157,29 @@ export default function ContactSection() {
     setErrors((err) => ({ ...err, [field]: undefined }));
   };
 
+  // Rules per field (name, email and mobile are all required)
+  const getFieldError = (field) => {
+    if (field === 'name') return validateName(values.name);
+    if (field === 'email') return validateEmail(values.email);
+    if (field === 'mobile') {
+      return validatePhone(values.mobile, { label: 'Mobile number' });
+    }
+    return null;
+  };
+
+  // Check a single field when the user leaves it
+  const handleFieldBlur = (field) => () => {
+    setFocusedField(null);
+    const message = getFieldError(field);
+    setErrors((err) => ({ ...err, [field]: message || undefined }));
+  };
+
   const validate = () => {
     const next = {};
-    if (!values.name.trim()) next.name = 'Name is required.';
-    if (!values.email.trim()) {
-      next.email = 'Email is required.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-      next.email = 'Enter a valid email address.';
-    }
+    ['name', 'email', 'mobile'].forEach((field) => {
+      const message = getFieldError(field);
+      if (message) next[field] = message;
+    });
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -134,6 +192,10 @@ export default function ContactSection() {
         type: 'error',
         text: 'Please fill in the required fields correctly.',
       });
+      // Move focus to the first invalid field once errors have rendered
+      requestAnimationFrame(() => {
+        formRef.current?.querySelector('[aria-invalid="true"]')?.focus();
+      });
       return;
     }
 
@@ -141,9 +203,9 @@ export default function ContactSection() {
 
     dispatch(
       submitEnquiryRequest({
-        name: values.name,
-        email: values.email,
-        mobile: values.mobile || undefined,
+        name: values.name.trim(),
+        email: values.email.trim(),
+        mobile: values.mobile.trim(),
         project_details: values.details || undefined,
       })
     );
@@ -262,8 +324,12 @@ export default function ContactSection() {
               Tell us about your botanical vision. Fields marked with * are required.
             </p>
 
+            {/* noValidate: our own red inline messages replace the
+                browser's native tooltips */}
             <form
+              ref={formRef}
               onSubmit={handleSubmit}
+              noValidate
               className="mt-8 space-y-5"
               aria-label="Contact form"
               aria-busy={loading}
@@ -274,12 +340,13 @@ export default function ContactSection() {
                   label="Your name"
                   placeholder="Your Name *"
                   autoComplete="name"
+                  maxLength={60}
                   required
                   value={values.name}
                   onChange={handleChange('name')}
                   focused={focusedField === 'name'}
                   onFocus={() => setFocusedField('name')}
-                  onBlur={() => setFocusedField(null)}
+                  onBlur={handleFieldBlur('name')}
                   error={errors.name}
                 />
                 <FormField
@@ -288,12 +355,13 @@ export default function ContactSection() {
                   label="Email address"
                   placeholder="Email Address *"
                   autoComplete="email"
+                  maxLength={254}
                   required
                   value={values.email}
                   onChange={handleChange('email')}
                   focused={focusedField === 'email'}
                   onFocus={() => setFocusedField('email')}
-                  onBlur={() => setFocusedField(null)}
+                  onBlur={handleFieldBlur('email')}
                   error={errors.email}
                 />
               </div>
@@ -303,13 +371,15 @@ export default function ContactSection() {
                 type="tel"
                 inputMode="tel"
                 label="Mobile number"
-                placeholder="Mobile Number"
+                placeholder="Mobile Number *"
                 autoComplete="tel"
+                maxLength={20}
+                required
                 value={values.mobile}
                 onChange={handleChange('mobile')}
                 focused={focusedField === 'mobile'}
                 onFocus={() => setFocusedField('mobile')}
-                onBlur={() => setFocusedField(null)}
+                onBlur={handleFieldBlur('mobile')}
                 error={errors.mobile}
               />
 
@@ -360,8 +430,9 @@ export default function ContactSection() {
 
 /**
  * Accessible field: real <label> (visually hidden so the design is
- * unchanged), name + id for autofill, native `required`, and the error
+ * unchanged), name + id for autofill, aria-required, and the error
  * message linked with aria-describedby / aria-invalid.
+ * No native `required` attribute, so the browser tooltip never appears.
  */
 function FormField({
   as = 'input',
@@ -378,6 +449,7 @@ function FormField({
   required = false,
   autoComplete,
   inputMode,
+  maxLength,
   rows,
 }) {
   const uid = useId();
@@ -404,13 +476,13 @@ function FormField({
         name={name}
         type={as === 'input' ? type : undefined}
         inputMode={inputMode}
+        maxLength={maxLength}
         rows={as === 'textarea' ? rows : undefined}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}
-        required={required}
         aria-required={required || undefined}
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={error ? errorId : undefined}

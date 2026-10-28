@@ -97,15 +97,15 @@ export default function Testimonials() {
             <SwiperSlide key={`${item.id}-${index}`}>
               <div className="testimonial-card-wrapper">
                 <div className="testimonial-green-shape">
-                  <Image src="/images/left-green.png" alt="" fill className="green-left" />
-                  <Image src="/images/center-green.png" alt="" fill className="green-center" />
-                  <Image src="/images/right-green.png" alt="" fill className="green-right" />
+                  <Image src="/images/left-green.png" alt="testimonial design" fill className="green-left" />
+                  <Image src="/images/center-green.png" alt="testimonial design" fill className="green-center" />
+                  <Image src="/images/right-green.png" alt="testimonial design" fill className="green-right" />
                 </div>
 
                 <div className="testimonial-white-shape">
-                  <Image src="/images/left-white.png" alt="" fill className="white-left" />
-                  <Image src="/images/center-white.png" alt="" fill className="white-center" />
-                  <Image src="/images/right-white.png" alt="" fill className="white-right" />
+                  <Image src="/images/left-white.png" alt="testimonial design" fill className="white-left" />
+                  <Image src="/images/center-white.png" alt="testimonial design" fill className="white-center" />
+                  <Image src="/images/right-white.png" alt="testimonial design" fill className="white-right" />
                 </div>
 
                 {/* CONTENT */}

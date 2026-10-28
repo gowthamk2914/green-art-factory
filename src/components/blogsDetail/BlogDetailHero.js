@@ -6,18 +6,16 @@ import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 import Link from "next/link";
 
-
 import { getBlogDetailRequest } from "../../redux/BlogDetail/actions";
 
+// Formats a date string into dd/mm/yyyy (e.g. "29/05/2026")
 function formatDate(dateString) {
   if (!dateString) return "";
   const d = new Date(dateString);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-US", {
-    month: "long",
-    day: "2-digit",
-    year: "numeric",
-  });
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${dd}/${mm}/${d.getFullYear()}`;
 }
 
 // The API doesn't return a read-time field, so estimate one from the
@@ -75,24 +73,23 @@ export default function BlogDetailHero({ slug: slugProp }) {
   return (
     <section className="blog-hero-section">
       <div className="container">
-                <div className="breadcrumb">
-  <Link href="/" className="breadcrumb-item">
-    Home
-  </Link>
+        <div className="breadcrumb">
+          <Link href="/" className="breadcrumb-item">
+            Home
+          </Link>
 
-  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+          <i className="bi bi-chevron-right breadcrumb-arrow"></i>
 
-  <Link href="/blogs" className="breadcrumb-item">
-    Blogs
-  </Link>
+          <Link href="/blogs" className="breadcrumb-item">
+            Blogs
+          </Link>
 
+          <i className="bi bi-chevron-right breadcrumb-arrow"></i>
 
-  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
-
-  <Link href="#" className="breadcrumb-item active">
-    {data.title}
-  </Link>
-</div>
+          <Link href="#" className="breadcrumb-item active">
+            {data.title}
+          </Link>
+        </div>
 
         <p className="blog-hero-meta">
           {date}

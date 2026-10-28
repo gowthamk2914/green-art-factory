@@ -14,11 +14,20 @@ function getReadTime(html = "") {
   return Math.max(1, Math.ceil(words / 200));
 }
 
+// Formats a date string into dd/mm/yyyy (e.g. "29/05/2026")
 function formatDate(value) {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  return `${dd}/${mm}/${date.getFullYear()}`;
+}
+
+// Timestamp helper for sorting (invalid/missing dates go last)
+function getTime(value) {
+  const t = new Date(value).getTime();
+  return Number.isNaN(t) ? 0 : t;
 }
 
 // Wrap the last two words of the title in the accent span
@@ -41,11 +50,10 @@ function renderTitleWithAccent(title = "") {
   );
 }
 
-
 export default function BlogHero() {
   const [blog, setBlog] = useState(null);
 
-  // Always use the FIRST blog the API returns
+  // Use the LATEST blog (by blog_date) as the featured one
   useEffect(() => {
     let cancelled = false;
 
@@ -54,7 +62,11 @@ export default function BlogHero() {
         const response = await axios.get(`${API_URL}/blog`);
         const list = response.data?.data;
         if (!cancelled && Array.isArray(list) && list.length > 0) {
-          setBlog(list[0]);
+          const sorted = [...list].sort((a, b) => {
+            const diff = getTime(b.blog_date) - getTime(a.blog_date);
+            return diff !== 0 ? diff : (b.id || 0) - (a.id || 0);
+          });
+          setBlog(sorted[0]);
         }
       } catch (error) {
         console.error("Failed to load featured blog:", error);
@@ -119,7 +131,7 @@ export default function BlogHero() {
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 7v5l3 2" />
               </svg>
-              <span>{getReadTime(blog.content)} min read</span>
+              <span>{getReadTime(blog.content)} Mins Read</span>
               {dateLabel && (
                 <>
                   <span className="livingwall-meta-dot">—</span>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FiSearch, FiX } from "react-icons/fi";
 import { FaInstagram, FaWhatsapp, FaFacebookF } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -14,19 +15,34 @@ import { switchToLanguage, getCurrentLanguage } from "./GoogleTranslate";
 // Single source of truth for the nav links — used by both the desktop
 // row and the mobile slide-in menu, so adding a link only means editing
 // this array once.
+// `match` (optional) lists extra path prefixes that should also count as
+// "this section", e.g. a blog post at /blog/some-slug highlights "Blogs".
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/portfolio", label: "Portfolio" },
-  { href: "/products-list", label: "Products" },
+  { href: "/products-list", label: "Products", match: ["/products"] },
   { href: "/services", label: "Services" },
-  { href: "/blogs", label: "Blogs" },
+  { href: "/blogs", label: "Blogs", match: ["/blog"] },
   { href: "/careers", label: "Careers" },
   { href: "/contact", label: "Contact us" },
 ];
 
+// True when the current URL belongs to this nav item.
+// "/" must match exactly, otherwise it would be active on every page.
+function isLinkActive(pathname, link) {
+  if (!pathname) return false;
+  if (link.href === "/") return pathname === "/";
+
+  const prefixes = [link.href, ...(link.match || [])];
+  return prefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(prefix + "/")
+  );
+}
 
 const Navbar = () => {
+  const pathname = usePathname();
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeLang, setActiveLang] = useState("en");
@@ -87,24 +103,28 @@ const Navbar = () => {
 
           {/* Menu — desktop only, hidden below lg */}
 
-          <nav className="hidden items-center gap-10 lg:flex">
+          <nav
+            className="hidden items-center gap-10 lg:flex"
+            aria-label="Main navigation"
+          >
+            {NAV_LINKS.map((link) => {
+              const active = isLinkActive(pathname, link);
 
-            {/* <Link
-              href="/"
-              className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
-            >
-              Home
-            </Link> */}
-
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-[16px] font-medium text-[#111] transition-all hover:text-[#0AA15B]"
-              >
-                {link.label}
-              </Link>
-            ))}
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`border-b-2 pb-1 text-[16px] transition-all ${
+                    active
+                      ? "border-[#5E671F] font-semibold text-[#5E671F]"
+                      : "border-transparent font-medium text-[#111] hover:text-[#0AA15B]"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="navbar-icon-wrapper flex items-center gap-4">
@@ -200,18 +220,23 @@ const Navbar = () => {
           </button>
         </div>
 
-        <nav className="mobileMenuLinks">
-          {NAV_LINKS.map((link, i) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="mobileMenuLink"
-              style={{ transitionDelay: isMobileMenuOpen ? `${i * 40}ms` : "0ms" }}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="mobileMenuLinks" aria-label="Mobile navigation">
+          {NAV_LINKS.map((link, i) => {
+            const active = isLinkActive(pathname, link);
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-current={active ? "page" : undefined}
+                className={`mobileMenuLink ${active ? "mobileMenuLinkActive" : ""}`}
+                style={{ transitionDelay: isMobileMenuOpen ? `${i * 40}ms` : "0ms" }}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="mobileMenuFooter">

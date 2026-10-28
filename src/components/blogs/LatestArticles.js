@@ -7,15 +7,23 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { getBlogPreviewRequest } from "../../redux/BlogPreview/actions";
 
-// Formats an ISO 8601 date string (e.g. "2026-05-29T16:44:47.000000Z")
-// into "05/29/2026". Falls back to the raw string if parsing fails.
+// Formats an ISO 8601 date string (e.g. "2026-07-21T00:00:00.000000Z")
+// into "21/07/2026" (dd/mm/yyyy). Uses UTC so the day never shifts
+// with the visitor's timezone. Falls back to the raw string if parsing fails.
 function formatDate(isoString) {
   if (!isoString) return "";
   const date = new Date(isoString);
   if (Number.isNaN(date.getTime())) return isoString;
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  return `${mm}/${dd}/${date.getFullYear()}`;
+  const dd = String(date.getUTCDate()).padStart(2, "0");
+  const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${dd}/${mm}/${date.getUTCFullYear()}`;
+}
+
+// ISO string -> timestamp for sorting. Missing/invalid dates become
+// -Infinity so those posts sink to the bottom.
+function toTime(isoString) {
+  const time = new Date(isoString).getTime();
+  return Number.isNaN(time) ? -Infinity : time;
 }
 
 // "Indoor-plants" -> "INDOOR PLANTS"
@@ -29,8 +37,9 @@ function formatTag(category) {
  *   - posts[0], posts[1] -> left column, large horizontal cards
  *   - posts[2]           -> right column, featured card (image on top)
  *
- * Posts are sorted newest-first by `id` (bigger id = posted more
- * recently) before slicing into these 3 slots.
+ * Posts are sorted newest-first by `blog_date` before slicing into
+ * these 3 slots. If two posts share the same date (or a date is
+ * missing), the bigger `id` wins so the order stays stable.
  *
  * Reads from the same `state.BlogPreview` slice as BlogsInsights/BlogList
  * — no separate redux files for this component. The API doesn't send
@@ -53,9 +62,15 @@ export default function LatestArticles() {
     dispatch(getBlogPreviewRequest());
   }, [dispatch]);
 
-  // Newest first: bigger id = posted more recently.
+  // Newest first by blog_date, with id as the tie-breaker.
   const sortedPosts = useMemo(
-    () => [...posts].sort((a, b) => b.id - a.id),
+    () =>
+      [...posts].sort((a, b) => {
+        const byDate = toTime(b.blog_date) - toTime(a.blog_date);
+        // Both dates missing gives NaN (-Infinity - -Infinity), so check it
+        if (byDate !== 0 && !Number.isNaN(byDate)) return byDate;
+        return b.id - a.id;
+      }),
     [posts]
   );
 
@@ -207,6 +222,7 @@ function ArticleCardFooter({ article }) {
         <div className="article-card-author-info article-card-author-info-stacked">
           <span className="article-card-author-name">{author}</span>
           {author?.handle && <span className="article-card-author-handle">{author.handle}</span>}
+          <span className="article-card-author-handle">Blog Author</span>
         </div>
       </div>
       <span className="article-card-date">{date}</span>
