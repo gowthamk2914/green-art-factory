@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
 
-const SHUFFLE_INTERVAL_MS = 7000;
-const TARGET_IMAGE_COUNT = 5;
+// How many photos the project page previews before "View All" appears
+const PREVIEW_IMAGE_COUNT = 5;
 
 function shuffleArray(array) {
   const result = [...array];
@@ -17,37 +18,48 @@ function shuffleArray(array) {
   return result;
 }
 
-function buildGalleryImages(collections, targetCount = TARGET_IMAGE_COUNT) {
-  if (!Array.isArray(collections) || collections.length === 0) return [];
+// Every image of the project, in a balanced order: one image from each
+// collection in turn (so the first 5 mix collections, as before), then
+// any gallery images that are not already included. Duplicates removed.
+function collectProjectImages(project) {
+  const result = [];
+  const seen = new Set();
 
-  const queues = collections
+  const add = (src, alt, idPart) => {
+    if (typeof src !== "string" || !src.trim() || seen.has(src)) return;
+    seen.add(src);
+    result.push({ id: `${idPart}-${result.length}`, src, alt });
+  };
+
+  const queues = (project?.collections ?? [])
     .filter((collection) => (collection.images ?? []).length > 0)
     .map((collection) => ({
       collection,
       remaining: [...collection.images],
     }));
 
-  const result = [];
   let madeProgress = true;
-
-  while (result.length < targetCount && madeProgress) {
+  while (madeProgress) {
     madeProgress = false;
 
     for (const queue of queues) {
-      if (result.length >= targetCount) break;
       if (queue.remaining.length === 0) continue;
 
       madeProgress = true;
       const src = queue.remaining.shift();
       const { collection } = queue;
 
-      result.push({
-        id: `${collection.slug}-${collection.variant_slug}-${result.length}`,
+      add(
         src,
-        alt: [collection.variant, collection.name].filter(Boolean).join(" \u2014 "),
-      });
+        [collection.variant, collection.name].filter(Boolean).join(" \u2014 "),
+        `${collection.slug}-${collection.variant_slug}`
+      );
     }
   }
+
+  (project?.gallery ?? []).forEach((item) =>
+    add(item?.url, project?.title || "Project image", "gallery")
+  );
 
   return result;
 }
@@ -60,19 +72,16 @@ function getSizes(count) {
   return "(max-width: 560px) 100vw, (max-width: 860px) 50vw, 33vw";
 }
 
-function GalleryCell({ image, slotIndex, sizes }) {
+function GalleryCell({ image, slotIndex, sizes, reduceMotion }) {
   return (
     <motion.div
-      layout
-      layoutId={image.id}
       data-slot={slotIndex}
-      initial={{ opacity: 0, scale: 0.96 }}
+      initial={reduceMotion ? false : { opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.96 }}
       transition={{
-        layout: { duration: 0.7, ease: "easeInOut" },
-        opacity: { duration: 0.4 },
-        scale: { duration: 0.4 },
+        duration: 0.5,
+        ease: "easeOut",
+        delay: reduceMotion ? 0 : slotIndex * 0.08,
       }}
       className="projectDetailGalleryCell"
     >
@@ -89,50 +98,75 @@ function GalleryCell({ image, slotIndex, sizes }) {
 
 export default function ProjectDetailGallery() {
   const project = useSelector((state) => state.ProjectDetail?.data);
+  const reduceMotion = useReducedMotion();
 
-  const images = useMemo(
-    () => buildGalleryImages(project?.collections),
-    [project?.collections]
+  const allImages = useMemo(() => collectProjectImages(project), [project]);
+
+  const previewImages = useMemo(
+    () => allImages.slice(0, PREVIEW_IMAGE_COUNT),
+    [allImages]
   );
 
-  const [displayImages, setDisplayImages] = useState(images);
+  const [displayImages, setDisplayImages] = useState([]);
 
+  // Shuffle ONCE each time the gallery appears: page load / reload, or
+  // arriving through navigation (including coming back from "View All").
+  // No timer, so it never reshuffles while the visitor stays on the page.
   useEffect(() => {
-    setDisplayImages(shuffleArray(images));
-  }, [images]);
+    setDisplayImages(shuffleArray(previewImages));
+  }, [previewImages]);
 
-  // Shuffling only makes sense with 2+ images
-  useEffect(() => {
-    if (images.length < 2) return;
+  if (displayImages.length === 0) return null;
 
-    const intervalId = setInterval(() => {
-      setDisplayImages((prev) => shuffleArray(prev));
-    }, SHUFFLE_INTERVAL_MS);
-
-    return () => clearInterval(intervalId);
-  }, [images.length]);
-
-  if (images.length === 0) return null;
-
-  const count = images.length;
+  const count = displayImages.length;
+  const total = allImages.length;
   const sizes = getSizes(count);
+
+  const hasMore = total > PREVIEW_IMAGE_COUNT;
+  const viewAllHref = project?.slug ? `/portfolio/${project.slug}/gallery` : null;
 
   return (
     <section className="projectDetailGallerySection" aria-label="Project gallery">
       <h2 className="projectDetailGalleryTitle">Project Gallery</h2>
 
       <div className="projectDetailGalleryGrid" data-count={count}>
-        <AnimatePresence mode="popLayout">
-          {displayImages.map((image, index) => (
-            <GalleryCell
-              key={image.id}
-              image={image}
-              slotIndex={index}
-              sizes={sizes}
-            />
-          ))}
-        </AnimatePresence>
+        {displayImages.map((image, index) => (
+          <GalleryCell
+            key={image.id}
+            image={image}
+            slotIndex={index}
+            sizes={sizes}
+            reduceMotion={reduceMotion}
+          />
+        ))}
       </div>
+
+      {hasMore && viewAllHref && (
+        <div className="projectDetailGalleryMore">
+          <Link
+            href={viewAllHref}
+            className="projectDetailGalleryMoreBtn"
+            aria-label={`View all ${total} photos of ${project?.title || "this project"}`}
+          >
+            View All Photos
+            <span className="projectDetailGalleryMoreCount">{total}</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14" />
+              <path d="M13 6l6 6-6 6" />
+            </svg>
+          </Link>
+        </div>
+      )}
     </section>
   );
 }

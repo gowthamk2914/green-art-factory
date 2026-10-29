@@ -8,7 +8,6 @@ import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 const FALLBACK_IMAGE = "/images/product-detail-common-img.png";
-const SHUFFLE_INTERVAL_MS = 10000;
 
 const GRID_PATTERN = [
   { colSpan: 2, rowSpan: 2 },
@@ -206,9 +205,9 @@ function ActiveFilterChips({ chips, onClearAll }) {
   );
 }
 
-// Card is now a motion.div grid item (handles layout animation on reorder)
-// wrapping a plain Link that fills it. Grid spans move to the wrapper since
-// that's the actual grid child now.
+// Card is a motion.div grid item (handles the layout animation when
+// filters add/remove cards) wrapping a plain Link that fills it. Grid
+// spans live on the wrapper since that's the actual grid child.
 function ProjectCard({ project, index }) {
   const { colSpan, rowSpan } = getCardSpan(index);
 
@@ -283,6 +282,24 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
   const [locationSlugs, setLocationSlugs] = useState([]);
   const [sectorSlugs, setSectorSlugs] = useState([]);
   const [selectedVariantSlugs, setSelectedVariantSlugs] = useState([]);
+
+  // ------------------------------------------------------------------------
+  // Shuffle: the full list is shuffled ONCE each time the page loads
+  // (a refresh, or arriving here through navigation) and once more only if
+  // the list of projects itself changes. There is no timer, and searching
+  // or filtering never reshuffles — the cards keep this shuffled order and
+  // the filters just choose which of them are shown.
+  //
+  // `projectsKey` stands in for the list so a re-render that hands us the
+  // same projects never triggers another shuffle.
+  // ------------------------------------------------------------------------
+  const projectsKey = allProjects.map((p) => p.slug ?? p.id).join("|");
+  const [orderedProjects, setOrderedProjects] = useState(allProjects);
+
+  useEffect(() => {
+    setOrderedProjects(shuffleArray(allProjects));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectsKey]);
 
   // Pre-check the Product filter from the URL, e.g. a "View Project"
   // button on a product page links to
@@ -440,10 +457,12 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
 
   const hasActiveFilters = Boolean(search) || chips.length > 0;
 
+  // Filters run on the shuffled list, so the cards that remain keep their
+  // shuffled order instead of being reshuffled on every filter change.
   const filteredProjects = useMemo(() => {
     const query = search.trim().toLowerCase();
 
-    return allProjects.filter((project) => {
+    return orderedProjects.filter((project) => {
       if (query && !project.title.toLowerCase().includes(query)) return false;
 
       if (categorySlugs.length && !categorySlugs.includes(project.category?.slug)) {
@@ -470,9 +489,7 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
       }
 
       // Matches against `product_variants` — the field the API actually
-      // returns on each project (previously checked `project.products`,
-      // which doesn't exist on the project objects, so this filter was
-      // silently a no-op).
+      // returns on each project.
       if (
         selectedVariantSlugs.length &&
         project.product_variants &&
@@ -484,7 +501,7 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
       return true;
     });
   }, [
-    allProjects,
+    orderedProjects,
     search,
     categorySlugs,
     installationTypeSlugs,
@@ -492,30 +509,6 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
     sectorSlugs,
     selectedVariantSlugs,
   ]);
-
-  // ------------------------------------------------------------------------
-  // Shuffle logic: re-order the visible cards on every mount/filter change
-  // and again every SHUFFLE_INTERVAL_MS, with framer-motion's `layout`
-  // animating each card smoothly from its old grid slot to its new one.
-  //
-  // - `filteredProjects` changing (search/filters) re-shuffles immediately.
-  // - A ref always tracks the *current* filtered list so the interval
-  //   timer (set up once) shuffles fresh data instead of a stale closure.
-  // ------------------------------------------------------------------------
-  const [displayProjects, setDisplayProjects] = useState([]);
-  const filteredProjectsRef = useRef(filteredProjects);
-
-  useEffect(() => {
-    filteredProjectsRef.current = filteredProjects;
-    setDisplayProjects(shuffleArray(filteredProjects));
-  }, [filteredProjects]);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setDisplayProjects(shuffleArray(filteredProjectsRef.current));
-    }, SHUFFLE_INTERVAL_MS);
-    return () => clearInterval(intervalId);
-  }, []);
 
   function handleReset() {
     setSearch("");
@@ -605,7 +598,7 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
 
         <div className="projectsListingMasonry">
           <AnimatePresence mode="popLayout">
-            {displayProjects.map((project, index) => (
+            {filteredProjects.map((project, index) => (
               <ProjectCard
                 key={project.slug ?? project.id}
                 project={project}
@@ -615,7 +608,7 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
           </AnimatePresence>
         </div>
 
-        {displayProjects.length === 0 && (
+        {filteredProjects.length === 0 && (
           <p className="projectsListingEmpty">No projects match those filters yet.</p>
         )}
       </div>

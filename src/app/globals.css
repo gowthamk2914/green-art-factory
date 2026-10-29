@@ -13393,7 +13393,197 @@ font.goog-text-highlight {
   }
 }
 
+/* ============================================================
+   Project detail: "View All Photos" button
+   ============================================================ */
+.projectDetailGalleryMore {
+  max-width: 1600px;
+  margin: 1.75rem auto 0;
+  display: flex;
+  justify-content: center;
+}
 
+.projectDetailGalleryMoreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.95rem 1.9rem;
+  border-radius: 999px;
+  background: #4c6b2f;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 10px 22px rgba(76, 107, 47, 0.25);
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.projectDetailGalleryMoreBtn:hover {
+  background: #2f4318;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(47, 67, 24, 0.32);
+}
+
+.projectDetailGalleryMoreBtn:focus-visible {
+  outline: 2px solid #2f4318;
+  outline-offset: 3px;
+}
+
+.projectDetailGalleryMoreCount {
+  min-width: 28px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.projectDetailGalleryMoreBtn svg {
+  transition: transform 0.25s ease;
+}
+
+.projectDetailGalleryMoreBtn:hover svg {
+  transform: translateX(3px);
+}
+
+
+/* ============================================================
+   Project "View All" gallery page
+   ============================================================ */
+.projectFullGallerySection {
+  background: #ffffff;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
+}
+
+.projectFullGalleryHeader {
+  max-width: 1600px;
+  margin: 0 auto clamp(1.5rem, 3vw, 2.5rem);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.projectFullGalleryEyebrow {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #66711e;
+}
+
+.projectFullGalleryTitle {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: #2f4318;
+}
+
+.projectFullGalleryCount {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  color: #6b6b60;
+}
+
+.projectFullGalleryBack {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.3rem;
+  border: 1px solid rgba(76, 107, 47, 0.35);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #4c6b2f;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.projectFullGalleryBack:hover {
+  background: #4c6b2f;
+  color: #ffffff;
+}
+
+.projectFullGalleryBack:focus-visible {
+  outline: 2px solid #4c6b2f;
+  outline-offset: 3px;
+}
+
+.projectFullGalleryGrid {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 1rem;
+}
+
+.projectFullGalleryCell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #e5e5dc;
+}
+
+.projectFullGalleryImage {
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Same diagonal shine as the project gallery */
+.projectFullGalleryCell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+}
+
+@media (hover: hover) {
+  .projectFullGalleryCell:hover .projectFullGalleryImage {
+    transform: scale(1.08);
+  }
+
+  .projectFullGalleryCell:hover::after {
+    transform: translateX(120%);
+    transition: transform 0.9s ease;
+  }
+}
+
+.projectFullGalleryEmpty {
+  max-width: 1600px;
+  margin: 0 auto;
+  text-align: center;
+  color: #6b6b60;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projectDetailGalleryMoreBtn,
+  .projectDetailGalleryMoreBtn svg,
+  .projectFullGalleryImage,
+  .projectFullGalleryCell::after {
+    transition: none;
+  }
+
+  .projectDetailGalleryMoreBtn:hover,
+  .projectFullGalleryCell:hover .projectFullGalleryImage {
+    transform: none;
+  }
+}
 
 
 .projectDetailDesignApproachSection {
