@@ -57,9 +57,7 @@ export default function Testimonials() {
         <h2 className="testimonial-title">What Our Customers Say</h2>
 
         <p className="testimonial-desc">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-          vulputate libero et velit interdum, ac aliquet odio mattis. Class
-          aptent taciti sociosqu ad litora torquent.
+          Hear from our clients as they share their experiences with Green Art Factory and our commitment to quality, creativity, and exceptional green solutions.
         </p>
 
         <Swiper

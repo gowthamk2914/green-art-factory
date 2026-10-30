@@ -100,9 +100,7 @@ const { data, loading, error } = useSelector((state) => state.TeamMembers);
     <section className="gaf-team-section">
       <h2 className="gaf-team-heading">Meet Our Team</h2>
       <p className="gaf-team-subtext">
-        Our dedicated team of experienced real estate professionals is at the
-        heart of what we do. With a deep knowledge of the local market and a
-        passion for helping clients achieve their real estate goals.
+        Our dedicated team of creative professionals is at the heart of everything we do. With expertise in biophilic design and a passion for greenery, we transform spaces into inspiring environments that blend nature, beauty, and innovation.
       </p>
 
       {loading && baseSet.length === 0 && (
