@@ -26,17 +26,7 @@ export default function Hero() {
           {section.title || "Products"}
         </h2>
 
-        <div className="breadcrumb">
-  <Link href="/" className="breadcrumb-item">
-    Home
-  </Link>
 
-  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
-
-  <Link href="/products-list" className="breadcrumb-item active">
-    Our Products
-  </Link>
-</div>
 
         <p className="gaf-categories-subtext">
           {section.description ||

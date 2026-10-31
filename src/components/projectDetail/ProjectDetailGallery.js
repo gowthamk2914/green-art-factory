@@ -149,7 +149,7 @@ export default function ProjectDetailGallery() {
             aria-label={`View all ${total} photos of ${project?.title || "this project"}`}
           >
             View All Photos
-            <span className="projectDetailGalleryMoreCount">{total}</span>
+            {/* <span className="projectDetailGalleryMoreCount">{total}</span>*/}
             <svg
               width="16"
               height="16"
@@ -163,7 +163,7 @@ export default function ProjectDetailGallery() {
             >
               <path d="M5 12h14" />
               <path d="M13 6l6 6-6 6" />
-            </svg>
+            </svg> 
           </Link>
         </div>
       )}

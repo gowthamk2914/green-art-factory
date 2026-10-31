@@ -15,7 +15,7 @@ export default function About() {
       <CoreValues />
       <TeamMembers />
       <WorkshopFacility />
-      <Certifications />
+      {/* <Certifications /> */}
       <Clients />
       <Catalogue />
 

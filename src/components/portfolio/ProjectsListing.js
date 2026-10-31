@@ -521,6 +521,19 @@ export default function ProjectsListing({ projects, filters, totalCount }) {
 
   return (
     <section className="projectsListingSection" aria-label="Projects">
+
+      <div className="breadcrumb">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/portfolio" className="breadcrumb-item active">
+    Portfolio
+  </Link>
+</div>
+
       <div className="projectsListingInner">
         <div className="projectsListingToolbar">
           <div className="projectsListingSearch">

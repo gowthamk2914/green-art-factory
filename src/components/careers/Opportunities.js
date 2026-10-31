@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MapPin, Clock, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 import { getCareersRequest } from '../../redux/Opportunities/actions';
 
@@ -140,6 +141,21 @@ export default function Opportunities() {
 
   return (
     <section id="open-positions" className="ops-section">
+
+
+       <div className="breadcrumb">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/careers" className="breadcrumb-item active">
+      Careers
+  </Link>
+</div>
+
+
       <div
         ref={headerRef}
         className={`ops-header ${isHeaderVisible ? 'ops-header--visible' : ''}`}

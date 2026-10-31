@@ -43,17 +43,7 @@ export default function CareersHeroSection() {
           <span className="chs-heading-accent">Career</span> With Us
         </h1>
 
-        <div className="breadcrumb">
-  <Link href="/" className="breadcrumb-item">
-    Home
-  </Link>
-
-  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
-
-  <Link href="/careers" className="breadcrumb-item active">
-      Careers
-  </Link>
-</div>
+       
 
         <p className="chs-subtitle chs-anim" style={{ transitionDelay: '150ms' }}>
           Join a collective of visionaries, botanists, and designers dedicated to bringing the

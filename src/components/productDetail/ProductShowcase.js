@@ -166,6 +166,10 @@ export default function ProductShowcase({ variants = [], productName }) {
           <Link href="/" className="breadcrumb-item">
             Home
           </Link>
+          <i className="bi bi-chevron-right breadcrumb-arrow" aria-hidden="true"></i>
+          <Link href="/products-list" className="breadcrumb-item">
+           Our Products
+          </Link>
 
           {name && (
             <>

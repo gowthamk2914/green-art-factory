@@ -125,6 +125,20 @@ export default function NatureShowcase() {
     return (
       <section className="showcase-section">
         <div className="container">
+
+                  <div className="breadcrumb">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/products-list" className="breadcrumb-item active">
+    Our Products
+  </Link>
+</div>
+
+
           <div className="showcase-wrapper">
             <div className="showcase-error">
               <h3>{error}</h3>
@@ -140,6 +154,20 @@ export default function NatureShowcase() {
   return (
     <section className="showcase-section">
       <div className="container">
+
+                <div className="breadcrumb">
+  <Link href="/" className="breadcrumb-item">
+    Home
+  </Link>
+
+  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+
+  <Link href="/products-list" className="breadcrumb-item active">
+    Our Products
+  </Link>
+</div>
+
+
         <div className="showcase-wrapper">
           {[...products]
             .sort((a, b) => a.id - b.id)
