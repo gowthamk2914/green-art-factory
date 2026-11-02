@@ -222,7 +222,7 @@ function ArticleCardFooter({ article }) {
         <div className="article-card-author-info article-card-author-info-stacked">
           <span className="article-card-author-name">{author}</span>
           {author?.handle && <span className="article-card-author-handle">{author.handle}</span>}
-          <span className="article-card-author-handle">Blog Author</span>
+          {/* <span className="article-card-author-handle">Blog Author</span> */}
         </div>
       </div>
       <span className="article-card-date">{date}</span>

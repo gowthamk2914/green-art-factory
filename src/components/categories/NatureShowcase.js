@@ -8,9 +8,21 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { getNatureShowcaseRequest } from "../../redux/NatureShowcase/actions";
 
-const SHUFFLE_INTERVAL = 7000; // 7 seconds
 const STORAGE_PREFIX = "showcase-last-hero-";
 const VISIBLE_SLOTS = 5; // 1 hero + 4 thumbnails
+
+/* Where an image click goes.
+   true  -> each image opens its own variant page:  /gallery/:productSlug/:variantSlug
+            (same route the Products section uses; falls back to the
+            "View Now" link when a slug is missing)
+   false -> every image opens the same page as the "View Now" button */
+const IMAGE_LINKS_TO_VARIANT = true;
+
+/* Builds /gallery/:productSlug/:variantSlug, or returns null if a slug is missing */
+function buildGalleryUrl(productSlug, variantSlug) {
+  if (!productSlug || !variantSlug) return null;
+  return `/gallery/${productSlug}/${variantSlug}`;
+}
 
 /* Fisher–Yates shuffle (returns a new array) */
 function shuffleArray(arr) {
@@ -53,44 +65,30 @@ function saveLastHero(storageKey, value) {
 }
 
 /*
-  - Every page load: shuffles, first image always differs from last load.
-  - Every `intervalMs`: shuffles again, first image always changes.
+  - Shuffles ONCE each time the component mounts (page load, refresh,
+    or navigating back to this page). The first image always differs
+    from the one shown last time.
+  - No timed re-shuffling.
   - `ready` is false until the first shuffle, so the original order
-    never flashes and the first shuffle doesn't animate.
+    never flashes.
 */
-function useShuffledImages(images, storageKey, intervalMs = SHUFFLE_INTERVAL) {
+function useShuffledImages(images, storageKey) {
   const [ordered, setOrdered] = useState(images);
   const [ready, setReady] = useState(false);
-  const prevHeroRef = useRef(undefined);
   const key = images.join("|");
 
   useEffect(() => {
     if (images.length === 0) return;
 
-    if (prevHeroRef.current === undefined) {
-      prevHeroRef.current = readLastHero(storageKey);
-    }
+    const lastHero = readLastHero(storageKey);
+    const next = shuffleWithNewFirst(images, lastHero);
 
-    setOrdered(shuffleWithNewFirst(images, prevHeroRef.current));
+    setOrdered(next);
     setReady(true);
+
+    if (next[0]) saveLastHero(storageKey, next[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, storageKey]);
-
-  useEffect(() => {
-    if (images.length < 2) return;
-
-    const id = setInterval(() => {
-      if (document.hidden) return;
-      setOrdered((prev) => shuffleWithNewFirst(prev, prev[0]));
-    }, intervalMs);
-
-    return () => clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, intervalMs]);
-
-  useEffect(() => {
-    if (ready && ordered[0]) saveLastHero(storageKey, ordered[0]);
-  }, [ordered, ready, storageKey]);
 
   return { ordered, ready };
 }
@@ -125,19 +123,17 @@ export default function NatureShowcase() {
     return (
       <section className="showcase-section">
         <div className="container">
+          <div className="breadcrumb">
+            <Link href="/" className="breadcrumb-item">
+              Home
+            </Link>
 
-                  <div className="breadcrumb">
-  <Link href="/" className="breadcrumb-item">
-    Home
-  </Link>
+            <i className="bi bi-chevron-right breadcrumb-arrow"></i>
 
-  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
-
-  <Link href="/products-list" className="breadcrumb-item active">
-    Our Products
-  </Link>
-</div>
-
+            <Link href="/products-list" className="breadcrumb-item active">
+              Our Products
+            </Link>
+          </div>
 
           <div className="showcase-wrapper">
             <div className="showcase-error">
@@ -154,19 +150,17 @@ export default function NatureShowcase() {
   return (
     <section className="showcase-section">
       <div className="container">
+        <div className="breadcrumb">
+          <Link href="/" className="breadcrumb-item">
+            Home
+          </Link>
 
-                <div className="breadcrumb">
-  <Link href="/" className="breadcrumb-item">
-    Home
-  </Link>
+          <i className="bi bi-chevron-right breadcrumb-arrow"></i>
 
-  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
-
-  <Link href="/products-list" className="breadcrumb-item active">
-    Our Products
-  </Link>
-</div>
-
+          <Link href="/products-list" className="breadcrumb-item active">
+            Our Products
+          </Link>
+        </div>
 
         <div className="showcase-wrapper">
           {[...products]
@@ -186,12 +180,25 @@ export default function NatureShowcase() {
                   ? variantImages
                   : [product?.cover_image || "/images/placeholder.jpg"];
 
+              const href = product.cta_url || "#";
+
+              // image src -> where clicking that image goes
+              const imageHrefs = {};
+              if (IMAGE_LINKS_TO_VARIANT) {
+                (product?.variants || []).forEach((v) => {
+                  if (!v.image || imageHrefs[v.image]) return;
+                  imageHrefs[v.image] =
+                    buildGalleryUrl(product.slug, v.slug) || href;
+                });
+              }
+
               const item = {
                 id: product.id,
                 title: product.name,
                 description: product.description || "",
-                href: product.cta_url || "#",
+                href,
                 images,
+                imageHrefs,
               };
 
               return (
@@ -270,8 +277,7 @@ function ShowcaseRow({ item, imageFirst }) {
 function ShowcaseMedia({ item }) {
   const { ordered, ready } = useShuffledImages(
     item.images,
-    `${STORAGE_PREFIX}${item.id}`,
-    SHUFFLE_INTERVAL
+    `${STORAGE_PREFIX}${item.id}`
   );
 
   return (
@@ -279,17 +285,19 @@ function ShowcaseMedia({ item }) {
       <div className="showcase-stage">
         {ready &&
           // item.images keeps a STABLE order, so DOM nodes are never
-          // re-created; only each tile's slot changes -> CSS animates it
+          // re-created; only each tile's slot changes
           item.images.map((src, i) => {
             const pos = ordered.indexOf(src);
             const slot = pos > -1 && pos < VISIBLE_SLOTS ? pos : "hidden";
+            const isHidden = slot === "hidden";
+            const tileHref = item.imageHrefs?.[src] || item.href;
 
             return (
               <div
                 key={src}
                 className="showcase-tile"
                 data-slot={slot}
-                style={{ "--slot": slot === "hidden" ? VISIBLE_SLOTS - 1 : slot }}
+                style={{ "--slot": isHidden ? VISIBLE_SLOTS - 1 : slot }}
               >
                 <Image
                   src={src}
@@ -298,6 +306,16 @@ function ShowcaseMedia({ item }) {
                   sizes="(max-width: 860px) 100vw, 50vw"
                   className="showcase-tile-image"
                 />
+
+                {/* Click target covering the whole tile. Hidden (off-stage)
+                    tiles get no link, so they can't be clicked or tabbed to. */}
+                {!isHidden && (
+                  <Link
+                    href={tileHref}
+                    className="showcase-tile-link"
+                    aria-label={`View ${item.title}`}
+                  />
+                )}
               </div>
             );
           })}

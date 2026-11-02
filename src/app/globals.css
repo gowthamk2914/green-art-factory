@@ -14929,3 +14929,123 @@ font.goog-text-highlight {
     padding: 16px 16px 4px;
   }
 }
+
+
+
+
+
+
+
+
+.showcase-tile-link {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  border-radius: inherit;
+  cursor: pointer;
+}
+
+.showcase-tile-link:focus-visible {
+  outline: 2px solid #66711e;
+  outline-offset: -2px;
+}
+
+
+.projectDetailGalleryCell {
+  position: relative; /* if not already set */
+}
+
+.projectDetailGalleryLink {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+
+
+/* Same width as the card below it, so the left edges line up.
+   Replace 1200px with your card's max-width. */
+.projectDetailStatsBreadcrumbWrap {
+  max-width: 1200px;
+  margin: 0 auto 1.25rem;
+}
+
+.projectDetailStatsBreadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.projectDetailStatsBreadcrumbItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.projectDetailStatsCrumb {
+  color: #4a4a40;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a.projectDetailStatsCrumb:hover {
+  color: #009652;
+  text-decoration: underline;
+}
+
+.projectDetailStatsCrumb.isCurrent {
+  color: #009652;
+  font-weight: 600;
+}
+
+.projectDetailStatsCrumbSep {
+  color: #8a9683;
+}
+
+
+
+
+
+
+
+
+
+
+/* ---------- Content protection ---------- */
+
+/* No text selection, except in form fields */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Images: no drag, no long-press save menu on mobile */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+/* Blur page when the window loses focus / PrintScreen is pressed */
+html.protect-blur body {
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+/* Print / Save as PDF shows nothing */
+@media print {
+  html,
+  body {
+    display: none !important;
+  }
+}

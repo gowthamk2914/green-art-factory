@@ -2,6 +2,7 @@ import "./globals.css";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
 import GoogleTranslate from "../components/common/GoogleTranslate";
+import ContentProtection from "../components/common/ContentProtection";
 import { ReactNode } from "react";
 import type { Metadata } from "next";
 import favicon from "@/public/images/gaf_favicon.png";
@@ -33,6 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
+        <ContentProtection />
         <GoogleTranslate />
         <Navbar />
         <Providers>{children}</Providers>

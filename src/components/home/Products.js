@@ -39,7 +39,7 @@ const ProductSkeleton = () => (
   </div>
 );
 
-// Builds /gallery/:productSlug/:variantSlug for a variant's Explore button.
+// Builds /gallery/:productSlug/:variantSlug for a variant's link.
 // The API's variant.cta_url is currently always null, so this constructs
 // the route directly from the parent category's slug + the variant's own
 // slug rather than relying on a per-variant URL from the backend.
@@ -79,6 +79,74 @@ function getRightGridClass(count) {
 function getItemSpanClass(count, index) {
   if (count === 3 && index === 0) return "row-span-2";
   return "";
+}
+
+// One clickable image card, used for both the featured image and the small
+// grid images. The WHOLE card is a single link: an invisible <Link> is
+// stretched over the card (absolute inset-0), so tapping the image, the
+// gradient or the name bar all redirect to the gallery page.
+//
+// - The name bar has pointer-events-none, so clicks pass through it to the
+//   link underneath.
+// - "Explore" is a <span> styled like the old button. A <button> inside a
+//   <Link> is invalid HTML and creates two tab stops; one link is cleaner.
+// - Hover styles on the pill use group-hover, so it still highlights when
+//   the pointer is anywhere on the card.
+function ProductImageCard({
+  href,
+  image,
+  name,
+  priority = false,
+  featured = false,
+  className = "",
+}) {
+  return (
+    <div
+      className={`group relative overflow-hidden rounded-xl transition-all duration-500 ${className}`}
+    >
+      <Image
+        src={image}
+        alt={name}
+        fill
+        priority={priority}
+        className="object-cover transition-transform duration-700 group-hover:scale-110"
+      />
+
+      {/* Overlay on the image */}
+      {featured ? (
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-all duration-500 group-hover:opacity-100"></div>
+      ) : (
+        <div className="absolute inset-0 bg-black/10 transition-all duration-500 group-hover:bg-black/30"></div>
+      )}
+
+      {/* The click target: covers the entire card */}
+      <Link
+        href={href}
+        aria-label={`Explore ${name}`}
+        className="absolute inset-0 z-10 cursor-pointer rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#66711E]"
+      />
+
+      {/* Name bar: sits above the image but lets clicks fall through */}
+      <div className="pointer-events-none absolute bottom-2 left-2 right-2 z-20 flex items-center justify-between rounded-xl bg-white/80 backdrop-blur-md px-3 py-2 transition-all duration-500 group-hover:bg-white/90">
+        <span
+          className={`text-sm font-medium ${
+            featured ? "featured-big-product-name" : "featured-product-name"
+          }`}
+        >
+          {name}
+        </span>
+        <span
+          className={`rounded-full bg-white text-[11px] transition-all duration-300 group-hover:bg-[#66711E] group-hover:text-white ${
+            featured
+              ? "px-5 py-2 group-hover:shadow-2xl"
+              : "px-3 py-1"
+          }`}
+        >
+          Explore
+        </span>
+      </div>
+    </div>
+  );
 }
 
 const Products = () => {
@@ -188,28 +256,17 @@ const Products = () => {
                         }`}
                       >
                         {featuredProduct && (
-                          <div className="group relative h-[420px] overflow-hidden rounded-xl transition-all duration-500">
-                            <Image
-                              src={featuredProduct.image}
-                              alt={featuredProduct.name}
-                              fill
-                              priority={slideIndex === 0}
-                              className="object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-all duration-500 group-hover:opacity-100"></div>
-                            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between rounded-xl bg-white/80 backdrop-blur-md px-3 py-2 transition-all duration-500 group-hover:bg-white/90">
-                              <span className="text-sm font-medium featured-big-product-name">
-                                {featuredProduct.name}
-                              </span>
-                              <Link
-                                href={buildGalleryUrl(category.slug, featuredProduct.slug)}
-                              >
-                                <button className="rounded-full bg-white px-5 py-2 text-[11px] transition-all duration-300 hover:bg-[#66711E] hover:text-white hover:shadow-2xl">
-                                  Explore
-                                </button>
-                              </Link>
-                            </div>
-                          </div>
+                          <ProductImageCard
+                            featured
+                            className="h-[420px]"
+                            href={buildGalleryUrl(
+                              category.slug,
+                              featuredProduct.slug
+                            )}
+                            image={featuredProduct.image}
+                            name={featuredProduct.name}
+                            priority={slideIndex === 0}
+                          />
                         )}
 
                         {!soloFeature && (
@@ -219,34 +276,20 @@ const Products = () => {
                             )}`}
                           >
                             {remainingProducts.map((product, idx) => (
-                              <div
+                              <ProductImageCard
                                 key={product.id}
-                                className={`group relative h-full overflow-hidden rounded-xl transition-all duration-500 ${getItemSpanClass(
+                                className={`h-full ${getItemSpanClass(
                                   remainingCount,
                                   idx
                                 )}`}
-                              >
-                                <Image
-                                  src={product.image}
-                                  alt={product.name}
-                                  fill
-                                  priority={slideIndex === 0}
-                                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-black/10 transition-all duration-500 group-hover:bg-black/30"></div>
-                                <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between rounded-xl bg-white/80 backdrop-blur-md px-3 py-2 transition-all duration-500 group-hover:bg-white/90">
-                                  <span className="text-sm font-medium featured-product-name">
-                                    {product.name}
-                                  </span>
-                                  <Link
-                                    href={buildGalleryUrl(category.slug, product.slug)}
-                                  >
-                                    <button className="rounded-full bg-white px-3 py-1 text-[11px] transition-all duration-300 hover:bg-[#66711E] hover:text-white">
-                                      Explore
-                                    </button>
-                                  </Link>
-                                </div>
-                              </div>
+                                href={buildGalleryUrl(
+                                  category.slug,
+                                  product.slug
+                                )}
+                                image={product.image}
+                                name={product.name}
+                                priority={slideIndex === 0}
+                              />
                             ))}
                           </div>
                         )}

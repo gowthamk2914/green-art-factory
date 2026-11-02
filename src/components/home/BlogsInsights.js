@@ -112,7 +112,7 @@ function PostCard({ post }) {
                 <span className="gaf-blogs-author-text">
                   <span className="gaf-blogs-author-name">{post.author}</span>
                   {post.authorHandle && <span className="gaf-blogs-author-handle">{post.authorHandle}</span>}
-                  <span className="article-card-author-handle">Blog Author</span>
+                  {/* <span className="article-card-author-handle">Blog Author</span> */}
                 </span>
               </div>
             ) : (
@@ -298,7 +298,7 @@ export default function BlogsInsights() {
                             )}
                             <span className="gaf-blogs-author-name">{featuredPost.author}</span>
                             
-                            <span className="article-card-author-handle">Blog Author</span>
+                            // <span className="article-card-author-handle">Blog Author</span>
                           </>
                         )}
                         <span className="gaf-blogs-post-date">{formatDate(featuredPost.blog_date)}</span>

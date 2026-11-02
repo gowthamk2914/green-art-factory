@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const BG_IMAGE = "/images/latest-posts-section-bg.jpg";
 const LEAF_IMAGE = "/images/latest-posts-section-leaf.png";
@@ -151,9 +152,11 @@ export default function LatestPosts() {
               </span>
               <span className="gaf-posts-social-name">Green Art Factory</span>
               <span className="gaf-posts-divider" />
-              <button type="button" className="gaf-posts-follow-btn">
-                Follow Us
-              </button>
+              <Link href="https://www.instagram.com/greenartfactoryuae/" target="_blank" rel="noopener noreferrer">
+                <button type="button" className="gaf-posts-follow-btn">
+                  Follow Us
+                </button>
+              </Link>
             </div>
 
             <div className="gaf-posts-social-row">
@@ -162,9 +165,11 @@ export default function LatestPosts() {
               </span>
               <span className="gaf-posts-social-name">Green Art Factory</span>
               <span className="gaf-posts-divider" />
-              <button type="button" className="gaf-posts-follow-btn">
-                Follow Us
-              </button>
+              <Link href="https://www.linkedin.com/company/green-art-factory-uae/posts/?feedView=all" target="_blank" rel="noopener noreferrer">
+                <button type="button" className="gaf-posts-follow-btn">
+                  Follow Us
+                </button>
+              </Link>
             </div>
           </div>
         </aside>
