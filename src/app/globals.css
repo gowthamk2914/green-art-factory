@@ -15036,11 +15036,6 @@ img {
   -webkit-touch-callout: none;
 }
 
-/* Blur page when the window loses focus / PrintScreen is pressed */
-html.protect-blur body {
-  filter: blur(28px);
-  pointer-events: none;
-}
 
 /* Print / Save as PDF shows nothing */
 @media print {
