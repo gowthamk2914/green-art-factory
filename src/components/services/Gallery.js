@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-import { getPortfolioPageRequest } from '../../redux/portfolio/actions'; // adjust path to your actions file
+import { getPortfolioPageRequest } from '../../redux/Portfolio/actions'; // adjust path to your actions file
 
 /**
  * GallerySection — "Featured Gallery"
