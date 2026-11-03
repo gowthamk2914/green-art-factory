@@ -4,8 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-const BANNER_IMAGE =
-  "/images/services-banner-img.png";
+const BANNER_IMAGE = "/images/services-banner-img.webp";
 
 const STATS = [
   { value: "98%", label: "Client Satisfaction Rate" },
@@ -15,38 +14,42 @@ const STATS = [
 export default function ServicesBanner() {
   return (
     <section className="servicesBannerSection" aria-label="Our services">
+      {/* Photo: sits on the right of the banner (see --services-banner-offset in the CSS) */}
       <div className="servicesBannerMedia">
         <Image
           src={BANNER_IMAGE}
-          alt="Nature-integrated architecture surrounded by lush greenery"
+          alt="Green Art Factory team in front of a living green wall"
           fill
           priority
-          sizes="100vw"
+          sizes="(max-width: 900px) 100vw, 76vw"
           className="servicesBannerImage"
         />
-        <div className="servicesBannerGradient" aria-hidden="true" />
       </div>
 
+      {/* Gradient now covers the whole banner, so the cream fades into the photo */}
+      <div className="servicesBannerGradient" aria-hidden="true" />
+
       <div className="servicesBannerContent">
-        {/* <span className="servicesBannerEyebrow">Our Services</span> */}
         <div className="breadcrumb">
-  <Link href="/" className="breadcrumb-item">
-    Home
-  </Link>
+          <Link href="/" className="breadcrumb-item">
+            Home
+          </Link>
 
-  <i className="bi bi-chevron-right breadcrumb-arrow"></i>
+          <i className="bi bi-chevron-right breadcrumb-arrow"></i>
 
-  <Link href="/services" className="breadcrumb-item active">
-    Services
-  </Link>
-</div>
+          <Link href="/services" className="breadcrumb-item active">
+            Services
+          </Link>
+        </div>
 
         <h1 className="servicesBannerTitle">
           We Bring Nature&rsquo;s Balance To Every Space.
         </h1>
 
         <p className="servicesBannerDescription">
-          From plant maintenance to rentals and temporary landscapes, we create and care for green environments that inspire, refresh, and elevate everyday spaces.
+          From plant maintenance to rentals and temporary landscapes, we create
+          and care for green environments that inspire, refresh, and elevate
+          everyday spaces.
         </p>
 
         <Link href="/products-list" className="servicesBannerCta">
@@ -58,7 +61,7 @@ export default function ServicesBanner() {
 
         <div className="servicesBannerStatsCard">
           <div className="servicesBannerStatsRow">
-            {STATS.map((stat, index) => (
+            {STATS.map((stat) => (
               <div key={stat.label} className="servicesBannerStat">
                 <span className="servicesBannerStatValue">{stat.value}</span>
                 <span className="servicesBannerStatLabel">{stat.label}</span>

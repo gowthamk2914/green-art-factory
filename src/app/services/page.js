@@ -8,7 +8,6 @@ import Faq from "../../components/services/Faq";
 import CommonContactEnquiry from "../../components/common/CommonContactEnquiry";
 import ServicesTypes from "../../components/services/ServicesTypes";
 
-
 export default function Services() {
   return (
     <>

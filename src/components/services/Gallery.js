@@ -1,63 +1,172 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import Link from 'next/link';
+import { useSelector, useDispatch } from 'react-redux';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
+import { getPortfolioPageRequest } from '../../redux/portfolio/actions'; // adjust path to your actions file
+
 /**
- * GallerySection
- * "Featured Gallery" — Pinterest-style masonry grid (via CSS columns) with
- * staggered reveal-on-scroll, hover zoom, and a keyboard-navigable lightbox.
+ * GallerySection — "Featured Gallery"
+ * Pinterest-style masonry grid with staggered reveal-on-scroll, hover zoom
+ * and a keyboard-navigable lightbox.
+ *
+ * Images come from the portfolio API (/api/v1/pages/portfolio) via Redux:
+ *   ONE random image from each of 9 randomly chosen projects,
+ *   re-randomised on every page load.
  *
  * Files:
  *   GallerySection.jsx → markup + logic (this file)
  *   GallerySection.css → all styling + keyframe animations
- *
- * Swap the `src` values below for your real project photos.
  */
 
-const IMAGES = [
-  {
-    src: '/images/indoor-gallery-1.png',
-    alt: 'Sunlit hotel lobby with palm trees and floral arrangement',
-  },
-  {
-    src: '/images/indoor-gallery-2.png',
-    alt: 'Moody black and white office interior with hanging plants',
-  },
-  {
-    src: '/images/indoor-gallery-3.png',
-    alt: 'Living room with three potted plants on a patterned rug',
-  },
-  {
-    src: '/images/indoor-gallery-4.png',
-    alt: 'Spiral staircase wrapped in green living wall inside an atrium',
-  },
-  {
-    src: '/images/indoor-gallery-5.png',
-    alt: 'Collection of potted houseplants beside a window',
-  },
-  {
-    src: '/images/indoor-gallery-6.png',
-    alt: 'Close-up of dark monstera leaves',
-  },
-  {
-    src: '/images/indoor-gallery-7.png',
-    alt: 'Indoor garden courtyard with dining tables surrounded by greenery',
-  },
-  {
-    src: '/images/indoor-gallery-8.png',
-    alt: 'Single monstera leaf in a glass vase on a white table',
-  },
-  {
-    src: '/images/indoor-gallery-9.png',
-    alt: 'Tall dracaena plants displayed inside a retail store',
-  },
+const TOTAL_IMAGES = 9;
+
+/* Optional: show only one category, e.g. 'interior-projects'.
+   null = pick from ALL projects. */
+const ONLY_CATEGORY = null;
+
+/* Must match the key used in combineReducers (rootReducer). */
+const PORTFOLIO_STATE_KEY = 'Portfolio';
+
+const EMPTY_STATE = { data: null, loading: false, error: null };
+
+const selectPortfolioState = (state) => state[PORTFOLIO_STATE_KEY] ?? EMPTY_STATE;
+
+/* Your original images: shown until the projects load, and used to top up
+   the grid if fewer than 9 projects have images. */
+const FALLBACK_IMAGES = [
+  { src: '/images/indoor-gallery-1.png', alt: 'Sunlit hotel lobby with palm trees and floral arrangement' },
+  { src: '/images/indoor-gallery-2.png', alt: 'Moody black and white office interior with hanging plants' },
+  { src: '/images/indoor-gallery-3.png', alt: 'Living room with three potted plants on a patterned rug' },
+  { src: '/images/indoor-gallery-4.png', alt: 'Spiral staircase wrapped in green living wall inside an atrium' },
+  { src: '/images/indoor-gallery-5.png', alt: 'Collection of potted houseplants beside a window' },
+  { src: '/images/indoor-gallery-6.png', alt: 'Close-up of dark monstera leaves' },
+  { src: '/images/indoor-gallery-7.png', alt: 'Indoor garden courtyard with dining tables surrounded by greenery' },
+  { src: '/images/indoor-gallery-8.png', alt: 'Single monstera leaf in a glass vase on a white table' },
+  { src: '/images/indoor-gallery-9.png', alt: 'Tall dracaena plants displayed inside a retail store' },
 ];
 
-export default function Gallery() {
+/* ---------- helpers ---------- */
+
+/* Fisher–Yates shuffle (returns a new array) */
+function shuffle(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+/* Accepts: [...]  |  { projects: [...] }  |  { data: { projects: [...] } } */
+function getProjects(source) {
+  if (Array.isArray(source)) return source;
+  if (Array.isArray(source?.projects)) return source.projects;
+  if (Array.isArray(source?.data?.projects)) return source.data.projects;
+  return [];
+}
+
+/* All usable image URLs of one project, no duplicates.
+   API shape: gallery: [{ url, alt }], cover_image: string | null */
+function getProjectImages(project) {
+  const gallery = Array.isArray(project?.gallery) ? project.gallery : [];
+
+  const urls = [
+    project?.cover_image,
+    ...gallery.map((item) => (typeof item === 'string' ? item : item?.url)),
+  ].filter((url) => typeof url === 'string' && url.trim() !== '');
+
+  return [...new Set(urls)];
+}
+
+/* One random image from each of 9 random projects (topped up if needed) */
+function pickGalleryImages(projects) {
+  const eligible = ONLY_CATEGORY
+    ? projects.filter((p) => p?.category?.slug === ONLY_CATEGORY)
+    : projects;
+
+  const toItem = (project, src) => ({
+    src,
+    // The API's image alt values are random IDs, so use the project title
+    alt: project.title?.trim() || 'Project image',
+    title: project.title?.trim() || '',
+    href: project.cta_url || (project.slug ? `/portfolio/${project.slug}` : ''),
+  });
+
+  const picked = [];    // one image per project
+  const leftovers = []; // every other image, only used to top up
+  const used = new Set();
+
+  shuffle(eligible).forEach((project) => {
+    const urls = getProjectImages(project);
+    if (urls.length === 0) return;
+
+    // pick a random image of this project
+    const [chosen, ...rest] = shuffle(urls);
+
+    if (picked.length < TOTAL_IMAGES) {
+      picked.push(toItem(project, chosen));
+      used.add(chosen);
+      rest.forEach((url) => leftovers.push(toItem(project, url)));
+    }
+  });
+
+  // Fewer than 9 projects? Add more images from the same projects
+  for (const item of shuffle(leftovers)) {
+    if (picked.length >= TOTAL_IMAGES) break;
+    if (!used.has(item.src)) {
+      picked.push(item);
+      used.add(item.src);
+    }
+  }
+
+  // Still short? Fill with the static images
+  for (const item of FALLBACK_IMAGES) {
+    if (picked.length >= TOTAL_IMAGES) break;
+    if (!used.has(item.src)) {
+      picked.push(item);
+      used.add(item.src);
+    }
+  }
+
+  return picked;
+}
+
+/* ---------- component ---------- */
+
+export default function Gallery({ projects: projectsProp }) {
+  const dispatch = useDispatch();
+  const { data, loading } = useSelector(selectPortfolioState);
+
+  // A `projects` prop wins; otherwise read from Redux.
+  // `data` is the whole API response: { data: { section, filters, projects }, meta }
+  const projects = getProjects(projectsProp ?? data);
+
+  // Static images first, so server and first client render match
+  // (no hydration warning); the random pick is applied after mount.
+  const [images, setImages] = useState(FALLBACK_IMAGES);
   const [visible, setVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
   const sectionRef = useRef(null);
+
+  // Fetch once if nothing is loaded yet (e.g. the home page, where the
+  // portfolio page was never visited)
+  useEffect(() => {
+    if (projectsProp) return;
+    if (!data && !loading) dispatch(getPortfolioPageRequest());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Re-pick only when the set of projects changes
+  const projectsKey = projects.map((p) => p?.id ?? p?.slug ?? '').join('|');
+
+  useEffect(() => {
+    if (projects.length === 0) return;
+    setImages(pickGalleryImages(projects));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectsKey]);
 
   useEffect(() => {
     const node = sectionRef.current;
@@ -81,12 +190,16 @@ export default function Gallery() {
   const closeLightbox = () => setActiveIndex(null);
 
   const showPrev = useCallback(() => {
-    setActiveIndex((current) => (current === null ? null : (current - 1 + IMAGES.length) % IMAGES.length));
-  }, []);
+    setActiveIndex((current) =>
+      current === null ? null : (current - 1 + images.length) % images.length
+    );
+  }, [images.length]);
 
   const showNext = useCallback(() => {
-    setActiveIndex((current) => (current === null ? null : (current + 1) % IMAGES.length));
-  }, []);
+    setActiveIndex((current) =>
+      current === null ? null : (current + 1) % images.length
+    );
+  }, [images.length]);
 
   // keyboard navigation for the lightbox
   useEffect(() => {
@@ -102,6 +215,8 @@ export default function Gallery() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeIndex, showPrev, showNext]);
 
+  const activeImage = activeIndex === null ? null : images[activeIndex];
+
   return (
     <section ref={sectionRef} className={`gls-section ${visible ? 'gls-visible' : ''}`}>
       <div className="gls-header">
@@ -113,7 +228,7 @@ export default function Gallery() {
       </div>
 
       <div className="gls-masonry">
-        {IMAGES.map((image, i) => (
+        {images.map((image, i) => (
           <button
             key={image.src}
             type="button"
@@ -128,7 +243,7 @@ export default function Gallery() {
         ))}
       </div>
 
-      {activeIndex !== null && (
+      {activeImage && (
         <div className="gls-lightbox" onClick={closeLightbox}>
           <button
             type="button"
@@ -151,12 +266,25 @@ export default function Gallery() {
             <ChevronLeft size={26} />
           </button>
 
-          <img
-            src={IMAGES[activeIndex].src}
-            alt={IMAGES[activeIndex].alt}
-            className="gls-lightbox-img"
-            onClick={(e) => e.stopPropagation()}
-          />
+          <figure className="gls-lightbox-figure" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={activeImage.src}
+              alt={activeImage.alt}
+              className="gls-lightbox-img"
+            />
+
+            {/* Project name + link; only for images that came from a project */}
+            {activeImage.title && (
+              <figcaption className="gls-lightbox-caption">
+                <span>{activeImage.title}</span>
+                {activeImage.href && (
+                  <Link href={activeImage.href} className="gls-lightbox-link">
+                    View project
+                  </Link>
+                )}
+              </figcaption>
+            )}
+          </figure>
 
           <button
             type="button"
