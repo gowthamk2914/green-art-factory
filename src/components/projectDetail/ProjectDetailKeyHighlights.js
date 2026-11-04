@@ -4,11 +4,9 @@ import { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 // `content.key_highlights` comes through as an HTML list, e.g.:
-//   <ul><li><p>Bespoke Artificial Olive Trees – Five trees, each 4m
+//   <ul><li><p>Bespoke Artificial Olive Trees: Five trees, each 4m
 //   tall with mature, realistic trunks.</p></li>...</ul>
-// Each <li> is "Title – Description", separated by an en dash. There's
-// no structured { title, description } field from the API for this, so
-// we parse it out of the HTML rather than guessing a different shape.
+// Each <li> is "Title: Description", separated by the first colon.
 function parseHighlights(html) {
   if (typeof html !== "string") return [];
 
@@ -24,17 +22,11 @@ function parseHighlights(html) {
 
       if (!text) return null;
 
-      // en dash (–) is what the sample content uses; fall back to a
-      // plain hyphen in case a different item was authored differently.
-      const separatorMatch = text.match(/\s[\u2013-]\s/);
-      if (!separatorMatch) {
-        return { title: text, description: "" };
-      }
+      const splitIndex = text.indexOf(":");
 
-      const splitIndex = separatorMatch.index;
       return {
         title: text.slice(0, splitIndex).trim(),
-        description: text.slice(splitIndex + separatorMatch[0].length).trim(),
+        description: text.slice(splitIndex + 1).trim(),
       };
     })
     .filter(Boolean);
@@ -64,9 +56,7 @@ function HighlightItem({ title, description }) {
       </span>
       <div className="projectDetailKeyHighlightsText">
         <h3 className="projectDetailKeyHighlightsItemTitle">{title}</h3>
-        {description && (
-          <p className="projectDetailKeyHighlightsItemDescription">{description}</p>
-        )}
+        <p className="projectDetailKeyHighlightsItemDescription">{description}</p>
       </div>
     </div>
   );
