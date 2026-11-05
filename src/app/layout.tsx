@@ -32,8 +32,12 @@ export default function RootLayout({
   children: ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={poppins.className}>
+    // suppressHydrationWarning: browser extensions and Google Translate add
+    // attributes to <html>/<body> before React loads. This ignores only those
+    // two tags' attributes (not their children), so real mismatches elsewhere
+    // are still reported.
+    <html lang="en" suppressHydrationWarning>
+      <body className={poppins.className} suppressHydrationWarning>
         <ContentProtection />
         <GoogleTranslate />
         <Navbar />
