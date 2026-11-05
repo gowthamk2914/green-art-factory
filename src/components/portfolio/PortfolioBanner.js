@@ -52,7 +52,7 @@ export default function PortfolioBanner({
 
           <p className="portfolio-banner-desc">{finalDescription}</p>
 
-          <a href="/products-list" className="portfolio-banner-cta">
+          <Link href="/products-list" className="portfolio-banner-cta">
             <span>{finalCtaLabel}</span>
             <span className="portfolio-banner-cta-icon" aria-hidden="true">
               <svg
@@ -71,7 +71,7 @@ export default function PortfolioBanner({
                 />
               </svg>
             </span>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

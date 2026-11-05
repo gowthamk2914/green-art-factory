@@ -3,6 +3,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { UploadCloud, ArrowUpRight, X, CheckCircle2 } from 'lucide-react';
+import Link from "next/link";
 
 import {
   submitApplicationRequest,
@@ -510,7 +511,7 @@ export default function ApplyForm() {
               />
               <span>
                 I agree to the processing of my personal data for recruitment purposes in
-                accordance with Green Art Factory&apos;s <a href="/terms-and-privacy" target="_blank" rel="noopener noreferrer" className="terms-and-privacy-checkbox-text">Terms and Privacy</a>.
+                accordance with Green Art Factory&apos;s <Link href="/terms-and-privacy" target="_blank" rel="noopener noreferrer" className="terms-and-privacy-checkbox-text">Terms and Privacy</Link>
               </span>
             </label>
             {errors.agreed && (

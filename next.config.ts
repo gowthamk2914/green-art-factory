@@ -1,28 +1,23 @@
 /** @type {import('next').NextConfig} */
+const { BASE_PATH } = require("./site.config.js");
+
+// True only for `npm run build`; `npm run dev` is untouched
+const isStaticBuild = process.env.npm_lifecycle_event === "build";
+
 const nextConfig = {
+  // Prefixes the _next files (CSS and JS) and every <Link> route
+  basePath: isStaticBuild ? BASE_PATH : "",
+  ...(isStaticBuild && {
+    output: "export",
+    trailingSlash: true,
+  }),
   images: {
+    unoptimized: isStaticBuild,
     remotePatterns: [
-      {
-        protocol: "https",
-        // Instagram serves media from many rotating subdomains like
-        // scontent-sin6-3, scontent-sin6-1, scontent.cdninstagram.com, etc.
-        // The wildcard covers all of them.
-        hostname: "*.cdninstagram.com",
-      },
-      {
-        protocol: "https",
-        // Instagram/Facebook also serve some media from *.fbcdn.net
-        hostname: "*.fbcdn.net",
-      },
-      {
-        protocol: "https",
-        // Behold's own CDN, used for profile pictures in the feed JSON
-        hostname: "*.behold.pictures",
-      },
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
+      { protocol: "https", hostname: "*.cdninstagram.com" },
+      { protocol: "https", hostname: "*.fbcdn.net" },
+      { protocol: "https", hostname: "*.behold.pictures" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
     ],
   },
 };

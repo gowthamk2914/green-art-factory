@@ -51,13 +51,13 @@ export default function CareersHeroSection() {
         </p>
 
         <div className="chs-actions chs-anim" style={{ transitionDelay: '300ms' }}>
-          <a href="#open-positions" className="chs-btn chs-btn--solid">
+          <Link href="#open-positions" className="chs-btn chs-btn--solid">
             <span className="chs-btn-shine" />
             <span className="chs-btn-text">View Open Positions</span>
-          </a>
-          <a href="#apply" className="chs-btn chs-btn--outline">
+          </Link>
+          <Link href="#apply" className="chs-btn chs-btn--outline">
             <span className="chs-btn-text">Apply Now</span>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

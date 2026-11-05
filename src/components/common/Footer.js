@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 /* Replace with your real logo file in /public */
 const LOGO_IMAGE = "/images/gaf-footer-logo.png";
@@ -165,9 +166,9 @@ export default function Footer() {
 
         <nav className="gaf-footer-nav">
           {NAV_LINKS.map((link) => (
-            <a key={link.label} href={link.href} className="gaf-footer-nav-link">
+            <Link key={link.label} href={link.href} className="gaf-footer-nav-link">
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -179,9 +180,9 @@ export default function Footer() {
                   <span className="gaf-footer-contact-icon">
                     <ContactIcon type={item.icon} />
                   </span>
-                  <a href={item.href} className="gaf-footer-contact-text">
+                  <Link href={item.href} className="gaf-footer-contact-text">
                     {item.text}
-                  </a>
+                  </Link>
                 </li>
               ) : (
                 <li key={item.id} className="gaf-footer-contact-item">
@@ -196,7 +197,7 @@ export default function Footer() {
 
           <div className="gaf-footer-social-row">
             {SOCIAL_LINKS.map((social) => (
-              <a
+              <Link
                 key={social.id}
                 href={social.href}
                 target="_blank"
@@ -205,7 +206,7 @@ export default function Footer() {
                 className="gaf-footer-social-icon"
               >
                 <SocialIcon type={social.icon} />
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -216,9 +217,9 @@ export default function Footer() {
       <div className="gaf-footer-bottom">
         <p className="gaf-footer-copyright">
           Copyright © {year}{" "}
-          <a href="/" className="gaf-footer-copyright-link">
+          <Link href="/" className="gaf-footer-copyright-link">
             Green Art Factory
-          </a>{" "}
+          </Link>{" "}
           All Rights Reserved.
         </p>
       </div>

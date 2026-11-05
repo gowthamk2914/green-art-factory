@@ -260,18 +260,18 @@ const Navbar = () => {
           </div>
 
           <div className="mobileMenuSocials">
-            <a href="#" aria-label="Instagram" className="mobileMenuSocialIcon" style={{ background: "#E1306C" }}>
+            <Link href="https://www.instagram.com/greenartfactoryuae/" aria-label="Instagram" className="mobileMenuSocialIcon" style={{ background: "#E1306C" }}>
               <FaInstagram size={16} />
-            </a>
-            <a href="#" aria-label="WhatsApp" className="mobileMenuSocialIcon" style={{ background: "#25D366" }}>
+            </Link>
+            <Link href="https://wa.me/971569588315" aria-label="WhatsApp" className="mobileMenuSocialIcon" style={{ background: "#25D366" }}>
               <FaWhatsapp size={16} />
-            </a>
-            <a href="#" aria-label="Facebook" className="mobileMenuSocialIcon" style={{ background: "#1877F2" }}>
+            </Link>
+            <Link href="https://www.facebook.com/people/Green-Art-Factory-UAE/61591535935180/" aria-label="Facebook" className="mobileMenuSocialIcon" style={{ background: "#1877F2" }}>
               <FaFacebookF size={16} />
-            </a>
-            <a href="#" aria-label="X (Twitter)" className="mobileMenuSocialIcon" style={{ background: "#2A2A2A" }}>
+            </Link>
+            <Link href="https://x.com/Greenmosswall " aria-label="X (Twitter)" className="mobileMenuSocialIcon" style={{ background: "#2A2A2A" }}>
               <FaXTwitter size={14} />
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -289,33 +289,33 @@ const Navbar = () => {
 <div className="fixed right-0 top-[140px] z-50 overflow-hidden rounded-l-[35px] py-4">
       {/* <div className="fixed right-0 top-[140px] z-50 overflow-hidden rounded-l-[35px] bg-[#5E671F] py-4"> */}
         <div className="flex flex-col items-center gap-3 px-3 floating-social-bar-wrapper">
-          <a
+          <Link
             href="https://www.instagram.com/greenartfactoryuae/"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E1306C] text-white"
           >
             <FaInstagram size={18} />
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="https://wa.me/971569588315"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#25D366] text-white"
           >
             <FaWhatsapp size={18} />
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="https://www.facebook.com/people/Green-Art-Factory-UAE/61591535935180/"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1877F2] text-white"
           >
             <FaFacebookF size={18} />
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="https://x.com/Greenmosswall"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2A2A2A] text-white"
           >
             <FaXTwitter size={16} />
-          </a>
+          </Link>
         </div>
       </div>
     </>
