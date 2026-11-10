@@ -18,6 +18,8 @@ import ContactPageFormReducer from "./ContactPageForm/reducer";
 import CommonContactEnquiryFormReducer from "./CommonContactEnquiryForm/reducer";
 import ProjectDetailReducer from "./ProjectDetail/reducer";
 import CataloguesReducer from "./Catalogue/reducer";
+import YoutubeVideosReducer from "./YoutubeVideos/reducer";
+
 
 
 
@@ -40,6 +42,7 @@ const rootReducer = combineReducers({
   CommonContactEnquiryForm: CommonContactEnquiryFormReducer,
   ProjectDetail: ProjectDetailReducer,
   Catalogues: CataloguesReducer,
+  YoutubeVideos: YoutubeVideosReducer,
 });
 
 export default rootReducer;
