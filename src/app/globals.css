@@ -15182,8 +15182,14 @@ img {
 }
 
 
+@media (max-width:768px){
+.floating-social-bar{
+    top: unset;
+    bottom: 20px;
+}
 
-
-
-
+.floating-icon-insta , .floating-icon-facebook , .floating-icon-twitter{
+    display:none;
+}
+}
 
