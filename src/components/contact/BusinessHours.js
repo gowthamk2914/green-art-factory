@@ -105,7 +105,7 @@ export default function BusinessHours() {
         >
           <div className="bh-image-card relative rounded-[24px] overflow-hidden h-56 group cursor-pointer">
             <img
-              src="images/bh-image-card.png"
+              src="/images/bh-image-card.png"
               alt="Garden bathed in golden light"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
             />
