@@ -35,7 +35,7 @@ button{
   align-items: center;
   gap: 10px;
   font-size: 15px;
-  padding: 30px 0;
+  padding: 0 0 30px;
 }
 
 .breadcrumb-item {
@@ -7206,7 +7206,7 @@ a.gaf-footer-contact-text:hover {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 90px 24px 100px;
+  padding: 35px 24px 100px;
 }
 
 .ops-header {
@@ -10960,7 +10960,7 @@ font.goog-text-highlight {
 
 .productDetailSection {
   background: #faf8f1;
-  padding: clamp(3rem, 6vw, 6rem) clamp(1.25rem, 5vw, 3rem);
+  padding: clamp(3rem, 5vw, 6rem) clamp(1.25rem, 5vw, 3rem);
   color: #14140f;
 }
 
@@ -15047,10 +15047,10 @@ font.goog-text-highlight {
    ============================================================ */
 .galleryListBreadcrumb,
 .productDetailBreadcrumb {
-  width: 100%;
+  width: 95%;
   max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px 24px 8px;
+  /* margin: 0 auto;
+  padding: 8px 24px 8px; */
 }
 
 /* the last item is plain text (current page), not a link */
@@ -15182,6 +15182,7 @@ img {
 }
 
 
+
 @media (max-width:768px){
 .floating-social-bar{
     top: unset;
@@ -15192,4 +15193,10 @@ img {
     display:none;
 }
 }
+
+
+nav .breadcrumb , .contact-breadcrumb {
+  padding : 30px 0;
+}
+
 

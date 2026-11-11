@@ -247,7 +247,7 @@ export default function ContactSection() {
         </div>
       )}
 
-      <div className="breadcrumb container">
+      <div className="breadcrumb container contact-breadcrumb">
         <Link href="/" className="breadcrumb-item">
           Home
         </Link>

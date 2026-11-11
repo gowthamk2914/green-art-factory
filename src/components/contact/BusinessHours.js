@@ -43,9 +43,9 @@ export default function BusinessHours() {
             We dedicate time to understanding your vision. Visit us, call, or schedule a
             consultation during our working hours.
           </p>
-          <button className="bh-btn group mt-7 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-[#2E3A18] font-semibold shadow-lg shadow-black/20 transition-transform duration-300 hover:scale-[1.04] active:scale-95">
+          {/* <button className="bh-btn group mt-7 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-[#2E3A18] font-semibold shadow-lg shadow-black/20 transition-transform duration-300 hover:scale-[1.04] active:scale-95">
             Book a Consultation
-          </button>
+          </button> */}
         </div>
 
         {/* CENTER: operating hours card */}
