@@ -19,6 +19,7 @@ import CommonContactEnquiryFormReducer from "./CommonContactEnquiryForm/reducer"
 import ProjectDetailReducer from "./ProjectDetail/reducer";
 import CataloguesReducer from "./Catalogue/reducer";
 import YoutubeVideosReducer from "./YoutubeVideos/reducer";
+import HomeHeroReducer from "./HomeHero/reducer"; 
 
 
 
@@ -43,6 +44,7 @@ const rootReducer = combineReducers({
   ProjectDetail: ProjectDetailReducer,
   Catalogues: CataloguesReducer,
   YoutubeVideos: YoutubeVideosReducer,
+  HomeHero: HomeHeroReducer,
 });
 
 export default rootReducer;

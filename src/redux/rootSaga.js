@@ -20,6 +20,7 @@ import CommonContactEnquiryFormSaga from "./CommonContactEnquiryForm/saga";
 import ProjectDetailSaga from "./ProjectDetail/saga";
 import CataloguesSaga from "./Catalogue/saga";
 import YoutubeVideosSaga from "./YoutubeVideos/saga";
+import HomeHeroSaga from "./HomeHero/saga";
 
 
 export default function* rootSaga() {
@@ -43,5 +44,6 @@ export default function* rootSaga() {
     ProjectDetailSaga(),
     CataloguesSaga(),
     YoutubeVideosSaga(),
+    HomeHeroSaga(),
   ]);
 }

@@ -3,35 +3,6 @@
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 
-// `content.key_highlights` comes through as an HTML list, e.g.:
-//   <ul><li><p>Bespoke Artificial Olive Trees: Five trees, each 4m
-//   tall with mature, realistic trunks.</p></li>...</ul>
-// Each <li> is "Title: Description", separated by the first colon.
-function parseHighlights(html) {
-  if (typeof html !== "string") return [];
-
-  const items = html.match(/<li[\s\S]*?<\/li>/g) ?? [];
-
-  return items
-    .map((item) => {
-      const text = item
-        .replace(/<[^>]+>/g, "") // strip tags (<li>, <p>, etc.)
-        .replace(/&amp;/g, "&")
-        .replace(/&nbsp;/g, " ")
-        .trim();
-
-      if (!text) return null;
-
-      const splitIndex = text.indexOf(":");
-
-      return {
-        title: text.slice(0, splitIndex).trim(),
-        description: text.slice(splitIndex + 1).trim(),
-      };
-    })
-    .filter(Boolean);
-}
-
 function HighlightBullet() {
   return (
     <svg
@@ -63,14 +34,19 @@ function HighlightItem({ title, description }) {
 }
 
 export default function ProjectDetailKeyHighlights() {
-  // `ProjectDetail` must match the key used in your rootReducer.
-  // The [slug] page dispatches the fetch — this component only reads.
   const project = useSelector((state) => state.ProjectDetail?.data);
 
-  const highlights = useMemo(
-    () => parseHighlights(project?.content?.key_highlights),
-    [project?.content?.key_highlights]
-  );
+  const highlights = useMemo(() => {
+    const list = project?.content?.key_highlights;
+    if (!Array.isArray(list)) return [];
+
+    return list
+      .map((item) => ({
+        title: item?.title?.trim() ?? "",
+        description: item?.description?.trim() ?? "",
+      }))
+      .filter((item) => item.title && item.description);
+  }, [project?.content?.key_highlights]);
 
   if (highlights.length === 0) return null;
 
@@ -80,8 +56,12 @@ export default function ProjectDetailKeyHighlights() {
         <h2 className="projectDetailKeyHighlightsTitle">Key Highlights</h2>
 
         <div className="projectDetailKeyHighlightsGrid">
-          {highlights.map((highlight) => (
-            <HighlightItem key={highlight.title} {...highlight} />
+          {highlights.map((highlight, index) => (
+            <HighlightItem
+              key={`${highlight.title}-${index}`}
+              title={highlight.title}
+              description={highlight.description}
+            />
           ))}
         </div>
       </div>
