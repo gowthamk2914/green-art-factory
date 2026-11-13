@@ -298,7 +298,7 @@ export default function BlogsInsights() {
                             )}
                             <span className="gaf-blogs-author-name">{featuredPost.author}</span>
                             
-                            // <span className="article-card-author-handle">Blog Author</span>
+                            {/* <span className="article-card-author-handle">Blog Author</span> */}
                           </>
                         )}
                         <span className="gaf-blogs-post-date">{formatDate(featuredPost.blog_date)}</span>
