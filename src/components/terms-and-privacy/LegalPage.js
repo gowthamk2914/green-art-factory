@@ -209,7 +209,7 @@ export default function TermsAndPrivacyPage() {
 
   return (
     <>
-      <div className="breadcrumb container">
+      <div className="breadcrumb container terms-and-privacy-breadcrumb">
         <Link href="/" className="breadcrumb-item">
           Home
         </Link>

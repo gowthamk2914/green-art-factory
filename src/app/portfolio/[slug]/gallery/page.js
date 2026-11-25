@@ -118,7 +118,7 @@ export default function ProjectFullGalleryPage() {
   return (
     <>
       <nav aria-label="Breadcrumb">
-        <div className="breadcrumb container">
+        <div className="breadcrumb container projectFullGallerySectionBreadcrumb">
           {crumbs.map((crumb, i) => {
             const isLast = i === crumbs.length - 1;
 

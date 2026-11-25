@@ -21,6 +21,7 @@ import ProjectDetailSaga from "./ProjectDetail/saga";
 import CataloguesSaga from "./Catalogue/saga";
 import YoutubeVideosSaga from "./YoutubeVideos/saga";
 import HomeHeroSaga from "./HomeHero/saga";
+import InstagramLinksSaga from "./InstagramLinks/saga";
 
 
 export default function* rootSaga() {
@@ -45,5 +46,6 @@ export default function* rootSaga() {
     CataloguesSaga(),
     YoutubeVideosSaga(),
     HomeHeroSaga(),
+    InstagramLinksSaga(),
   ]);
 }

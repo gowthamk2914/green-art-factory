@@ -19,7 +19,8 @@ import CommonContactEnquiryFormReducer from "./CommonContactEnquiryForm/reducer"
 import ProjectDetailReducer from "./ProjectDetail/reducer";
 import CataloguesReducer from "./Catalogue/reducer";
 import YoutubeVideosReducer from "./YoutubeVideos/reducer";
-import HomeHeroReducer from "./HomeHero/reducer"; 
+import HomeHeroReducer from "./HomeHero/reducer";
+import InstagramLinksReducer from "./InstagramLinks/reducer"; 
 
 
 
@@ -45,6 +46,7 @@ const rootReducer = combineReducers({
   Catalogues: CataloguesReducer,
   YoutubeVideos: YoutubeVideosReducer,
   HomeHero: HomeHeroReducer,
+  InstagramLinks: InstagramLinksReducer,
 });
 
 export default rootReducer;

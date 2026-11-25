@@ -1,4 +1,8 @@
+"use client";
+
+import { useId, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 /* Replace with your real logo file in /public */
 const LOGO_IMAGE = "/images/gaf-footer-logo.png";
@@ -11,6 +15,7 @@ const NAV_LINKS = [
   { label: "Blogs", href: "/blogs" },
   { label: "Careers", href: "/careers" },
   { label: "Contact us", href: "/contact" },
+  { label: "Terms and Privacy", href: "/terms-and-privacy" },
 ];
 
 const CONTACT_INFO = [
@@ -79,6 +84,25 @@ function MailIcon() {
   );
 }
 
+function ChevronIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="gaf-footer-nav-chevron"
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}
+
 function SocialIcon({ type }) {
   switch (type) {
     case "facebook":
@@ -138,6 +162,8 @@ function ContactIcon({ type }) {
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const navId = useId();
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
   return (
     <footer className="gaf-footer">
@@ -163,12 +189,30 @@ export default function Footer() {
           </p>
         </div>
 
-        <nav className="gaf-footer-nav">
-          {NAV_LINKS.map((link) => (
-            <a key={link.label} href={link.href} className="gaf-footer-nav-link">
-              {link.label}
-            </a>
-          ))}
+        <nav className="gaf-footer-nav" aria-label="Footer navigation">
+          <button
+            type="button"
+            className="gaf-footer-nav-toggle"
+            aria-expanded={isNavOpen}
+            aria-controls={navId}
+            onClick={() => setIsNavOpen((open) => !open)}
+          >
+            <span>Quick Links</span>
+            <ChevronIcon />
+          </button>
+
+          <div
+            id={navId}
+            className={`gaf-footer-nav-links ${isNavOpen ? "gaf-footer-nav-links--open" : ""}`}
+          >
+            <div className="gaf-footer-nav-links-inner">
+              {NAV_LINKS.map((link) => (
+                <Link key={link.label} href={link.href} className="gaf-footer-nav-link">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </nav>
 
         <div className="gaf-footer-contact">
@@ -216,9 +260,9 @@ export default function Footer() {
       <div className="gaf-footer-bottom">
         <p className="gaf-footer-copyright">
           Copyright © {year}{" "}
-          <a href="/" className="gaf-footer-copyright-link">
+          <Link href="/" className="gaf-footer-copyright-link">
             Green Art Factory
-          </a>{" "}
+          </Link>{" "}
           All Rights Reserved.
         </p>
       </div>

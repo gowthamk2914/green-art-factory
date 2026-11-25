@@ -289,34 +289,46 @@ const Navbar = () => {
 <div className="fixed right-0 top-[140px] z-50 overflow-hidden rounded-l-[35px] py-4 floating-social-bar">
       {/* <div className="fixed right-0 top-[140px] z-50 overflow-hidden rounded-l-[35px] bg-[#5E671F] py-4"> */}
         <div className="flex flex-col items-center gap-3 px-3 floating-social-bar-wrapper">
-          <a
-            href="https://www.instagram.com/greenartfactoryuae/"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E1306C] text-white floating-icon-insta"
-          >
-            <FaInstagram size={18} />
-          </a>
+  <a
+    href="https://www.instagram.com/greenartfactoryuae/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Instagram (opens in a new tab)"
+    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E1306C] text-white floating-icon-insta"
+  >
+    <FaInstagram size={18} aria-hidden="true" />
+  </a>
 
-          <a
-            href="https://wa.me/971569588315"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#25D366] text-white floating-icon-whatsapp"
-          >
-            <FaWhatsapp size={18} />
-          </a>
+  <a
+    href="https://wa.me/971569588315"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="WhatsApp (opens in a new tab)"
+    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#25D366] text-white floating-icon-whatsapp"
+  >
+    <FaWhatsapp size={18} aria-hidden="true" />
+  </a>
 
-          <a
-            href="https://www.facebook.com/people/Green-Art-Factory-UAE/61591535935180/"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1877F2] text-white floating-icon-facebook"
-          >
-            <FaFacebookF size={18} />
-          </a>
+  <a
+    href="https://www.facebook.com/people/Green-Art-Factory-UAE/61591535935180/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Facebook (opens in a new tab)"
+    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1877F2] text-white floating-icon-facebook"
+  >
+    <FaFacebookF size={18} aria-hidden="true" />
+  </a>
 
-          <a
-            href="https://x.com/Greenmosswall"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2A2A2A] text-white floating-icon-twitter"
-          >
-            <FaXTwitter size={16} />
-          </a>
-        </div>
+  <a
+    href="https://x.com/Greenmosswall"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="X (opens in a new tab)"
+    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2A2A2A] text-white floating-icon-twitter"
+  >
+    <FaXTwitter size={16} aria-hidden="true" />
+  </a>
+</div>
       </div>
     </>
   );

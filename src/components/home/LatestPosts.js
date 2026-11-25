@@ -1,33 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
+
+import { getInstagramLinksRequest } from "../../redux/InstagramLinks/actions"; // adjust path to match your folders
 
 const BG_IMAGE = "/images/latest-posts-section-bg.jpg";
 const LEAF_IMAGE = "/images/latest-posts-section-leaf.png";
 
-
-const BEHOLD_FEED_URL = "https://feeds.behold.so/Ahmm4BnIUEH6OgjWRfw5";
-
-
-function splitCaption(caption = "") {
-  const hashtags = caption.match(/#\w+/g) ?? [];
-  const description = caption.replace(/#\w+/g, "").trim();
-  return { hashtags: hashtags.join(" "), description };
-}
-
-
-function distributeIntoColumns(posts, columnCount) {
-  const columns = Array.from({ length: columnCount }, () => []);
-  posts.forEach((post, i) => columns[i % columnCount].push(post));
-  return columns;
-}
+const MAX_POSTS = 3;
 
 function InstagramGlyph() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-      <rect x="3" y="3" width="18" height="18" rx="5" stroke="white" strokeWidth="2" />
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="5"
+        stroke="white"
+        strokeWidth="2"
+      />
       <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="2" />
       <circle cx="17.5" cy="6.5" r="1.2" fill="white" />
     </svg>
@@ -42,120 +39,96 @@ function LinkedInGlyph() {
   );
 }
 
-function CameraIcon() {
+function InstagramPost({ url }) {
   return (
-    <Image
-      src="/images/latest-posts-camera.png"
-      alt="carousel post"
-      fill
-      className="gaf-posts-camera-icon"
-    />
-  );
-}
-
-function PostCard({ post, profilePicture }) {
-  const { hashtags, description } = splitCaption(post.caption);
-
-  return (
-    <article className="gaf-posts-card gaf-posts-card--normal">
-      <a
-        href={post.permalink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="gaf-posts-card-image-wrap"
+    <article className="gaf-posts-card gaf-posts-embed-card">
+      <blockquote
+        className="instagram-media"
+        data-instgrm-permalink={url}
+        data-instgrm-version="14"
       >
-        <Image
-          src={post.mediaUrl || post.thumbnailUrl}
-          alt="Green Art Factory post"
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 400px"
-          className="gaf-posts-card-image"
-        />
-        {post.isAlbum && (
-          <span className="gaf-posts-camera-badge">
-            <CameraIcon />
-          </span>
-        )}
-      </a>
-
-      <div className="gaf-posts-card-body">
-        <div className="gaf-posts-card-header">
-          <span className="gaf-posts-avatar">
-            {profilePicture && (
-              <Image
-                src={profilePicture}
-                alt="Green Art Factory"
-                fill
-                sizes="46px"
-                className="gaf-posts-avatar-img"
-              />
-            )}
-          </span>
-          <span className="gaf-posts-name">Green Art Factory</span>
-        </div>
-
-        {hashtags && <p className="gaf-posts-hashtags">{hashtags}</p>}
-        {description && <p className="gaf-posts-desc">{description}</p>}
-
-        <span className="gaf-posts-ig-badge">
-          <InstagramGlyph />
-        </span>
-      </div>
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          View this post on Instagram
+        </a>
+      </blockquote>
     </article>
   );
 }
 
 export default function LatestPosts() {
-  const [status, setStatus] = useState("loading"); 
-  const [posts, setPosts] = useState([]);
-  const [profilePicture, setProfilePicture] = useState(null);
+  const dispatch = useDispatch();
+
+  const { data } = useSelector((state) => state.InstagramLinks ?? {});
 
   useEffect(() => {
-    let cancelled = false;
+    dispatch(getInstagramLinksRequest());
+  }, [dispatch]);
 
-    fetch(`${BEHOLD_FEED_URL}?_=${Date.now()}`, { cache: "no-store" })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to load feed");
-        return res.json();
-      })
-      .then((data) => {
-        if (cancelled) return;
-        setPosts((data.posts ?? []).slice(0, 7));
-        setProfilePicture(data.profilePictureUrl ?? null);
-        setStatus("ready");
-      })
-      .catch(() => !cancelled && setStatus("error"));
+  const posts = useMemo(() => {
+    return (data ?? [])
+      .filter((item) => item?.is_active && item?.instagram_url)
+      .sort(
+        (a, b) =>
+          (a.sort_order ?? 0) - (b.sort_order ?? 0) || (a.id ?? 0) - (b.id ?? 0)
+      )
+      .slice(0, MAX_POSTS);
+  }, [data]);
 
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const columns = distributeIntoColumns(posts, 3);
+  // The Instagram script only turns blockquotes into posts when it runs,
+  // so run it again whenever the list of posts arrives or changes.
+  useEffect(() => {
+    if (posts.length === 0) return;
+    window.instgrm?.Embeds?.process();
+  }, [posts]);
 
   return (
-    <section className="gaf-posts-outer" style={{ backgroundImage: `url(${BG_IMAGE})` }}>
+    <section
+      className="gaf-posts-outer"
+      style={{ backgroundImage: `url(${BG_IMAGE})` }}
+    >
+      <Script
+        src="https://www.instagram.com/embed.js"
+        strategy="afterInteractive"
+        onReady={() => {
+          window.instgrm?.Embeds?.process();
+        }}
+      />
+
       <div className="gaf-posts-container">
         <aside className="gaf-posts-sidebar">
-          <Image src={LEAF_IMAGE} alt="leaf image" width={280} height={280} className="gaf-posts-leaf-img" />
+          <Image
+            src={LEAF_IMAGE}
+            alt="leaf image"
+            width={280}
+            height={280}
+            className="gaf-posts-leaf-img"
+          />
 
           <div className="gaf-posts-sidebar-content">
             <h2 className="gaf-posts-heading">Latest Posts</h2>
+
             <p className="gaf-posts-subtext">
-              Stay connected with our latest projects, green innovations, and
-              landscaping inspirations.
+              Want to bring more nature into your life? Stay connected with us for behind-the-scenes looks at our latest projects, practical tips on the newest green innovations, and endless landscaping inspirations to spark ideas for your next outdoor makeover!
             </p>
 
             <div className="gaf-posts-social-row">
               <span className="gaf-posts-social-icon gaf-posts-social-icon--ig">
                 <InstagramGlyph />
               </span>
-              <span className="gaf-posts-social-name">Green Art Factory</span>
+
+              <span className="gaf-posts-social-name">
+                Green Art Factory
+              </span>
+
               <span className="gaf-posts-divider" />
-              <Link href="https://www.instagram.com/greenartfactoryuae/" target="_blank" rel="noopener noreferrer">
-                <button type="button" className="gaf-posts-follow-btn">
-                  Follow Us
-                </button>
+
+              <Link
+                href="https://www.instagram.com/greenartfactoryuae/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gaf-posts-follow-btn"
+              >
+                Follow Us
               </Link>
             </div>
 
@@ -163,32 +136,32 @@ export default function LatestPosts() {
               <span className="gaf-posts-social-icon gaf-posts-social-icon--li">
                 <LinkedInGlyph />
               </span>
-              <span className="gaf-posts-social-name">Green Art Factory</span>
+
+              <span className="gaf-posts-social-name">
+                Green Art Factory
+              </span>
+
               <span className="gaf-posts-divider" />
-              <Link href="https://www.linkedin.com/company/green-art-factory-uae/posts/?feedView=all" target="_blank" rel="noopener noreferrer">
-                <button type="button" className="gaf-posts-follow-btn">
-                  Follow Us
-                </button>
+
+              <Link
+                href="https://www.linkedin.com/company/green-art-factory-uae/posts/?feedView=all"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gaf-posts-follow-btn"
+              >
+                Follow Us
               </Link>
             </div>
           </div>
         </aside>
 
-        <div className="gaf-posts-grid">
-          {status === "loading" && <p className="gaf-posts-status">Loading latest posts…</p>}
-          {status === "error" && (
-            <p className="gaf-posts-status">Couldn&rsquo;t load Instagram posts right now.</p>
-          )}
-
-          {status === "ready" &&
-            columns.map((column, i) => (
-              <div className="gaf-posts-column" key={i}>
-                {column.map((post) => (
-                  <PostCard key={post.id} post={post} profilePicture={profilePicture} />
-                ))}
-              </div>
+        {posts.length > 0 && (
+          <div className="gaf-posts-grid">
+            {posts.map((post) => (
+              <InstagramPost key={post.id} url={post.instagram_url} />
             ))}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

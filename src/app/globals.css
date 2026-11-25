@@ -36,7 +36,18 @@ button{
   gap: 10px;
   font-size: 15px;
   padding: 0 0 30px;
+  max-width: 1600px;
+  margin: 0px auto;
 }
+
+@media(max-width:500px){
+  .breadcrumb{
+    font-size: 12px;
+  }
+}
+
+
+
 
 .breadcrumb-item {
   color: #4a4a40;
@@ -2050,7 +2061,7 @@ justify-content:center;
   margin: 0 auto;
   padding: 0 20px;
   display: grid;
-  grid-template-columns: 340px 1fr;
+  /* grid-template-columns: 340px 1fr; */
   gap: 20px;
 }
 
@@ -2110,7 +2121,7 @@ justify-content:center;
   color: #e6ebe1;
   font-size: 14px;
   line-height: 1.65;
-  max-width: 320px;
+  /* max-width: 320px; */
   margin: 0 0 44px;
 }
 
@@ -2148,7 +2159,7 @@ justify-content:center;
   color: #ffffff;
   font-weight: 700;
   font-size: 15px;
-  flex: 1;
+  /* flex: 1; */
 }
 
 .gaf-posts-divider {
@@ -2816,12 +2827,12 @@ justify-content:center;
     padding: 36px 18px 40px;
   }
 
-  .gaf-blogs-filter-row {
+  /* .gaf-blogs-filter-row {
     justify-content: flex-start;
     overflow-x: auto;
     flex-wrap: nowrap;
     padding-bottom: 6px;
-  }
+  } */
 }
 
 
@@ -2877,6 +2888,12 @@ justify-content:center;
   line-height: 1.7;
   max-width: 480px;
   margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .gaf-footer-brand-desc {
+    max-width: none;
+  }
 }
 
 /* ---------- nav column ---------- */
@@ -2993,17 +3010,17 @@ a.gaf-footer-contact-text:hover {
 /* ---------- responsive ---------- */
 
 @media (max-width: 1024px) {
-  .gaf-footer-top {
+  /* .gaf-footer-top {
     grid-template-columns: 1fr 1fr;
     row-gap: 44px;
-  }
+  } */
 
   .gaf-footer-contact {
     grid-column: span 2;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1024px) {
   .gaf-footer {
     padding: 48px 20px 0;
   }
@@ -3032,7 +3049,95 @@ a.gaf-footer-contact-text:hover {
 }
 
 
+/* ============================================================
+   Footer: collapsible "Quick Links" below 768px
+   ============================================================ */
 
+/* Desktop / tablet (768px and up): look exactly as before.
+   The toggle is hidden and the two wrapper divs add no box of their own. */
+.gaf-footer .gaf-footer-nav-toggle {
+  display: none;
+}
+
+.gaf-footer .gaf-footer-nav-links,
+.gaf-footer .gaf-footer-nav-links-inner {
+  display: contents;
+}
+
+/* Mobile (below 768px): collapsed by default */
+@media (max-width: 1024px) {
+  .gaf-footer .gaf-footer-nav {
+    display: block;
+    width: 100%;
+  }
+
+  .gaf-footer .gaf-footer-nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    background: transparent;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .gaf-footer .gaf-footer-nav-toggle:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .gaf-footer .gaf-footer-nav-chevron {
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .gaf-footer .gaf-footer-nav-toggle[aria-expanded="true"] .gaf-footer-nav-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Smooth open/close without fixed heights. visibility keeps the hidden
+     links out of the tab order and away from screen readers. */
+  .gaf-footer .gaf-footer-nav-links {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition: grid-template-rows 0.3s ease, visibility 0s linear 0.3s;
+  }
+
+  .gaf-footer .gaf-footer-nav-links--open {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition: grid-template-rows 0.3s ease, visibility 0s;
+  }
+
+  .gaf-footer .gaf-footer-nav-links-inner {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 16px;
+    min-height: 0;
+    overflow: hidden;
+    padding-top: 0;
+  }
+
+  .gaf-footer .gaf-footer-nav-links--open .gaf-footer-nav-links-inner {
+    padding-top: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaf-footer .gaf-footer-nav-chevron,
+  .gaf-footer .gaf-footer-nav-links,
+  .gaf-footer .gaf-footer-nav-links--open {
+    transition: none;
+  }
+}
 
 
 
@@ -10962,10 +11067,11 @@ font.goog-text-highlight {
   background: #faf8f1;
   padding: clamp(3rem, 5vw, 6rem) clamp(1.25rem, 5vw, 3rem);
   color: #14140f;
+  padding-top: 10px;
 }
 
 .productDetailInner {
-  max-width: 1240px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -12418,6 +12524,7 @@ font.goog-text-highlight {
 .galleryListSection {
   background: #ffffff;
   padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
+  padding-top: 10px;
 }
 
 .galleryListTitle{
@@ -12428,7 +12535,7 @@ font.goog-text-highlight {
 }
 
 .galleryListInner {
-  max-width: 1600px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -12489,8 +12596,9 @@ font.goog-text-highlight {
 
 @media (max-width: 480px) {
   .galleryListRow {
-    flex-direction: column;
+    /* flex-direction: column; */
     /* height: auto; */
+    display: unset;
   }
 
   .galleryListRowWideFirst > .galleryListCell,
@@ -12498,17 +12606,11 @@ font.goog-text-highlight {
   .galleryListRowSingle > .galleryListCell {
     flex: none;
     width: 100%;
-    height: 280px;
+    height: 220px;
+    margin-bottom: 1rem;
   }
 }
 
-@media (max-width: 480px) {
-  .galleryListRowWideFirst > .galleryListCell,
-  .galleryListRowWideSecond > .galleryListCell,
-  .galleryListRowSingle > .galleryListCell {
-    height: 220px;
-  }
-}
 
 .galleryListEmpty {
   text-align: center;
@@ -13099,7 +13201,7 @@ font.goog-text-highlight {
 
 .projectDetailStatsSection {
   background: #ffffff;
-  padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem);
+  padding: clamp(1.5rem, 4vw, 2rem) clamp(1.25rem, 5vw, 3rem);
 }
 
 /* ==========================================================================
@@ -13589,6 +13691,12 @@ font.goog-text-highlight {
 .projectFullGallerySection {
   background: #ffffff;
   padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
+}
+
+@media(max-width:475px){
+.projectFullGallerySectionBreadcrumb{
+  font-size:10px;
+}
 }
 
 .projectFullGalleryHeader {
@@ -14466,6 +14574,12 @@ font.goog-text-highlight {
 /* ============================================================
    Terms & Privacy page
    ============================================================ */
+ 
+ .terms-and-privacy-breadcrumb{
+  padding: 12px 0;
+ }
+
+
 .gaf-legal-section {
   background: #f7f6f1;
   padding: 40px 24px 90px;
@@ -15049,8 +15163,8 @@ font.goog-text-highlight {
 .productDetailBreadcrumb {
   width: 95%;
   max-width: 1400px;
-  /* margin: 0 auto;
-  padding: 8px 24px 8px; */
+  margin: 0 auto;
+  /* padding: 8px 24px 8px; */
 }
 
 /* the last item is plain text (current page), not a link */
@@ -15059,12 +15173,12 @@ font.goog-text-highlight {
   cursor: default;
 }
 
-@media (max-width: 640px) {
+/* @media (max-width: 640px) {
   .galleryListBreadcrumb,
   .productDetailBreadcrumb {
     padding: 16px 16px 4px;
   }
-}
+} */
 
 
 
@@ -15103,7 +15217,7 @@ font.goog-text-highlight {
 /* Same width as the card below it, so the left edges line up.
    Replace 1200px with your card's max-width. */
 .projectDetailStatsBreadcrumbWrap {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto 1.25rem;
 }
 
@@ -15200,3 +15314,105 @@ nav .breadcrumb , .contact-breadcrumb {
 }
 
 
+
+/* =========================================
+   LATEST POSTS - INSTAGRAM EMBEDS
+========================================= */
+
+.gaf-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(326px, 1fr));
+  gap: 18px;
+  width: 100%;
+  min-width: 0;
+  align-items: start;
+}
+
+/* Individual Instagram card */
+
+.gaf-posts-embed-card {
+  width: 100%;
+  max-width: 390px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(82, 88, 30, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.045);
+}
+
+/* Instagram's original embed */
+
+.gaf-posts-embed-card .instagram-media {
+  width: 100% !important;
+  min-width: 326px !important;
+  max-width: 390px !important;
+  margin: 0 auto !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+/* Keep the embedded iframe within the card */
+
+.gaf-posts-embed-card iframe {
+  max-width: 100% !important;
+  border-radius: 12px !important;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+/* Smaller desktop and tablets */
+
+@media (max-width: 1100px) {
+  .gaf-posts-grid {
+    grid-template-columns: repeat(3, minmax(326px, 1fr));
+    gap: 14px;
+  }
+
+  .gaf-posts-embed-card {
+    max-width: 360px;
+  }
+
+  .gaf-posts-embed-card .instagram-media {
+    max-width: 360px !important;
+  }
+}
+
+/* Tablet portrait */
+
+@media (max-width: 1050px) {
+  .gaf-posts-grid {
+    grid-template-columns: minmax(326px, 390px);
+    justify-content: center;
+    gap: 18px;
+  }
+
+  .gaf-posts-embed-card {
+    width: 100%;
+    max-width: 390px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+  .gaf-posts-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .gaf-posts-embed-card {
+    width: 100%;
+    max-width: 390px;
+  }
+
+  .gaf-posts-embed-card .instagram-media {
+    min-width: 326px !important;
+    max-width: 390px !important;
+  }
+}
