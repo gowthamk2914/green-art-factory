@@ -949,6 +949,12 @@ body.mobileMenuLockScroll {
     overflow:hidden;
 }
 
+@media(max-width:992px){
+.services-section{
+    padding:20px 0;
+}
+}
+
 .services-title{
     text-align:center;
     font-size:30px;
@@ -1137,7 +1143,8 @@ justify-content:center;
 @media(max-width:768px){
 
 .services-title{
-font-size:34px;
+font-size:27px;
+margin-bottom:20px;
 }
 
 .services-image{
@@ -15171,6 +15178,10 @@ font.goog-text-highlight {
 .galleryListBreadcrumb .breadcrumb-item.active,
 .productDetailBreadcrumb .breadcrumb-item.active {
   cursor: default;
+}
+
+.galleryListBreadcrumb .breadcrumb {
+  padding:10px 0 20px;
 }
 
 /* @media (max-width: 640px) {

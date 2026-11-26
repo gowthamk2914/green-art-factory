@@ -6,17 +6,26 @@ import Link from "next/link";
 import { FiArrowUpRight } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 import { getNatureShowcaseRequest } from "../../redux/NatureShowcase/actions";
+
+gsap.registerPlugin(ScrollTrigger); // safe to call more than once
 
 const STORAGE_PREFIX = "showcase-last-hero-";
 const VISIBLE_SLOTS = 5; // 1 hero + 4 thumbnails
 
 /* Where an image click goes.
    true  -> each image opens its own variant page:  /gallery/:productSlug/:variantSlug
-            (same route the Products section uses; falls back to the
-            "View Now" link when a slug is missing)
    false -> every image opens the same page as the "View Now" button */
 const IMAGE_LINKS_TO_VARIANT = true;
+
+/* Clears ScrollTrigger's remembered scroll position so the next page
+   doesn't inherit this page's scroll offset */
+const resetScroll = () => {
+  ScrollTrigger.clearScrollMemory();
+};
 
 /* Builds /gallery/:productSlug/:variantSlug, or returns null if a slug is missing */
 function buildGalleryUrl(productSlug, variantSlug) {
@@ -105,6 +114,15 @@ export default function NatureShowcase() {
   useEffect(() => {
     dispatch(getNatureShowcaseRequest());
   }, [dispatch]);
+
+  // On leaving this page, reset scroll so the next page opens at the top
+  // (same approach as Products.js)
+  useEffect(() => {
+    return () => {
+      ScrollTrigger.clearScrollMemory();
+      window.scrollTo(0, 0);
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -312,6 +330,8 @@ function ShowcaseMedia({ item }) {
                 {!isHidden && (
                   <Link
                     href={tileHref}
+                    scroll={true}
+                    onClick={resetScroll}
                     className="showcase-tile-link"
                     aria-label={`View ${item.title}`}
                   />
@@ -333,7 +353,12 @@ function ShowcaseText({ item }) {
         <p className="showcase-desc">{item.description}</p>
       )}
 
-      <Link href={item.href} className="showcase-btn">
+      <Link
+        href={item.href}
+        scroll={true}
+        onClick={resetScroll}
+        className="showcase-btn"
+      >
         <span className="showcase-btn-label">View Now</span>
 
         <span className="showcase-btn-icon">

@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { getFeaturedProjectsRequest } from "../../redux/FeaturedProjects/actions";
 
-const AUTOPLAY_INTERVAL_MS = 2000;
+const AUTOPLAY_INTERVAL_MS = 7000;
 const PLACEHOLDER_IMAGE = "/images/projects-placeholder.jpg";
 
 // Image = first gallery image, then cover_image, then placeholder
